@@ -12,6 +12,7 @@ def maugold_lighthouse(calc):
 	theta_i, phi_i = 54.487375, -3.599760
 	theta_f, phi_f = 54.295668, -4.309418
 
+	
 	renderer = Renderer_35mm(calc,35,theta_i,phi_i,(theta_f,phi_f),d_max,
 								vert_res=4000,focal_length=2000,vert_camera_tilt=0)
 
