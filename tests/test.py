@@ -1,3 +1,5 @@
+import sys
+sys.path.append("../")
 from refraction_render.render import Scene,Renderer_35mm,CurveCalc,FlatCalc
 from pyproj import Geod
 import numpy as np
