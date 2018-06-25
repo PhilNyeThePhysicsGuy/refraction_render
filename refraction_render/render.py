@@ -142,7 +142,10 @@ class Renderer_35mm(object):
 			self._h_angles = np.linspace(-a_h/2,a_h/2,horz_res)+f_az
 
 		self._ds = np.arange(0,max_distance,distance_res)
-		self._sols = calc.solve_ivp(max_distance,h_i,R0=self._R0,alpha=self._v_angles,atol=1.1e-3,rtol=1.1e-5)
+		if self._sphere:
+			self._sols = calc.solve_ivp(max_distance,h_i,R0=self._R0,alpha=self._v_angles,atol=1.1e-5,rtol=1.1e-7)
+		else:
+			self._sols = calc.solve_ivp(max_distance,h_i,alpha=self._v_angles,atol=1.1e-5,rtol=1.1e-7)
 
 		if self._sphere:
 			sigmas = np.pi/2+self._ds/self._R0
@@ -184,7 +187,7 @@ class Renderer_35mm(object):
 						s = np.pi/2+dist/self._R0
 						ray_heights[dist] = (self._sols.sol(s)[:self._vert_res]-self._R0).copy()
 					else:
-						ray_heights[dist] = self._sols.sol(d)[:self._vert_res].copy()
+						ray_heights[dist] = self._sols.sol(dist)[:self._vert_res].copy()
 
 
 				img_datas.append((im_data,h_px,v_px,dist))

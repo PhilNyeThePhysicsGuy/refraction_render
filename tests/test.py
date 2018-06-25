@@ -9,12 +9,12 @@ import os
 
 def maugold_lighthouse(calc):
 
-	d_max = 80000
+	d_max = 52000
 	theta_i, phi_i = 54.487375, -3.599760
 	theta_f, phi_f = 54.295668, -4.309418
 
 	renderer = Renderer_35mm(calc,35,theta_i,phi_i,(theta_f,phi_f),d_max,
-								vert_res=4000,focal_length=8000,vert_camera_tilt=-0.15)
+								vert_res=4000,focal_length=2000,vert_camera_tilt=0)
 
 
 	s = Scene()
@@ -40,7 +40,7 @@ def ships(calc):
 	phi_2,theta_2,b_az = geod.fwd(phi_i,theta_i,270+np.rad2deg(np.arctan(10/13000.0)),d2)
 
 	renderer = Renderer_35mm(calc,10,theta_i,phi_i,270,30000,
-								vert_res=2000,focal_length=4000,vert_camera_tilt=-0.07)
+								vert_res=4000,focal_length=4000,vert_camera_tilt=-0.07)
 
 	image1_path = os.path.join("images","cargo2.png")
 	image2_path = os.path.join("images","iStenaLine.png")
@@ -68,9 +68,17 @@ def soundly_pylons(calc):
 
 	theta_i, phi_i = 30.077320, -90.404888
 	theta_f, phi_f = 30.293719, -90.310753
-	renderer = Renderer_35mm(calc,4,theta_i,phi_i,(theta_f,phi_f),40000,
-								vert_res=6000,focal_length=2000)
+	f_az,b_az,dist = geod.inv(phi_i,theta_i,phi_f,theta_f)
+	f_az = f_az%360 # f_az must be between 0 and 360
+	f_az = f_az + 0.3
+
+	renderer = Renderer_35mm(calc,4,theta_i,phi_i,f_az,40000,vert_camera_tilt=0.2,
+								vert_res=6000,focal_length=400)
 	renderer.render_scene(s,"soundly_pylons.png")
+
+	renderer = Renderer_35mm(calc,4,theta_i,phi_i,f_az,40000,vert_camera_tilt=0.2,
+								vert_res=6000,focal_length=2000)
+	renderer.render_scene(s,"soundly_pylons_zoom.png")
 
 
 
@@ -85,12 +93,13 @@ def T_prof(h):
 
 
 calc_args = dict(T0=8.3,P0=103000,T_prof=T_prof)
-calc = CurveCalc(**calc_args)
+# calc = CurveCalc(**calc_args)
+calc = FlatCalc(**calc_args)
 
 soundly_pylons(calc)
-maugold_lighthouse(calc)
+# maugold_lighthouse(calc)
 
-
-calc_args = dict(T0=30,T_prof=T_prof_inf)
-calc = CurveCalc(**calc_args)
-ships(calc)
+# calc_args = dict(T0=30,T_prof=T_prof_inf)
+# calc = CurveCalc(**calc_args)
+# calc = FlatCalc(**calc_args)
+# ships(calc)
