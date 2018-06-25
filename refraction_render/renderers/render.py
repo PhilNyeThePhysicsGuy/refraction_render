@@ -1,4 +1,4 @@
-from .refraction import CurveCalc,FlatCalc
+from ..calcs import CurveCalc,FlatCalc
 
 from numba import njit
 from PIL import Image
