@@ -1,30 +1,94 @@
 from scipy.integrate import solve_bvp,solve_ivp
 import numpy as np
 
-__all__=["CurveCalc","FlatCalc"]
+__all__=["CurveCalc","FlatCalc","FermatEquationsEuclid","FermatEquationsPolar"]
 
-class EulerEquations(object):
+class _EulerEquations(object):
     def __init__(self):
         pass
 
-    def solve_bvp(self,a,b,ha,hb):
-        def bc(ya,yb):
-            return np.array([ya[0]-ha,yb[0]-hb])
+    def solve_ivp(self,a,b,y0,dy0,**kwargs):
+        """Solve initial value problem for light rays.
 
-        x = np.linspace(a,b,100)
-        y = np.zeros((2,100))
-        y[0,:] = ha+(hb-ha)*(x-a)/(b-a)
-        y[1,:] = (hb-ha)/(b-a)
-        self._yout = np.zeros_like(y)
-        return solve_bvp(self,bc,x,y,max_nodes=100000,tol=1e-7)    
+        Notes
+        -----
+        The solver can solve the path of an arbitrary number of light rays in one function call
+        however the format of the solutions has the y(x) positions stacked on top of the derivatives.
 
-    def solve_ivp(self,a,b,h,dh,**kwargs):
-        y0 = np.array([h,dh])
+        Parameters
+        ----------
+        a : scalar
+            initial position for the solution of the ray's path.
+        b : scalar
+            final position for the solution of the ray's path.
+        y0 : array_like of shape (n,)
+            initial position of the ray's.
+        dy0 : array_like of shape (n,)
+            initial derivative (with respect to the independent variable) of the ray's trajectory.
+        kwargs : optional
+            additional arguments to pass into solver, 
+            see scipy.integrate.solve_ivp for more details.
+
+
+        Returns
+        -------
+        Bunch object with the following fields defined:
+        t : ndarray, shape (n_points,)
+            Time points.
+        y : ndarray, shape (n, n_points)
+            Values of the solution at `t`.
+        sol : `OdeSolution` or None
+            Found solution as `OdeSolution` instance; None if `dense_output` was
+            set to False.
+        t_events : list of ndarray or None
+            Contains for each event type a list of arrays at which an event of
+            that type event was detected. None if `events` was None.
+        nfev : int
+            Number of evaluations of the right-hand side.
+        njev : int
+            Number of evaluations of the Jacobian.
+        nlu : int
+            Number of LU decompositions.
+        status : int
+            Reason for algorithm termination:
+                * -1: Integration step failed.
+                *  0: The solver successfully reached the end of `tspan`.
+                *  1: A termination event occurred.
+        message : string
+            Human-readable description of the termination reason.
+        success : bool
+            True if the solver reached the interval end or a termination event
+            occurred (``status >= 0``).
+
+
+        """
+        y0 = np.array([y0,dy0])
         self._yout = np.zeros_like(y0.reshape((2,-1)))
-        return solve_ivp(self,(a,b),y0.ravel(),dense_output=True,**kwargs)
+        return solve_ivp(self,(a,b),y0.ravel(),**kwargs)
 
-class EulerEquationsEuclid(EulerEquations):
+class FermatEquationsEuclid(_EulerEquations):
+    """Solver for light ray in a 2D Euclidian geometry.
+
+    This object takes in three user defined functions:  :math:`n(x,y), dn/dx, dn/dy`
+    and uses these functions to solve Fermat's equations for the path of a light ray.
+
+
+    """
     def __init__(self,n,dndx,dndy,args=()):
+        """Intializes the `FermatEquationsEuclid` object.
+
+        Parameters
+        ----------
+        n : callable
+            function which returns the index of refraction :math:`n(x,y)`.
+        dndx : callable
+            function which returns :math:`\\frac{\partial n(x,y)}{\partial x}`.
+        dndy : callable
+            function which returns :math:`\\frac{\partial n(x,y)}{\partial y}`.
+        args : array_like, optional
+            optional arguments which go into the functions. 
+
+        """
         self._n = n
         self._dndx = dndx
         self._dndy = dndy
@@ -37,6 +101,7 @@ class EulerEquationsEuclid(EulerEquations):
             self._yout[...] = yin[...]
         except ValueError:
             self._yout = yin.copy()
+
         y,dydx = yin[0],yin[1]
 
         n_val = self._n(x,y,*self._args)
@@ -48,8 +113,22 @@ class EulerEquationsEuclid(EulerEquations):
 
         return self._yout.reshape(shape0)
 
-class EulerEquationsPolar(EulerEquations):
+class FermatEquationsPolar(_EulerEquations):
     def __init__(self,n,dndtheta,dndr,args=()):
+        """Intializes the `FermatEquationsPolar` object.
+
+        Parameters
+        ----------
+        n : callable
+            function which returns the index of refraction: :math:`n(\theta,r)`.
+        dndx : callable
+            function which returns :math:`\\frac{\partial n(\theta,r)}{\partial\theta}`.
+        dndy : callable
+            function which returns :math:`\\frac{\partial n(\theta,r)}{\partial r}`.
+        args : array_like, optional
+            optional arguments which go into the functions. 
+
+        """
         self._n = n
         self._dndtheta = dndtheta
         self._dndr = dndr
@@ -150,7 +229,7 @@ class CurveCalc(object):
         else:
             n,dndr,dndtheta = n_funcs
 
-        self._ee = EulerEquationsPolar(n,dndtheta,dndr)
+        self._ee = FermatEquationsPolar(n,dndtheta,dndr)
 
     @property
     def dT(self):
@@ -264,7 +343,7 @@ class FlatCalc(object):
 
 
 
-        self._ee = EulerEquationsEuclid(n,dndx,dndy)
+        self._ee = FermatEquationsEuclid(n,dndx,dndy)
 
 
     @property
@@ -281,8 +360,8 @@ class FlatCalc(object):
     def P(self,h):
         return self._P(h)
 
-    def n(self,theta,h):
-        return self._n(theta,h)
+    def n(self,h):
+        return self._n(0,h)
 
     def solve_bvp(self,d,ha,hb):
         return self._ee.solve_bvp(0,d,ha,hb)
