@@ -161,7 +161,7 @@ class FermatEquationsPolar(_EulerEquations):
 
 class CurveCalc(object):
     def __init__(self,T0=15.0,P0=101325.0,h0=0.0,g=9.8076,dT=None,moist_lapse_rate=False,
-                ll=545,T_prof=None,phi=None,T_prof_args=(),n_funcs=None):
+                wavelength=545,dT_prof=None,T_prof=None,phi=None,T_prof_args=(),n_funcs=None):
 
 
         if phi is None:
@@ -189,7 +189,10 @@ class CurveCalc(object):
                     dT = 0.0098
                 
 
-
+            if T_prof is not None and dT_prof is not None:
+                T_prof0 = T_prof(h0+R0,*T_prof_args)
+                T = lambda r:T0-dT*(r-(h0+R0))+(T_prof(r-R0,*T_prof_args)-T_prof0)
+                dTdr = lambda r:-dT+dT_prof(r-h0)
             if T_prof is not None:
                 T_prof0 = T_prof(h0+R0,*T_prof_args)
                 T = lambda r:T0-dT*(r-(h0+R0))+(T_prof(r-R0,*T_prof_args)-T_prof0)
@@ -215,7 +218,7 @@ class CurveCalc(object):
             rho = lambda r:sol.sol(r)[0]/(R*T(r))
 
 
-            deltan = 0.0002879*(1+0.0000567/ll**2)
+            deltan = 0.0002879*(1+0.0000567/wavelength**2)
             n = lambda theta,r:(1+rho(r)*deltan)
             dndr = lambda theta,r:drhodr(r)*deltan
             dndtheta = lambda theta,r:0.0
@@ -280,7 +283,7 @@ class CurveCalc(object):
 
 class FlatCalc(object):
     def __init__(self,T0=15.0,P0=101325.0,h0=0.0,g=9.81,dT=None,moist_lapse_rate=False,
-                ll=545,T_prof=None,T_prof_args=(),n_funcs=None):
+                wavelength=545,T_prof=None,dT_prof=None,T_prof_args=(),n_funcs=None):
 
         if n_funcs is None:
             T0 = max(T0,0)
@@ -298,6 +301,10 @@ class FlatCalc(object):
                 else:
                     dT = 0.0098
 
+            if T_prof is not None and dT_prof is not None:
+                T_prof0 = T_prof(h0+R0,*T_prof_args)
+                T = lambda r:T0-dT*(r-(h0+R0))+(T_prof(r-R0,*T_prof_args)-T_prof0)
+                dTdr = lambda r:-dT+dT_prof(r-h0)
             if T_prof is not None:
                 T = lambda r:T0-dT*(r-h0)+T_prof(r,*T_prof_args)
                 dTdr = lambda r:-dT+(T_prof(r+1.1e-7,*T_prof_args)-T_prof(r-1.1e-7,*T_prof_args))/(2.2e-7)
@@ -321,13 +328,13 @@ class FlatCalc(object):
             rho = lambda r:sol.sol(r)[0]/(R*T(r))
 
 
-            deltan = 0.0002879*(1+0.0000567/ll**2)
+            deltan = 0.0002879*(1+0.0000567/wavelength**2)
             n = lambda theta,r:(1+rho(r)*deltan)
             dndr = lambda theta,r:drhodr(r)*deltan
             dndtheta = lambda theta,r:0.0
 
 
-            deltan = 0.0002879*(1+0.0000567/ll**2)
+            deltan = 0.0002879*(1+0.0000567/wavelength**2)
             n = lambda theta,r:(1+rho(r)*deltan)
             dndy = lambda theta,r:drhody(r)*deltan
             dndx = lambda theta,r:0.0

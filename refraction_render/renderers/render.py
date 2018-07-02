@@ -1,6 +1,6 @@
 from ..calcs import CurveCalc,FlatCalc
 
-from numba import njit,guvectorize
+from numba import njit,guvectorize,vectorize
 from PIL import Image
 from pyproj import Geod
 from six import iteritems
@@ -21,38 +21,24 @@ def _get_water(rs,ind):
 				ind[i] = j
 				break
 
-@njit
-def _get_bounds(a,a_min,a_max,mask):
-	for i in range(a.shape[0]):
-		mask[i] = a[i] >= a_min and a[i] < a_max
+@vectorize(["b1(f8,f8,f8)"])
+def _get_bounds(a,a_min,a_max):
+	return a >= a_min and a < a_max
 
 @njit
-def _get_vertical_mask(rh,h_min,h_max,ind,n_z,ds,d,mask):
+def _get_vertical_mask(rh,h_min,h_max,inds,ds,d,sky,mask):
 	n = rh.shape[0]
 
 	for i in range(n):
+		mask[i] = False
 		if rh[i] >= h_min and rh[i] < h_max:
-			if ind[i] < n_z:
-				if ds[ind[i]] < d:
-					mask[i] = False
-				else:
-					mask[i] = True
-			else:
+			if sky[i]: # if ray has hit sky (not hit anything) it has hit image
 				mask[i] = True
-		else:
-			mask[i] = False
-
-@njit
-def _update_png_data(k,l,png_data,i,j,img_png_data):
-	n = k.shape[0]
-	m = l.shape[0]
-
-	for a in range(n):
-		ii = i[a]
-		kk = k[a]
-		for b in range(m):
-			if img_png_data[ii,j[b],3] > 0:
-				png_data[kk,l[b],:] = img_png_data[ii,j[b],:3]
+			else:
+				if ds[inds[i]] < d: # if ray hits land or water before image no change required
+					mask[i] = False
+				else: 
+					mask[i] = True				
 
 @njit
 def _ray_crossing(rs,heights,inds,water,land,sky):
@@ -79,6 +65,26 @@ def _ray_crossing(rs,heights,inds,water,land,sky):
 
 		sky[i] = not hit
 
+@njit
+def _update_png_data(i,j,png_data,k,l,img_png_data):
+	n = i.shape[0]
+	m = j.shape[0]
+
+	for a in range(n):
+		ii = i[a]
+		kk = k[a]
+		for b in range(m):
+			if img_png_data[kk,l[b],3] > 0:
+				png_data[ii,j[b],:] = img_png_data[kk,l[b],:3]
+
+@njit
+def _update_png_data_slice(j,png_data,l,img_png_data):
+	m = j.shape[0]
+
+	for b in range(m):
+		if img_png_data[l[b],3] > 0:
+			png_data[j[b],:] = img_png_data[l[b],:3]
+
 
 def _check_gps(lat,lon):
 	if np.any(lat < -90) or np.any(lat > 90):
@@ -92,30 +98,7 @@ def _defualt_cfunc(d,heights):
 	# nr = ng*(1-heights/(heights.max()+1))
 	return np.stack(np.broadcast_arrays(0,ng,0),axis=-1)
 
-
-def _render_images(png_data,rs,ds,h_angles,img_datas,ray_heights):
-	n_z = rs.shape[1]
-
-	ind = np.zeros(rs.shape[0],dtype=np.int)
-	v_mask = np.zeros(rs.shape[0],dtype=np.bool)
-	h_mask = np.zeros(h_angles.shape[0],dtype=np.bool)
-	_get_water(rs,ind)
-
-	for img_png_data,h_px,v_px,d in img_datas:
-		rh = ray_heights[d]
-
-		_get_bounds(h_angles,h_px[0],h_px[-1],h_mask)
-		_get_vertical_mask(rh,v_px[0],v_px[-1],ind,n_z,ds,d,v_mask)
-
-		if np.any(v_mask):
-			k = np.argwhere(h_mask).ravel()
-			l = np.argwhere(v_mask).ravel()
-			i = np.searchsorted(h_px,h_angles[k])
-			j = np.searchsorted(v_px,rh[l])
-
-			_update_png_data(k,l,png_data,i,j,img_png_data)
-
-
+"""
 def _render_terrain(png_data,lat_obs,lon_obs,rs,ds,h_angles,terrain,cfunc,cfunc_args,surface_color,background_color):
 	n_v = rs.shape[0]
 
@@ -148,6 +131,98 @@ def _render_terrain(png_data,lat_obs,lon_obs,rs,ds,h_angles,terrain,cfunc,cfunc_
 		png_data[:,water,:] = surface_color
 		np.logical_not(water,out=water)
 		png_data[:,water,:] = background_color
+
+def _render_images(png_data,rs,ds,h_angles,img_datas,ray_heights):
+	n_z = rs.shape[1]
+
+	ind = np.zeros(rs.shape[0],dtype=np.int)
+	v_mask = np.zeros(rs.shape[0],dtype=np.bool)
+	h_mask = np.zeros(h_angles.shape[0],dtype=np.bool)
+	_get_water(rs,ind)
+
+	for img_png_data,h_px,v_px,d in img_datas:
+		rh = ray_heights[d]
+
+		_get_bounds(h_angles,h_px[0],h_px[-1],out=h_mask)
+		_get_vertical_mask_no_terrain(rh,v_px[0],v_px[-1],ind,n_z,ds,d,v_mask)
+
+		if np.any(v_mask):
+			k = np.argwhere(h_mask).ravel()
+			l = np.argwhere(v_mask).ravel()
+			i = np.searchsorted(h_px,h_angles[k])
+			j = np.searchsorted(v_px,rh[l])
+
+			_update_png_data(k,l,png_data,i,j,img_png_data)
+"""
+
+def _render(png_data,rs,ds,h_angles,surface_color,background_color,terrain_args,image_args):
+
+	lat_obs,lon_obs,terrain,cfunc,cfunc_args = terrain_args
+	img_datas,ray_heights = image_args
+
+	n_v = rs.shape[0]
+	n_z = rs.shape[1]
+
+	water = np.zeros(n_v,dtype=np.bool)
+	land = np.zeros(n_v,dtype=np.bool)
+	sky = np.zeros(n_v,dtype=np.bool)
+	inds = np.zeros(n_v,dtype=np.int32)
+
+	v_mask = np.zeros(n_v,dtype=np.bool)
+	h_mask = np.zeros(h_angles.shape[0],dtype=np.bool)
+
+	if terrain.has_data: # render land model 
+		h_mins = np.array([h_px.min() for _,h_px,_,_ in img_datas])
+		h_maxs = np.array([h_px.max() for _,h_px,_,_ in img_datas])
+		img_mask = np.zeros_like(h_mins,dtype=np.bool)
+
+		for i,h_angle in enumerate(h_angles):
+
+			heights = terrain.get_terrain(lat_obs,lon_obs,h_angle,ds)
+
+			_ray_crossing(rs,heights,inds,water,land,sky)
+			png_data[i,water,:] = surface_color
+			png_data[i,sky,:] = background_color
+
+			if np.any(land):
+				land_inds = inds[land]
+				png_data[i,land,:] = cfunc(ds[land_inds],heights[land_inds],*cfunc_args)
+
+			_get_bounds(h_angle,h_mins,h_maxs,out=img_mask)
+			if np.any(img_mask):
+				img_indx = np.argwhere(img_mask).ravel()
+				for I in img_indx:
+					img_png_data,h_px,v_px,d = img_datas[I]
+
+					rh = ray_heights[d]
+					_get_vertical_mask(rh,v_px[0],v_px[-1],inds,ds,d,sky,v_mask)
+
+					j = np.argwhere(v_mask).ravel()
+					k = np.searchsorted(h_px,h_angle)
+					l = np.searchsorted(v_px,rh[j])
+					_update_png_data_slice(j,png_data[i,...],l,img_png_data[k,...])
+
+	else: # if no terrain to render, just render sky and sphere surface
+
+		_get_water(rs,inds)
+		np.less(inds,n_z,out=water)
+		png_data[:,water,:] = surface_color
+		np.logical_not(water,out=sky)
+		png_data[:,sky,:] = background_color
+
+		for img_png_data,h_px,v_px,d in img_datas:
+			rh = ray_heights[d]
+
+			_get_bounds(h_angles,h_px[0],h_px[-1],out=h_mask)
+			_get_vertical_mask(rh,v_px[0],v_px[-1],inds,ds,d,sky,v_mask)
+
+			if np.any(v_mask):
+				i = np.argwhere(h_mask).ravel()
+				j = np.argwhere(v_mask).ravel()
+				k = np.searchsorted(h_px,h_angles[i])
+				l = np.searchsorted(v_px,rh[j])
+
+				_update_png_data(i,j,png_data,k,l,img_png_data)
 
 
 class Renderer_35mm(object):
@@ -215,9 +290,6 @@ class Renderer_35mm(object):
 			self._rs = self._sols.sol(self._ds)[:vert_res].copy()
 
 	def change_direction(self,direction):
-		"""
-
-		"""
 		if type(direction) is tuple:
 			if len(direction) != 2:
 				raise ValueError("direction must be either heading or tuple containing latitude and lonitude respectively.")
@@ -234,7 +306,7 @@ class Renderer_35mm(object):
 		x_grid = np.linspace(-18,18,self._horz_res)
 		self._h_angles = np.rad2deg(np.arctan(x_grid/self._focal_length))+f_az
 
-
+	"""
 	def render_scene(self,scene,image_name,surface_color=None,background_color=None,cfunc=_defualt_cfunc,cfunc_args=()):
 		if surface_color is None:
 			surface_color = np.array([0,80,120])
@@ -289,9 +361,63 @@ class Renderer_35mm(object):
 		im = Image.fromarray(png_data,mode="RGB")
 		im.save(image_name)
 
+		"""
+
+	def render_scene(self,scene,image_name,surface_color=None,background_color=None,cfunc=_defualt_cfunc,cfunc_args=()):
+		if surface_color is None:
+			surface_color = np.array([0,80,120])
+
+		if background_color is None:
+			background_color = np.array([135,206,250])
+
+		if not isinstance(scene,Scene):
+			raise ValueError("scene must be a scene type object")
+
+		img_datas = []
+		ray_heights = {}
+
+		for image,(im,image_data) in iteritems(scene._image_dict):
+			im_data = np.array(im)
+			im_data = im_data[::-1,:,:].transpose((1,0,2)).copy()
+
+			for lat,lon,vert_pixel_pos,horz_pixel_pos in image_data:
+				v_px = vert_pixel_pos
+				f_az,b_az,dist = self._geod.inv(self._lon_obs,self._lat_obs,lon,lat)
+
+				h_px=np.arctan(horz_pixel_pos/dist)
+				np.rad2deg(h_px,out=h_px)
+				h_px += (f_az % 360)
+				np.mod(h_px,360,out=h_px)
+
+				if dist not in ray_heights:
+					if self._sphere:
+						s = np.pi/2+dist/self._R0
+						ray_heights[dist] = (self._sols.sol(s)[:self._vert_res]-self._R0).copy()
+					else:
+						ray_heights[dist] = self._sols.sol(dist)[:self._vert_res].copy()
+
+
+				img_datas.append((im_data,h_px,v_px,dist))
+
+		img_datas.sort(key=lambda x:-x[-1])
+		
+		land_model = scene._land_model
+
+		png_data = np.empty((len(self._h_angles),self._rs.shape[0],3),dtype=np.uint8)
+		png_data[...] = 0
+
+		terrain_args = (self._lat_obs,self._lon_obs,land_model,cfunc,cfunc_args)
+		image_args = (img_datas,ray_heights)
+
+		_render(png_data,self._rs,self._ds,self._h_angles,surface_color,background_color,terrain_args,image_args)
+
+		png_data = png_data.transpose((1,0,2))
+		png_data = png_data[::-1,:,:]
+		im = Image.fromarray(png_data,mode="RGB")
+		im.save(image_name)
 
 class Scene(object):
-	def __init__(self,ellps='sphere'):
+	def __init__(self):
 		"""
 		Simple wrapper which keeps track of data used to render an image.
 
@@ -353,8 +479,6 @@ class Scene(object):
 			vert_pixel_pos = h + np.linspace(0,height,px_height)
 			horz_pixel_pos = np.linspace(-width/2,width/2,px_width)
 
-
-
 		if pixel_size is not None:
 			try:
 				pixel_size = float(pixel_size)
@@ -365,9 +489,6 @@ class Scene(object):
 			horz_pixel_pos = pixel_size*np.arange(-(px_width//2+px_width%2),px_width//2,1)
 
 		self._image_dict[image][1].append((lat,lon,vert_pixel_pos,horz_pixel_pos))
-
-		
-
 
 
 class _land_model(object):

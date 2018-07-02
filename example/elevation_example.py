@@ -9,6 +9,7 @@ from pyproj import Geod
 import gdal
 import numpy as np
 import os
+import cProfile
 
 def cfunc(d,h):
 	ng = 100+(255-100)*(d/50000.0)**(-4)
@@ -37,19 +38,18 @@ def maugold_lighthouse(calc):
 	image_path = os.path.join("images","MG_lighthouse_model.png")
 	s.add_image(image_path,(43.7,theta_f,phi_f),dimensions=(-1,23))
 	s.add_elevation_model(lats,lons,data)
-	renderer.render_scene(s,'lighthouse_render.png',cfunc=cfunc)
+
+	renderer.render_scene(s,'lighthouse_render.png',cfunc=cfunc)	
 	renderer.change_direction(252)
 	renderer.render_scene(s,'nose_cone_render.png',cfunc=cfunc)
 	renderer.change_direction(256)
 	renderer.render_scene(s,'shallag_render.png',cfunc=cfunc)
 
 
-
 def T_prof(h):
 	e1 = np.exp(h/1.5)
 	e2 = np.exp(h/0.1)
 	return (2/(1+e1))*0.1+(2/(1+e2))*0.15
-
 
 
 calc_args = dict(T0=8.3,P0=103000,T_prof=T_prof)
