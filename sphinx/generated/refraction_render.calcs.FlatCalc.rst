@@ -17,7 +17,7 @@ refraction\_render\.calcs\.FlatCalc
       ~FlatCalc.T
       ~FlatCalc.__init__
       ~FlatCalc.n
-      ~FlatCalc.solve_bvp
+      ~FlatCalc.rho
       ~FlatCalc.solve_ivp
    
    

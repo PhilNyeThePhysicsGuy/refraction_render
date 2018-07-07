@@ -15,4 +15,5 @@ refraction_render API reference
     :maxdepth: 1
     
     calcs
+    renderers
     misc

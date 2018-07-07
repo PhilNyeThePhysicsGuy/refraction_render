@@ -62,15 +62,15 @@ class _EulerEquations(object):
 
 
         """
-        y0 = np.array([y0,dy0])
-        self._yout = np.zeros_like(y0.reshape((2,-1)))
+        y0 = np.vstack((y0,dy0))
+        self._yout = np.zeros_like(y0)
         return solve_ivp(self,(a,b),y0.ravel(),**kwargs)
 
 class FermatEquationsEuclid(_EulerEquations):
     """Solver for light ray in a 2D Euclidian geometry.
 
-    This object takes in three user defined functions:  :math:`n(x,y), dn/dx, dn/dy`
-    and uses these functions to solve Fermat's equations for the path of a light ray.
+    This object takes in three user defined functions:  :math:`n(x,y), \\frac{\\partial n(x,y)}{\\partial x}, \\frac{\\partial n(x,y)}{\\partial y}`
+    and uses these functions to solve Fermat's equations for the path of a light ray. This is only really useful
 
 
     """
@@ -82,9 +82,9 @@ class FermatEquationsEuclid(_EulerEquations):
         n : callable
             function which returns the index of refraction :math:`n(x,y)`.
         dndx : callable
-            function which returns :math:`\\frac{\partial n(x,y)}{\partial x}`.
+            function which returns :math:`\\frac{\\partial n(x,y)}{\\partial x}`.
         dndy : callable
-            function which returns :math:`\\frac{\partial n(x,y)}{\partial y}`.
+            function which returns :math:`\\frac{\\partial n(x,y)}{\\partial y}`.
         args : array_like, optional
             optional arguments which go into the functions. 
 
@@ -114,6 +114,13 @@ class FermatEquationsEuclid(_EulerEquations):
         return self._yout.reshape(shape0)
 
 class FermatEquationsPolar(_EulerEquations):
+    """Solver for light ray in a 2D Polar geometry.
+
+    This object takes in three user defined functions:  :math:`n(\\theta,r), \\frac{\partial n(\\theta,r)}{\partial\\theta}, \\frac{\partial n(\\theta,r)}{\partial r}`
+    and uses these functions to solve Fermat's equations for the path of a light ray.
+
+
+    """
     def __init__(self,n,dndtheta,dndr,args=()):
         """Intializes the `FermatEquationsPolar` object.
 
@@ -122,9 +129,9 @@ class FermatEquationsPolar(_EulerEquations):
         n : callable
             function which returns the index of refraction: :math:`n(\theta,r)`.
         dndx : callable
-            function which returns :math:`\\frac{\partial n(\theta,r)}{\partial\theta}`.
+            function which returns :math:`\\frac{\partial n(\\theta,r)}{\\partial\\theta}`.
         dndy : callable
-            function which returns :math:`\\frac{\partial n(\theta,r)}{\partial r}`.
+            function which returns :math:`\\frac{\partial n(\\theta,r)}{\\partial r}`.
         args : array_like, optional
             optional arguments which go into the functions. 
 
@@ -160,16 +167,52 @@ class FermatEquationsPolar(_EulerEquations):
         return self._yout.reshape(shape0)
 
 class CurveCalc(object):
-    def __init__(self,T0=15.0,P0=101325.0,h0=0.0,g=9.8076,dT=None,moist_lapse_rate=False,
-                wavelength=545,dT_prof=None,T_prof=None,phi=None,T_prof_args=(),n_funcs=None):
+    """
+    Ray trace calculator for a curved earth.
+    """
+    def __init__(self,h0=0.0,T0=15.0,P0=101325.0,g=9.8076,dT=None,moist_lapse_rate=False,
+                 R0=6370997.0,T_prof=None,dT_prof=None,T_prof_args=(),n_funcs=None):
+        """Intializes the `CurveCalc` object.
+        
+        Parameters
+        ----------
+        h0: float, optional
+            height (in :math:`m`) to determine initial conditions on atmospheric model
 
+        T0: float, optional
+            Temperature (in degrees :math:`C`) at `h0`
 
-        if phi is None:
-            R0 = 6370997.0
-            self._R0 = 6370997.0
-        else:
-            R0 = effective_curvature(phi)
-            self._R0 = R0
+        P0: float, optional
+            Pressure (in :math:`Pa`) at `h0`
+
+        g: float, optional
+            gravitational acceleration (in :math:`m/s^2`)
+
+        dT: float, optional
+            Temperature lapse rate (in :math:`C/m`) defined as minus the slope of the temperature
+
+        moist_lapse_rate: bool, optional
+            Uses the temperature and pressure to calculate the moist lapse rate, use when the humidity is at 100%
+
+        R0: float, optional
+            radius of the earth for calculation.
+
+        T_prof: callable, optional
+            user defined function, see description. 
+
+        dT_prof: callable, optional
+            derivative of `T_prof`, see description.
+
+        T_prof_args: array_like, optional
+            optional arguments to pass into `T_prof` and `dT_prof`.
+
+        n_funcs: array_like, optional
+            object which contains three callable functions: :math:`n(\theta,r),\frac{\partial n(\theta,r)}{\partial\theta},\frac{\partial n(\theta,r)}{\partial r}` in this order.
+
+        """
+
+        wavelength=545.0
+        self._R0 = R0
 
         if n_funcs is None:
                     
@@ -190,16 +233,17 @@ class CurveCalc(object):
                 
 
             if T_prof is not None and dT_prof is not None:
-                T_prof0 = T_prof(h0+R0,*T_prof_args)
-                T = lambda r:T0-dT*(r-(h0+R0))+(T_prof(r-R0,*T_prof_args)-T_prof0)
-                dTdr = lambda r:-dT+dT_prof(r-h0)
+                T_prof0 = T_prof(h0,*T_prof_args)
+                T = lambda r:T0-dT*(r-h0-R0)+(T_prof(r-R0,*T_prof_args)-T_prof0)
+                dTdr = lambda r:-dT+dT_prof(r-R0)
             if T_prof is not None:
-                T_prof0 = T_prof(h0+R0,*T_prof_args)
-                T = lambda r:T0-dT*(r-(h0+R0))+(T_prof(r-R0,*T_prof_args)-T_prof0)
-                dTdr = lambda r:-dT+(T_prof((r-R0)+1.1e-7,*T_prof_args)-T_prof((r-R0)-1.1e-7,*T_prof_args))/(2.2e-7)
+                T_prof0 = T_prof(h0,*T_prof_args)
+                T = lambda r:T0-dT*(r-h0-R0)+(T_prof(r-R0,*T_prof_args)-T_prof0)
+                dTdr = lambda r:-dT+(T_prof(r-R0+1.1e-7,*T_prof_args)-T_prof(r-R0-1.1e-7,*T_prof_args))/(2.2e-7)
             else:
-                T = lambda r:T0-dT*(r-(h0+R0))
+                T = lambda r:T0-dT*(r-h0-R0)
                 dTdr = lambda r:-dT
+
 
             dPdh = lambda r,P:-g*P/(R*T(r))
 
@@ -230,61 +274,100 @@ class CurveCalc(object):
             self._P = lambda r:sol.sol(r)[0]
             self._T = T
         else:
-            n,dndr,dndtheta = n_funcs
+            n,dndtheta,dndr = n_funcs
 
         self._ee = FermatEquationsPolar(n,dndtheta,dndr)
 
     @property
     def dT(self):
+        """ Temperature Lapse rate for this atmospheric model. """
         return self._dT
 
     def T(self,h):
+        """ Temperature function for this atmospheric model. """
         return self._T(self._R0+h)
 
     def P(self,h):
+        """ Pressure function for this atmospheric model. """
         return self._P(self._R0+h)
 
     def n(self,h):
+        """ Index of refraction function for this atmospheric model. """
         return self._n(0.0,self._R0+h)
 
     def rho(self,h):
+        """ density function for this atmospheric model. """
         return self._rho(self._R0+h)
 
     @property
     def R0(self):
+        """ Radius of the earth for this calcuulator. """
         return self._R0
 
-    def solve_ivp(self,d,h,dh=None,alpha=None,R0=None,**kwargs):
-        theta_a = np.pi/2
-        theta_b = np.pi/2+d/self._R0
-        h = np.array(h)
+    def solve_ivp(self,d,h,dh=None,alpha=None,**kwargs):
+        """
 
-        if R0 is None:
-            R_a = (self.R0+h)
-        else:
-            R_a = R0+h
-            
+        """
+        theta_a = 0
+        theta_b = float(d)/self._R0
+        
+        h = np.asarray(h)
+
+        R_a = self._R0+h
+
         if alpha is not None:
-            dR_a = np.array(R_a*np.tan(np.deg2rad(alpha)))
+            dR_a = np.asarray(R_a*np.tan(np.deg2rad(alpha)))
         else:
-            dR_a = np.array(dh)
+            dR_a = np.asarray(dh)
 
-        if R_a.ndim == 0 and dR_a.ndim > 0:
-            R_a = np.ones_like(dR_a)*R_a
-        elif R_a.ndim > 0 and dR_a.ndim == 0:
-            dR_a = np.ones_like(R_a)*dR_a
-        elif R_a.ndim > 0 and dR_a.ndim > 0:
-            if len(R_a) != len(dR_a):
-                raise ValueError("number of initial positions and slops must be equal.")
+        R_a,dR_a = np.broadcast_arrays(R_a,dR_a)
 
-        sol = self._ee.solve_ivp(theta_a,theta_b,R_a,dR_a,**kwargs)
 
-        return sol
+        return self._ee.solve_ivp(theta_a,theta_b,R_a,dR_a,**kwargs)
 
 class FlatCalc(object):
-    def __init__(self,T0=15.0,P0=101325.0,h0=0.0,g=9.81,dT=None,moist_lapse_rate=False,
-                wavelength=545,T_prof=None,dT_prof=None,T_prof_args=(),n_funcs=None):
+    """
+    Ray trace calculator for a flat earth.
+    """
+    def __init__(self,h0=0.0,T0=15.0,P0=101325.0,g=9.81,dT=None,moist_lapse_rate=False,
+                 T_prof=None,dT_prof=None,T_prof_args=(),n_funcs=None):
+        """Intializes the `FlatCalc` object.
 
+        Parameters
+        ----------
+        h0: float, optional
+            height (in :math:`m`) to determine initial conditions on atmospheric model
+
+        T0: float, optional
+            Temperature (in degrees :math:`C`) at `h0`
+
+        P0: float, optional
+            Pressure (in :math:`Pa`) at `h0`
+
+        g: float, optional
+            gravitational acceleration (in :math:`m/s^2`)
+
+        dT: float, optional
+            Temperature lapse rate (in :math:`C/m`) defined as minus the slope of the temperature
+
+        moist_lapse_rate: bool, optional
+            Uses the temperature and pressure to calculate the moist lapse rate, use when the humidity is at 100%
+
+        T_prof: callable, optional
+            user defined function, see description. 
+
+        dT_prof: callable, optional
+            derivative of `T_prof`, see description.
+
+        T_prof_args: array_like, optional
+            optional arguments to pass into `T_prof` and `dT_prof`.
+
+        n_funcs: array_like, optional
+            object which contains three callable functions: :math:`n(x,y),\frac{\partial n(x,y)}{\partial x},\frac{\partial n(x,y)}{\partial y}` in this order.
+
+        """
+
+        wavelength=545
         if n_funcs is None:
             T0 = max(T0,0)
             e = 611.21*np.exp((18.678-T0/234.5)*(T0/(557.14+T0)))
@@ -302,11 +385,12 @@ class FlatCalc(object):
                     dT = 0.0098
 
             if T_prof is not None and dT_prof is not None:
-                T_prof0 = T_prof(h0+R0,*T_prof_args)
-                T = lambda r:T0-dT*(r-(h0+R0))+(T_prof(r-R0,*T_prof_args)-T_prof0)
-                dTdr = lambda r:-dT+dT_prof(r-h0)
+                T_prof0 = T_prof(h0,*T_prof_args)
+                T = lambda r:T0-dT*(r-h0)+(T_prof(r,*T_prof_args)-T_prof0)
+                dTdr = lambda r:-dT+dT_prof(r)
             if T_prof is not None:
-                T = lambda r:T0-dT*(r-h0)+T_prof(r,*T_prof_args)
+                T_prof0 = T_prof(h0,*T_prof_args)
+                T = lambda r:T0-dT*(r-h0)+(T_prof(r,*T_prof_args)-T_prof0)
                 dTdr = lambda r:-dT+(T_prof(r+1.1e-7,*T_prof_args)-T_prof(r-1.1e-7,*T_prof_args))/(2.2e-7)
             else:
                 T = lambda r:T0-dT*(r-h0)
@@ -347,45 +431,38 @@ class FlatCalc(object):
         else:
             n,dndy,dndx = n_funcs
 
-
-
-
         self._ee = FermatEquationsEuclid(n,dndx,dndy)
 
 
     @property
-    def R0(self):
-        return 0
-
-    @property
     def dT(self):
+        """ Temperature Lapse rate for this atmospheric model. """
         return self._dT
 
     def T(self,h):
+        """ Temperature function for this atmospheric model. """
         return self._T(h)
 
     def P(self,h):
+        """ Pressure function for this atmospheric model. """
         return self._P(h)
 
     def n(self,h):
+        """ Index of refraction function for this atmospheric model. """
         return self._n(0,h)
 
-    def solve_bvp(self,d,ha,hb):
-        return self._ee.solve_bvp(0,d,ha,hb)
+    def rho(self,h):
+        """ density function for this atmospheric model. """
+        return self._rho(h)
 
     def solve_ivp(self,d,h,dh=None,alpha=None,**kwargs):
+        """
+        
+        """
         if alpha is not None:
             dh = np.tan(np.deg2rad(alpha))
         
-        h = np.array(h)
-        if h.ndim == 0 and dh.ndim > 0:
-            h = np.ones_like(dh)*h
-        elif h.ndim > 0 and dh.ndim == 0:
-            dh = np.ones_like(h)*dh
-        elif h.ndim > 0 and dh.ndim > 0:
-            if len(h) != len(dh):
-                raise ValueError("number of initial positions and slops must be equal.")
-
+        h,dh = np.broadcast_arrays(h,dh)
 
         return self._ee.solve_ivp(0,d,h,dh,**kwargs)
 
