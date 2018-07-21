@@ -230,17 +230,15 @@ class Renderer_35mm(object):
             raise ValueError
 
         self._calc = calc
+        self._geod = Geod(ellps="sphere")
+
+
         self._atol=atol
         self._rtol=rtol
 
         self._lat_obs = float(lat_obs)
         self._lon_obs = float(lon_obs)
-        self._h_obs = float(h_obs)
         _check_gps(self._lat_obs,self._lon_obs)
-
-        self._calc = calc
-        self._geod = Geod(ellps="sphere")
-
         if type(direction) is tuple:
             if len(direction) != 2:
                 raise ValueError("direction must be either heading or tuple containing latitude and lonitude respectively.")
@@ -251,6 +249,13 @@ class Renderer_35mm(object):
 
         else:
             f_az = float(direction)
+
+        self._h_obs = float(h_obs)
+
+
+
+
+
 
         f_az = f_az%360
         vert_res = int(vert_res)
@@ -281,16 +286,23 @@ class Renderer_35mm(object):
     def vfov(self):
         return self._vfov
 
-    def change_direction(self,direction):
+    def set_location(self,lat_obs,lon_obs,direction):
         """This function can be used to change the heading of the renderer.
 
         Parameters
         ----------
+        lat_obs: float
+            new latitude of observer
+        lon_obs: float
+            new longitude of observer
         direction: tuple or float
             tuple: tuple containing a latitude and longitude point to point renderer towards.
             float: heading to point the renderer in. 
 
         """
+        self._lat_obs = float(lat_obs)
+        self._lon_obs = float(lon_obs)
+        _check_gps(self._lat_obs,self._lon_obs)
         if type(direction) is tuple:
             if len(direction) != 2:
                 raise ValueError("direction must be either heading or tuple containing latitude and lonitude respectively.")
@@ -352,11 +364,18 @@ class Renderer_35mm(object):
             im_data = np.array(im)
             im_data = im_data[::-1,:,:].transpose((1,0,2)).copy()
 
-            for lat,lon,vert_pixel_pos,horz_pixel_pos in image_data:
+            for lat,lon,vert_pixel_pos,horz_pixel_pos,heading in image_data:
                 v_px = vert_pixel_pos
                 f_az,b_az,dist = self._geod.inv(self._lon_obs,self._lat_obs,lon,lat)
 
-                h_px=np.arctan(horz_pixel_pos/dist)
+                if heading is None:
+                    alpha = 0.0
+                else:
+                    b_az = b_az%360
+                    heading = heading%360
+                    alpha = np.deg2rad(heading - b_az)
+
+                h_px=np.arctan(horz_pixel_pos*np.cos(alpha)/dist)
                 np.rad2deg(h_px,out=h_px)
                 h_px += (f_az % 360)
                 np.mod(h_px,360,out=h_px)
@@ -461,11 +480,18 @@ class Renderer_Composite(object):
             im_data = np.array(im)
             im_data = im_data[::-1,:,:].transpose((1,0,2)).copy()
 
-            for lat,lon,vert_pixel_pos,horz_pixel_pos in image_data:
+            for lat,lon,vert_pixel_pos,horz_pixel_pos,heading in image_data:
                 v_px = vert_pixel_pos
                 f_az,b_az,dist = self._geod.inv(self._lon_obs,self._lat_obs,lon,lat)
 
-                h_px=np.arctan(horz_pixel_pos/dist)
+                if heading is None:
+                    alpha = 0.0
+                else:
+                    b_az = b_az%360
+                    heading = heading%360
+                    alpha = np.deg2rad(heading - b_az)
+
+                h_px=np.arctan(horz_pixel_pos*np.cos(alpha)/dist)
                 np.rad2deg(h_px,out=h_px)
                 h_px += (f_az % 360)
                 np.mod(h_px,360,out=h_px)
@@ -509,43 +535,43 @@ class Scene(object):
     Simple wrapper which keeps track of data used to render an image.
     """
     def __init__(self):
-    	"""
-    	This function initialized `Scene` object.
-    	"""
+        """
+        This function initialized `Scene` object.
+        """
         self._land_model = land_model()
         self._image_dict = {}
 
     def add_elevation_model(self,lats,lons,elevation):
-    	"""Add elevation data to the scene.
+        """Add elevation data to the scene.
 
-    	Parameters
-    	----------
-    	lats : array_like of shape (n,)
-			list of latitudes which define the grid of data.
+        Parameters
+        ----------
+        lats : array_like of shape (n,)
+            list of latitudes which define the grid of data.
 
-		lons : array_like of shape (m,)
-			list of longitudes which define the grid of data.
+        lons : array_like of shape (m,)
+            list of longitudes which define the grid of data.
 
-		elevation : array_like of shape (n,m)
-			list of elevation data at the points defined by the grid of `lats` and `lons`.
-    	"""
+        elevation : array_like of shape (n,m)
+            list of elevation data at the points defined by the grid of `lats` and `lons`.
+        """
         self._land_model.add_elevation_data(lats,lons,elevation)
 
-    def add_image(self,image,image_pos,dimensions):
-    	"""Add image to scene. 
+    def add_image(self,image,image_pos,dimensions,direction=None):
+        """Add image to scene. 
 
-    	Parameters
-    	----------
-    	image: str
-			string which contains path to image file. 
+        Parameters
+        ----------
+        image: str
+            string which contains path to image file. 
 
         image_pos: array_like
-        	either has (h0,lat,lon) or (lat,lon) h0 is height above the earth's surface
+            either has (h0,lat,lon) or (lat,lon) h0 is height above the earth's surface
 
         dimensions: tuple
-        	contains dimensions of the image is in meters. If either one has value `-1` 
-        	then that dimension is determined by the resolution of the picture.
-    	"""
+            contains dimensions of the image is in meters. If either one has value `-1` 
+            then that dimension is determined by the resolution of the picture.
+        """
         if type(image) is str:
             if image in self._image_dict:
                 im = self._image_dict[image][0]
@@ -562,11 +588,24 @@ class Scene(object):
 
         if len(image_pos) == 2:
             lat,lon = image_pos
-            h = 0
+            h = self._land_model(lat,lon)
         elif len(image_pos) == 3:
             h,lat,lon = image_pos
         else:
             raise ValueError("expecting image_pos to contain gps coordinates and optionally height of image.")
+
+        if direction is None:
+            heading = None
+        elif type(direction) is tuple:
+            if len(direction) != 2:
+                raise ValueError("direction must be either heading or tuple containing latitude and lonitude respectively.")
+
+            lat_dir,lon_dir = direction
+            _check_gps(lat_dir,lon_dir)
+            heading,b_az,dist = self._geod.inv(lon_obs,lat_obs,lon_dir,lat_dir)
+
+        else:
+            heading = float(direction)
 
         try:
             width,height = dimensions
@@ -586,7 +625,7 @@ class Scene(object):
         horz_pixel_pos = np.linspace(-width/2,width/2,px_width)
 
 
-        self._image_dict[image][1].append((lat,lon,vert_pixel_pos,horz_pixel_pos))
+        self._image_dict[image][1].append((lat,lon,vert_pixel_pos,horz_pixel_pos,heading))
 
 
 class land_model(object):

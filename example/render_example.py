@@ -45,7 +45,7 @@ def soundly_pylons(calc):
 	image_path = os.path.join("images","pylon.png")
 	for d in dists:
 		phi,theta,b_az = geod.fwd(phi_1,theta_1,f_az,d)
-		s.add_image(image_path,(0,theta,phi),dimensions=(-1,23))
+		s.add_image(image_path,(0,theta,phi),dimensions=(-1,23),direction=b_az)
 
 	theta_i, phi_i = 30.077320, -90.404888
 	theta_f, phi_f = 30.293719, -90.310753
@@ -54,11 +54,11 @@ def soundly_pylons(calc):
 	f_az = f_az + 0.3
 
 	renderer = Renderer_35mm(calc,4,theta_i,phi_i,f_az,40000,vert_obs_angle=0.2,
-								vert_res=6000,focal_length=400)
+								vert_res=5000,focal_length=400)
 	renderer.render_scene(s,"soundly_pylons.png")
 
 	renderer = Renderer_35mm(calc,4,theta_i,phi_i,f_az,40000,vert_obs_angle=0.2,
-								vert_res=6000,focal_length=2000)
+								vert_res=5000,focal_length=2000)
 	renderer.render_scene(s,"soundly_pylons_zoom.png")
 
 

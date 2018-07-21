@@ -166,6 +166,58 @@ class FermatEquationsPolar(_EulerEquations):
 
         return self._yout.reshape(shape0)
 
+class FermatEquationsCurve(_EulerEquations):
+    """Solver for light ray in a 2D Polar geometry.
+
+    This object takes in three user defined functions:  :math:`n(\\theta,r), \\frac{\partial n(\\theta,r)}{\partial\\theta}, \\frac{\partial n(\\theta,r)}{\partial r}`
+    and uses these functions to solve Fermat's equations for the path of a light ray.
+
+
+    """
+    def __init__(self,R0,n,dndx,dndy,args=()):
+        """Intializes the `FermatEquationsCurve` object.
+
+        Parameters
+        ----------
+        n : callable
+            function which returns the index of refraction :math:`n(x,y)`.
+        dndx : callable
+            function which returns :math:`\\frac{\\partial n(x,y)}{\\partial x}`.
+        dndy : callable
+            function which returns :math:`\\frac{\\partial n(x,y)}{\\partial y}`.
+        args : array_like, optional
+            optional arguments which go into the functions. 
+
+        """
+        self._n = n
+        self._dndx = dndx
+        self._dndy = dndy
+        self._args = args    
+
+
+    def __call__(self,theta,yin):
+        shape0 = yin.shape
+        yin = yin.reshape((2,-1))
+        try:
+            self._yout[...] = yin[...]
+        except ValueError:
+            self._yout = yin.copy()
+
+        y,dydx = yin[0],yin[1]
+
+        n_val = self._n(x,y,*self._args)
+        dndx_val = self._dndx(x,y,*self._args)
+        dndy_val = self._dndy(x,y,*self._args)
+        R02 = self._R0**2
+        R0 = self._R0
+
+        self._yout[0] = dydx
+        self._yout[1] = (-2*dydx*R02*dndx_val - ((-1 + dydx)*R0 - y)*((1 + dydx)*R0 + y)*dndy_val + (R0 + y)*n_val)/(R02*n_val)
+
+        return self._yout.reshape(shape0)
+
+
+
 class CurveCalc(object):
     """
     Ray trace calculator for a curved earth.
@@ -465,5 +517,8 @@ class FlatCalc(object):
         h,dh = np.broadcast_arrays(h,dh)
 
         return self._ee.solve_ivp(0,d,h,dh,**kwargs)
+
+
+
 
 
