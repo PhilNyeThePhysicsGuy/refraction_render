@@ -5,6 +5,9 @@ import numpy as np
 __all__=["std_atmosphere"]
 
 class std_atmosphere(object):
+    """Object which calculates the standard atmospheric model. 
+
+    """
     def __init__(self,h0=0.0,T0=15.0,P0=101325.0,g=9.81,dT=None,moist_lapse_rate=False,
                  T_prof=None,dT_prof=None,T_prof_args=()):
         """Intializes the `std_atmosphere` object.

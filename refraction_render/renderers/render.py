@@ -1,6 +1,6 @@
 from __future__ import division,print_function
 
-from ..calcs import CurveCalc,FlatCalc
+from ..calcs import Calc
 
 from numba import njit,guvectorize,vectorize
 from PIL import Image
@@ -221,13 +221,9 @@ class Renderer_35mm(object):
 
 
         """
-        if isinstance(calc,CurveCalc):
-            self._sphere = True
-            self._R0 = calc.R0
-        elif isinstance(calc,FlatCalc):
-            self._sphere = False
-        else:
-            raise ValueError
+        if not isinstance(calc,Calc):
+            raise ValueError("expecting calculator to be instance of Calc base.")
+
 
         self._calc = calc
         self._geod = Geod(ellps="sphere")
@@ -251,11 +247,6 @@ class Renderer_35mm(object):
             f_az = float(direction)
 
         self._h_obs = float(h_obs)
-
-
-
-
-
 
         f_az = f_az%360
         vert_res = int(vert_res)
@@ -413,14 +404,8 @@ class Renderer_Composite(object):
                  distance_res=10,vert_obs_angle=0.0,vert_res=1000,
                  focal_length=2000,atol=1.1e-7,rtol=1.1e-7):
 
-
-        if isinstance(calc,CurveCalc):
-            self._sphere = True
-            self._R0 = calc.R0
-        elif isinstance(calc,FlatCalc):
-            self._sphere = False
-        else:
-            raise ValueError
+        if not isinstance(calc,Calc):
+            raise ValueError("expecting calculator to be instance of Calc base.")
 
         self._calc = calc
         self._atol=atol

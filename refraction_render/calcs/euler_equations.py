@@ -2,10 +2,10 @@ from scipy.integrate import solve_bvp,solve_ivp
 import numpy as np
 
 __all__=["FermatEquationsEuclid","UniformFermatEquationsEuclid",
-		 "FermatEquationsCurve","UniformFermatEquationsCurve"]
+		 "FermatEquationsCurve","UniformFermatEquationsCurve","FermatEquations"]
 
 
-class _EulerEquations(object):
+class FermatEquations(object):
     def __init__(self):
         pass
 
@@ -69,7 +69,7 @@ class _EulerEquations(object):
         return solve_ivp(self,(a,b),y0.ravel(),**kwargs)
 
 
-class FermatEquationsEuclid(_EulerEquations):
+class FermatEquationsEuclid(FermatEquations):
     """Solver for light ray in a 2D Euclidian geometry for :math:`n=n(x,y)`.
 
     This object takes in three user defined functions:  :math:`n(x,y), \\frac{\\partial n(x,y)}{\\partial x}, \\frac{\\partial n(x,y)}{\\partial y}`
@@ -117,7 +117,7 @@ class FermatEquationsEuclid(_EulerEquations):
         return self._yout.reshape(shape0)
 
 
-class FermatEquationsCurve(_EulerEquations):
+class FermatEquationsCurve(FermatEquations):
     """Solver for light ray in a 2D Polar geometry for :math:`n=n(s,y)`.
 
     This object takes in three user defined functions:  :math:`n(s,y), \\frac{\\partial n(s,y)}{\\partial s}, \\frac{\\partial n(s,y)}{\\partial y}`
@@ -170,7 +170,7 @@ class FermatEquationsCurve(_EulerEquations):
         return self._yout.reshape(shape0)
 
 
-class UniformFermatEquationsEuclid(_EulerEquations):
+class UniformFermatEquationsEuclid(FermatEquations):
     """Solver for light ray in a 2D Euclidian geometry with :math:`n=n(y)`.
 
     This object takes in three user defined functions:  :math:`n(y), \\frac{\\partial n(y)}{\\partial y}`
@@ -213,7 +213,7 @@ class UniformFermatEquationsEuclid(_EulerEquations):
         return self._yout.reshape(shape0)
 
 
-class UniformFermatEquationsCurve(_EulerEquations):
+class UniformFermatEquationsCurve(FermatEquations):
     """Solver for light ray in a 2D Polar geometry with :math:`n=n(y)`.
 
     This object takes in three user defined functions:  :math:`n(y), \\frac{\\partial n(y)}{\\partial y}`
