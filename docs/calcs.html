@@ -1,0 +1,158 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Calcs module (refraction_render.calcs) &#8212; refraction_render 1.0.0 documentation</title>
+    <link rel="stylesheet" href="static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="static/jquery.js"></script>
+    <script type="text/javascript" src="static/underscore.js"></script>
+    <script type="text/javascript" src="static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="refraction_render.calcs.FermatEquationsEuclid" href="generated/refraction_render.calcs.FermatEquationsEuclid.html" />
+    <link rel="prev" title="Welcome to refraction_render’s documentation!" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="generated/refraction_render.calcs.FermatEquationsEuclid.html" title="refraction_render.calcs.FermatEquationsEuclid"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to refraction_render’s documentation!"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">refraction_render 1.0.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <span class="target" id="module-refraction_render.calcs"></span><div class="section" id="calcs-module-refraction-render-calcs">
+<h1>Calcs module (<a class="reference internal" href="#module-refraction_render.calcs" title="refraction_render.calcs"><code class="xref py py-mod docutils literal"><span class="pre">refraction_render.calcs</span></code></a>)<a class="headerlink" href="#calcs-module-refraction-render-calcs" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="classes-for-solving-fermat-s-principle">
+<h2>classes for solving Fermat’s principle:<a class="headerlink" href="#classes-for-solving-fermat-s-principle" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/refraction_render.calcs.FermatEquationsEuclid.html#refraction_render.calcs.FermatEquationsEuclid" title="refraction_render.calcs.FermatEquationsEuclid"><code class="xref py py-obj docutils literal"><span class="pre">FermatEquationsEuclid</span></code></a>(n,&nbsp;dndx,&nbsp;dndy[,&nbsp;args])</td>
+<td>Solver for light ray in a 2D Euclidian geometry.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/refraction_render.calcs.FermatEquationsPolar.html#refraction_render.calcs.FermatEquationsPolar" title="refraction_render.calcs.FermatEquationsPolar"><code class="xref py py-obj docutils literal"><span class="pre">FermatEquationsPolar</span></code></a>(n,&nbsp;dndtheta,&nbsp;dndr[,&nbsp;args])</td>
+<td>Solver for light ray in a 2D Polar geometry.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="classes-for-solving-rays-in-atmospheric-model">
+<h2>classes for solving rays in atmospheric model:<a class="headerlink" href="#classes-for-solving-rays-in-atmospheric-model" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/refraction_render.calcs.CurveCalc.html#refraction_render.calcs.CurveCalc" title="refraction_render.calcs.CurveCalc"><code class="xref py py-obj docutils literal"><span class="pre">CurveCalc</span></code></a>([h0,&nbsp;T0,&nbsp;P0,&nbsp;g,&nbsp;dT,&nbsp;…])</td>
+<td>Ray trace calculator for a curved earth.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/refraction_render.calcs.FlatCalc.html#refraction_render.calcs.FlatCalc" title="refraction_render.calcs.FlatCalc"><code class="xref py py-obj docutils literal"><span class="pre">FlatCalc</span></code></a>([h0,&nbsp;T0,&nbsp;P0,&nbsp;g,&nbsp;dT,&nbsp;…])</td>
+<td>Ray trace calculator for a flat earth.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Calcs module (<code class="docutils literal"><span class="pre">refraction_render.calcs</span></code>)</a><ul>
+<li><a class="reference internal" href="#classes-for-solving-fermat-s-principle">classes for solving Fermat’s principle:</a></li>
+<li><a class="reference internal" href="#classes-for-solving-rays-in-atmospheric-model">classes for solving rays in atmospheric model:</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Welcome to refraction_render’s documentation!</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="generated/refraction_render.calcs.FermatEquationsEuclid.html"
+                        title="next chapter">refraction_render.calcs.FermatEquationsEuclid</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="sources/calcs.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="generated/refraction_render.calcs.FermatEquationsEuclid.html" title="refraction_render.calcs.FermatEquationsEuclid"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to refraction_render’s documentation!"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">refraction_render 1.0.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Phillip Weinberg.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
+    </div>
+  </body>
+</html>

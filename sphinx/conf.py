@@ -40,6 +40,7 @@ extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.autosummary',
               'sphinx.ext.viewcode',
               'numpydoc',
+              "sphinxtogithub",
             ]
 
 autodoc_default_flags = [
@@ -53,6 +54,10 @@ autodoc_default_flags = [
 ]
 
 autosummary_generate = True  # Make _autosummary files and include them
+
+sphinx_to_github = True
+sphinx_to_github_verbose = True
+sphinx_to_github_encoding = "utf-8"
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -108,7 +113,7 @@ todo_include_todos = True
 html_theme = 'classic'
 html_theme_options = {
     "linkcolor": "blue",
-    "externalrefs": "true"
+    "externalrefs": "true",
 }
 
 # Theme options are theme-specific and customize the look and feel of a theme
