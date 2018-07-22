@@ -176,7 +176,7 @@ class Renderer_35mm(object):
     """
     def __init__(self,calc,h_obs,lat_obs,lon_obs,direction,max_distance,
                  distance_res=10,vert_obs_angle=0.0,vert_res=1000,
-                 focal_length=2000,atol=1.1e-3,rtol=1.1e-5):
+                 focal_length=2000,atol=1.1e-7,rtol=1.1e-7):
 
         """
         Parameters
@@ -271,13 +271,8 @@ class Renderer_35mm(object):
         self._vfov = self._v_angles.max()-self._v_angles.min()
 
         self._ds = np.arange(0.0,max_distance,distance_res,dtype=np.float64)
-        if self._sphere:
-            sigmas = self._ds/self._R0
-            sol = self._calc.solve_ivp(max_distance,h_obs,alpha=self._v_angles,atol=atol,rtol=rtol,dense_output=True)
-            self._rs = (sol.sol(sigmas)[:vert_res]-self._R0)
-        else:
-            sol = self._calc.solve_ivp(max_distance,h_obs,alpha=self._v_angles,atol=atol,rtol=rtol,dense_output=True)
-            self._rs = sol.sol(self._ds)[:vert_res].copy()
+        sol = self._calc.solve_ivp(max_distance,h_obs,alpha=self._v_angles,atol=atol,rtol=rtol,dense_output=True)
+        self._rs = sol.sol(self._ds)[:vert_res].copy()
 
         
         self._sol = interp.interp1d(self._ds,self._rs,axis=-1,copy=False,bounds_error=True)
@@ -416,7 +411,7 @@ class Renderer_35mm(object):
 class Renderer_Composite(object):
     def __init__(self,calc,h_obs,lat_obs,lon_obs,max_distance,
                  distance_res=10,vert_obs_angle=0.0,vert_res=1000,
-                 focal_length=2000,atol=1.1e-3,rtol=1.1e-5):
+                 focal_length=2000,atol=1.1e-7,rtol=1.1e-7):
 
 
         if isinstance(calc,CurveCalc):
@@ -447,15 +442,9 @@ class Renderer_Composite(object):
         self._vfov = self._v_angles.max() - self._v_angles.min()
 
         self._ds = np.arange(0.0,max_distance,distance_res,dtype=np.float64)
-        if self._sphere:
-            sigmas = self._ds/self._R0
-            sol = self._calc.solve_ivp(max_distance,h_obs,alpha=self._v_angles,atol=atol,rtol=rtol,dense_output=True)
-            self._rs = (sol.sol(sigmas)[:vert_res]-self._R0)
-        else:
-            sol = self._calc.solve_ivp(max_distance,h_obs,alpha=self._v_angles,atol=atol,rtol=rtol,dense_output=True)
-            self._rs = sol.sol(self._ds)[:vert_res].copy()
+        sol = self._calc.solve_ivp(max_distance,h_obs,alpha=self._v_angles,atol=atol,rtol=rtol,dense_output=True)
+        self._rs = sol.sol(self._ds)[:vert_res].copy()
 
-        
         self._sol = interp.interp1d(self._ds,self._rs,axis=-1,copy=False,bounds_error=True)
 
     @property

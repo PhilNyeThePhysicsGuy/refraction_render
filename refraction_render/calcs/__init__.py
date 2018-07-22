@@ -12,8 +12,9 @@ classes for solving Fermat's principle:
    :toctree: generated/
 
    FermatEquationsEuclid
-   FermatEquationsPolar
-
+   FermatEquationsCurve
+   UniformFermatEquationsEuclid
+   UniformFermatEquationsCurve
 
 classes for solving rays in atmospheric model:
 ----------------------------------------------
@@ -21,10 +22,16 @@ classes for solving rays in atmospheric model:
 .. autosummary::
    :toctree: generated/
 
+   Calc
    CurveCalc
+   CurveNoRefraction
    FlatCalc
+   FlatNoRefraction
+
 
 
 """
 
-from .refraction import *
+from .calculators import *
+from .euler_equations import *
+from .standard_atmosphere import *
