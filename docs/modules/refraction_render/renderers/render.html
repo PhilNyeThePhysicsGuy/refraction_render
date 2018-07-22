@@ -259,7 +259,7 @@
 <span class="sd">            resolution of pixels on the verticle</span>
 
 <span class="sd">        focal_length: float</span>
-<span class="sd">            focal length in milimeters to calculate the field of view of the camera. This sets the resolution on the horizontal.</span>
+<span class="sd">            focal length in milimeters to calculate the field of view of the camera. This, along with the vertial resolution, sets the resolution on the horizontal.</span>
 
 <span class="sd">        atol: float</span>
 <span class="sd">            absolute tolerance of ode solver</span>
@@ -318,10 +318,11 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">vfov</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;vertial field of view for this particular renderer&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vfov</span>
 
 <div class="viewcode-block" id="Renderer_35mm.set_location"><a class="viewcode-back" href="../../../generated/refraction_render.renderers.Renderer_35mm.html#refraction_render.renderers.Renderer_35mm.set_location">[docs]</a>    <span class="k">def</span> <span class="nf">set_location</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">lat_obs</span><span class="p">,</span><span class="n">lon_obs</span><span class="p">,</span><span class="n">direction</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;This function can be used to change the heading of the renderer.</span>
+        <span class="sd">&quot;&quot;&quot;This function can be used to change the location and heading of the renderer.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -354,7 +355,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_h_angles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">rad2deg</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arctan</span><span class="p">(</span><span class="n">x_grid</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">_focal_length</span><span class="p">))</span><span class="o">+</span><span class="n">f_az</span></div>
 
 <div class="viewcode-block" id="Renderer_35mm.render_scene"><a class="viewcode-back" href="../../../generated/refraction_render.renderers.Renderer_35mm.html#refraction_render.renderers.Renderer_35mm.render_scene">[docs]</a>    <span class="k">def</span> <span class="nf">render_scene</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">scene</span><span class="p">,</span><span class="n">image_name</span><span class="p">,</span><span class="n">surface_color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">background_color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">cfunc</span><span class="o">=</span><span class="n">_defualt_cfunc</span><span class="p">,</span><span class="n">cfunc_args</span><span class="o">=</span><span class="p">(),</span><span class="n">disp</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">eye_level</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;This function can be used to change the heading of the renderer.</span>
+        <span class="sd">&quot;&quot;&quot;Render a scene object for the renderer&#39;s given field of view and direction. </span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -364,21 +365,24 @@
 <span class="sd">        image_name: str</span>
 <span class="sd">            name for the image</span>
 
-<span class="sd">        background_color: array_like</span>
+<span class="sd">        background_color: array_like, optional</span>
 <span class="sd">            3 element array containing an color via RGB color code (numbered 0 to 255)</span>
 <span class="sd">            default value: `[135,206,250]`</span>
 
-<span class="sd">        surface_color: array_like</span>
+<span class="sd">        surface_color: array_like, optional</span>
 <span class="sd">            3 element array containing an color via RGB color code (numbered 0 to 255)</span>
 <span class="sd">            default value: `[0,80,120]`</span>
 
-<span class="sd">        cfunc: callable</span>
+<span class="sd">        cfunc: callable, optional</span>
 <span class="sd">            Callable function which is used to color the elevation data. The function takes </span>
 <span class="sd">            in two arrays, the first is distances from the observer    the second is the elevation</span>
 <span class="sd">            above the surface of the earth. </span>
 
-<span class="sd">        cfunc_args: array_like</span>
+<span class="sd">        cfunc_args: array_like, optional</span>
 <span class="sd">            extra arguments to pass into `cfunc`</span>
+
+<span class="sd">        disp: bool, optional</span>
+<span class="sd">            when rendering topographical data this will print out the heading slice which has been rendered.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>        
         <span class="k">if</span> <span class="n">surface_color</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -447,10 +451,52 @@
 
 
 
-<span class="k">class</span> <span class="nc">Renderer_Composite</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">calc</span><span class="p">,</span><span class="n">h_obs</span><span class="p">,</span><span class="n">lat_obs</span><span class="p">,</span><span class="n">lon_obs</span><span class="p">,</span><span class="n">max_distance</span><span class="p">,</span>
+<div class="viewcode-block" id="Renderer_Composite"><a class="viewcode-back" href="../../../generated/refraction_render.renderers.Renderer_Composite.html#refraction_render.renderers.Renderer_Composite">[docs]</a><span class="k">class</span> <span class="nc">Renderer_Composite</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Object used to set a camera angle and position to render a scene for a user specified horizontal field of view. </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="Renderer_Composite.__init__"><a class="viewcode-back" href="../../../generated/refraction_render.renderers.Renderer_Composite.html#refraction_render.renderers.Renderer_Composite.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">calc</span><span class="p">,</span><span class="n">h_obs</span><span class="p">,</span><span class="n">lat_obs</span><span class="p">,</span><span class="n">lon_obs</span><span class="p">,</span><span class="n">max_distance</span><span class="p">,</span>
                  <span class="n">distance_res</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span><span class="n">vert_obs_angle</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span><span class="n">vert_res</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
                  <span class="n">focal_length</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span><span class="n">atol</span><span class="o">=</span><span class="mf">1.1e-7</span><span class="p">,</span><span class="n">rtol</span><span class="o">=</span><span class="mf">1.1e-7</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+
+<span class="sd">        calc: calcs object</span>
+<span class="sd">            object which can be used to calculate the trajectory of light rays</span>
+
+<span class="sd">        h_obs: float</span>
+<span class="sd">            height of renderer in meters</span>
+
+<span class="sd">        lat_obs: float</span>
+<span class="sd">            latitude of renderer in degrees between -90 and 90</span>
+
+<span class="sd">        lon_obs: float</span>
+<span class="sd">            longitude of renderer in degrees between -180 adn 180</span>
+
+<span class="sd">        max_distance: float</span>
+<span class="sd">            maximum distance away from the renderer to calculate the light ray path</span>
+
+<span class="sd">        distance_res: float</span>
+<span class="sd">            distance between points where the light ray path is checked for intersection point.</span>
+
+<span class="sd">        vert_obs_angle: float</span>
+<span class="sd">            vertical tilt of the renderer. </span>
+
+<span class="sd">        vert_res: int</span>
+<span class="sd">            resolution of pixels on the verticle</span>
+
+<span class="sd">        focal_length: float</span>
+<span class="sd">            focal length in milimeters to calculate the field of view of the camera. This, along with the vertial resolution, sets the resolution on the horizontal.</span>
+
+<span class="sd">        atol: float</span>
+<span class="sd">            absolute tolerance of ode solver</span>
+
+<span class="sd">        rtol: float</span>
+<span class="sd">            relative tolerance of the ode solver</span>
+
+
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">calc</span><span class="p">,</span><span class="n">Calc</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;expecting calculator to be instance of Calc base.&quot;</span><span class="p">)</span>
@@ -478,13 +524,65 @@
         <span class="n">sol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calc</span><span class="o">.</span><span class="n">solve_ivp</span><span class="p">(</span><span class="n">max_distance</span><span class="p">,</span><span class="n">h_obs</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_v_angles</span><span class="p">,</span><span class="n">atol</span><span class="o">=</span><span class="n">atol</span><span class="p">,</span><span class="n">rtol</span><span class="o">=</span><span class="n">rtol</span><span class="p">,</span><span class="n">dense_output</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_rs</span> <span class="o">=</span> <span class="n">sol</span><span class="o">.</span><span class="n">sol</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ds</span><span class="p">)[:</span><span class="n">vert_res</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_sol</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ds</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_rs</span><span class="p">,</span><span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span><span class="n">copy</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">bounds_error</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sol</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ds</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_rs</span><span class="p">,</span><span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span><span class="n">copy</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">bounds_error</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">vfov</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;vertial field of view for this particular renderer&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vfov</span>
 
-    <span class="k">def</span> <span class="nf">render_scene</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">scene</span><span class="p">,</span><span class="n">image_names</span><span class="p">,</span><span class="n">heading_mins</span><span class="p">,</span><span class="n">heading_maxs</span><span class="p">,</span><span class="n">surface_color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">background_color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">cfunc</span><span class="o">=</span><span class="n">_defualt_cfunc</span><span class="p">,</span><span class="n">cfunc_args</span><span class="o">=</span><span class="p">(),</span><span class="n">disp</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">eye_level</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="Renderer_Composite.set_location"><a class="viewcode-back" href="../../../generated/refraction_render.renderers.Renderer_Composite.html#refraction_render.renderers.Renderer_Composite.set_location">[docs]</a>    <span class="k">def</span> <span class="nf">set_location</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">lat_obs</span><span class="p">,</span><span class="n">lon_obs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;This function can be used to change the position of the renderer.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        lat_obs: float</span>
+<span class="sd">            new latitude of observer</span>
+<span class="sd">        lon_obs: float</span>
+<span class="sd">            new longitude of observer</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lat_obs</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">lat_obs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lon_obs</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">lon_obs</span><span class="p">)</span>
+        <span class="n">_check_gps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_lat_obs</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_lon_obs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Renderer_Composite.render_scene"><a class="viewcode-back" href="../../../generated/refraction_render.renderers.Renderer_Composite.html#refraction_render.renderers.Renderer_Composite.render_scene">[docs]</a>    <span class="k">def</span> <span class="nf">render_scene</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">scene</span><span class="p">,</span><span class="n">image_names</span><span class="p">,</span><span class="n">heading_mins</span><span class="p">,</span><span class="n">heading_maxs</span><span class="p">,</span><span class="n">surface_color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">background_color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">cfunc</span><span class="o">=</span><span class="n">_defualt_cfunc</span><span class="p">,</span><span class="n">cfunc_args</span><span class="o">=</span><span class="p">(),</span><span class="n">disp</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">eye_level</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Renders a composites over a very wide horizontal field.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        scene: Scene object</span>
+<span class="sd">            object which contains data which the renderer can extract and render</span>
+
+<span class="sd">        image_names: array_like (n,) or &#39;str&#39; </span>
+<span class="sd">            name(s) for the image(s) being rendered.</span>
+
+<span class="sd">        heading_mins: array_like (n,) or float</span>
+<span class="sd">            minimum starting point(s) for composite.</span>
+
+<span class="sd">        heading_maxs: array_like (n,) or float</span>
+<span class="sd">            maximum starting point(s) for composite, pair with &#39;heading_mins&#39;.</span>
+
+<span class="sd">        background_color: array_like, optional</span>
+<span class="sd">            3 element array containing an color via RGB color code (numbered 0 to 255)</span>
+<span class="sd">            default value: `[135,206,250]`</span>
+
+<span class="sd">        surface_color: array_like, optional</span>
+<span class="sd">            3 element array containing an color via RGB color code (numbered 0 to 255)</span>
+<span class="sd">            default value: `[0,80,120]`</span>
+
+<span class="sd">        cfunc: callable, optional</span>
+<span class="sd">            Callable function which is used to color the elevation data. The function takes </span>
+<span class="sd">            in two arrays, the first is distances from the observer    the second is the elevation</span>
+<span class="sd">            above the surface of the earth. </span>
+
+<span class="sd">        cfunc_args: array_like, optional</span>
+<span class="sd">            extra arguments to pass into `cfunc`</span>
+
+<span class="sd">        disp: bool, optional</span>
+<span class="sd">            when rendering topographical data this will print out the heading slice which has been rendered.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>  
         <span class="k">if</span> <span class="n">surface_color</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">surface_color</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">80</span><span class="p">,</span><span class="mi">120</span><span class="p">])</span>
         <span class="k">else</span><span class="p">:</span>
@@ -529,7 +627,12 @@
 
         <span class="n">land_model</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">_land_model</span>
 
-        <span class="k">for</span> <span class="n">heading_min</span><span class="p">,</span><span class="n">heading_max</span><span class="p">,</span><span class="n">image_name</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">heading_mins</span><span class="p">,</span><span class="n">heading_maxs</span><span class="p">,</span><span class="n">image_names</span><span class="p">):</span>
+        <span class="n">heading_mins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">heading_mins</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+        <span class="n">heading_maxs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">heading_maxs</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+        <span class="n">image_names</span> <span class="o">=</span>  <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">image_names</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+        <span class="n">tup</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">broadcast_arrays</span><span class="p">(</span><span class="n">heading_mins</span><span class="p">,</span><span class="n">heading_maxs</span><span class="p">,</span><span class="n">image_names</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">heading_min</span><span class="p">,</span><span class="n">heading_max</span><span class="p">,</span><span class="n">image_name</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">tup</span><span class="p">):</span>
             <span class="n">h_angles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">heading_min</span><span class="p">,</span><span class="n">heading_max</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_dangles</span><span class="p">)</span>
 
             <span class="n">png_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">h_angles</span><span class="p">),</span><span class="n">n_v</span><span class="p">,</span><span class="mi">3</span><span class="p">),</span><span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
@@ -549,7 +652,7 @@
             <span class="n">png_data</span> <span class="o">=</span> <span class="n">png_data</span><span class="o">.</span><span class="n">transpose</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
             <span class="n">png_data</span> <span class="o">=</span> <span class="n">png_data</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">,:,:]</span>
             <span class="n">im</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">fromarray</span><span class="p">(</span><span class="n">png_data</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;RGB&quot;</span><span class="p">)</span>
-            <span class="n">im</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">image_name</span><span class="p">)</span>
+            <span class="n">im</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">image_name</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="Scene"><a class="viewcode-back" href="../../../generated/refraction_render.renderers.Scene.html#refraction_render.renderers.Scene">[docs]</a><span class="k">class</span> <span class="nc">Scene</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -650,12 +753,12 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_image_dict</span><span class="p">[</span><span class="n">image</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">lat</span><span class="p">,</span><span class="n">lon</span><span class="p">,</span><span class="n">vert_pixel_pos</span><span class="p">,</span><span class="n">horz_pixel_pos</span><span class="p">,</span><span class="n">heading</span><span class="p">))</span></div></div>
 
 
-<span class="k">class</span> <span class="nc">land_model</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="land_model"><a class="viewcode-back" href="../../../generated/refraction_render.renderers.land_model.html#refraction_render.renderers.land_model">[docs]</a><span class="k">class</span> <span class="nc">land_model</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This class is used to grab slices of the tarrain alon great circle</span>
 <span class="sd">    slices of the earth. </span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">ellps</span><span class="o">=</span><span class="s1">&#39;sphere&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="land_model.__init__"><a class="viewcode-back" href="../../../generated/refraction_render.renderers.land_model.html#refraction_render.renderers.land_model.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">ellps</span><span class="o">=</span><span class="s1">&#39;sphere&#39;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Simple wrapper which does the bilinear interpolation of terrain data.</span>
 
@@ -669,9 +772,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_terrain_list</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_d_min</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_d_max</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_h_max</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_h_max</span> <span class="o">=</span> <span class="mi">0</span></div>
 
-    <span class="k">def</span> <span class="nf">get_terrain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">lat</span><span class="p">,</span><span class="n">lon</span><span class="p">,</span><span class="n">heading</span><span class="p">,</span><span class="n">dist</span><span class="p">):</span>
+<div class="viewcode-block" id="land_model.get_terrain"><a class="viewcode-back" href="../../../generated/refraction_render.renderers.land_model.html#refraction_render.renderers.land_model.get_terrain">[docs]</a>    <span class="k">def</span> <span class="nf">get_terrain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">lat</span><span class="p">,</span><span class="n">lon</span><span class="p">,</span><span class="n">heading</span><span class="p">,</span><span class="n">dist</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Sample terrain along geodesic defined by an intial latitude and longitude point along a heading at different distances.</span>
 
@@ -693,7 +796,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">lon</span><span class="p">,</span><span class="n">lat</span><span class="p">,</span><span class="n">az</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geod</span><span class="o">.</span><span class="n">fwd</span><span class="p">(</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">broadcast_arrays</span><span class="p">(</span><span class="n">lon</span><span class="p">,</span><span class="n">lat</span><span class="p">,</span><span class="n">heading</span><span class="p">,</span><span class="n">dist</span><span class="p">))</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__call__</span><span class="p">(</span><span class="n">lat</span><span class="p">,</span><span class="n">lon</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__call__</span><span class="p">(</span><span class="n">lat</span><span class="p">,</span><span class="n">lon</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">lat</span><span class="p">,</span><span class="n">lon</span><span class="p">):</span>
         <span class="n">lat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">lat</span><span class="p">)</span>
@@ -711,7 +814,7 @@
     <span class="k">def</span> <span class="nf">has_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_terrain_list</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
 
-    <span class="k">def</span> <span class="nf">add_elevation_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">lats</span><span class="p">,</span><span class="n">lons</span><span class="p">,</span><span class="n">elevation</span><span class="p">):</span>
+<div class="viewcode-block" id="land_model.add_elevation_data"><a class="viewcode-back" href="../../../generated/refraction_render.renderers.land_model.html#refraction_render.renderers.land_model.add_elevation_data">[docs]</a>    <span class="k">def</span> <span class="nf">add_elevation_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">lats</span><span class="p">,</span><span class="n">lons</span><span class="p">,</span><span class="n">elevation</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">        Add terrain data to the interpolated model.</span>
 
@@ -727,7 +830,7 @@
 <span class="sd">            elevation data at each grid defined by lats and lons.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_terrain_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">interp</span><span class="o">.</span><span class="n">RegularGridInterpolator</span><span class="p">((</span><span class="n">lats</span><span class="p">,</span><span class="n">lons</span><span class="p">),</span><span class="n">elevation</span><span class="p">,</span><span class="n">bounds_error</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">fill_value</span><span class="o">=</span><span class="mf">0.0</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_terrain_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">interp</span><span class="o">.</span><span class="n">RegularGridInterpolator</span><span class="p">((</span><span class="n">lats</span><span class="p">,</span><span class="n">lons</span><span class="p">),</span><span class="n">elevation</span><span class="p">,</span><span class="n">bounds_error</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">fill_value</span><span class="o">=</span><span class="mf">0.0</span><span class="p">))</span></div></div>
 
 
 

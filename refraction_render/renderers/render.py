@@ -211,7 +211,7 @@ class Renderer_35mm(object):
             resolution of pixels on the verticle
 
         focal_length: float
-            focal length in milimeters to calculate the field of view of the camera. This sets the resolution on the horizontal.
+            focal length in milimeters to calculate the field of view of the camera. This, along with the vertial resolution, sets the resolution on the horizontal.
 
         atol: float
             absolute tolerance of ode solver
@@ -270,10 +270,11 @@ class Renderer_35mm(object):
 
     @property
     def vfov(self):
+        """vertial field of view for this particular renderer"""
         return self._vfov
 
     def set_location(self,lat_obs,lon_obs,direction):
-        """This function can be used to change the heading of the renderer.
+        """This function can be used to change the location and heading of the renderer.
 
         Parameters
         ----------
@@ -306,7 +307,7 @@ class Renderer_35mm(object):
         self._h_angles = np.rad2deg(np.arctan(x_grid/self._focal_length))+f_az
 
     def render_scene(self,scene,image_name,surface_color=None,background_color=None,cfunc=_defualt_cfunc,cfunc_args=(),disp=False,eye_level=False):
-        """This function can be used to change the heading of the renderer.
+        """Render a scene object for the renderer's given field of view and direction. 
 
         Parameters
         ----------
@@ -316,21 +317,24 @@ class Renderer_35mm(object):
         image_name: str
             name for the image
 
-        background_color: array_like
+        background_color: array_like, optional
             3 element array containing an color via RGB color code (numbered 0 to 255)
             default value: `[135,206,250]`
 
-        surface_color: array_like
+        surface_color: array_like, optional
             3 element array containing an color via RGB color code (numbered 0 to 255)
             default value: `[0,80,120]`
 
-        cfunc: callable
+        cfunc: callable, optional
             Callable function which is used to color the elevation data. The function takes 
             in two arrays, the first is distances from the observer    the second is the elevation
             above the surface of the earth. 
 
-        cfunc_args: array_like
+        cfunc_args: array_like, optional
             extra arguments to pass into `cfunc`
+
+        disp: bool, optional
+            when rendering topographical data this will print out the heading slice which has been rendered.
 
         """        
         if surface_color is None:
@@ -400,9 +404,51 @@ class Renderer_35mm(object):
 
 
 class Renderer_Composite(object):
+    """
+    Object used to set a camera angle and position to render a scene for a user specified horizontal field of view. 
+    """
     def __init__(self,calc,h_obs,lat_obs,lon_obs,max_distance,
                  distance_res=10,vert_obs_angle=0.0,vert_res=1000,
                  focal_length=2000,atol=1.1e-7,rtol=1.1e-7):
+        """
+        Parameters
+        ----------
+
+        calc: calcs object
+            object which can be used to calculate the trajectory of light rays
+
+        h_obs: float
+            height of renderer in meters
+
+        lat_obs: float
+            latitude of renderer in degrees between -90 and 90
+
+        lon_obs: float
+            longitude of renderer in degrees between -180 adn 180
+
+        max_distance: float
+            maximum distance away from the renderer to calculate the light ray path
+
+        distance_res: float
+            distance between points where the light ray path is checked for intersection point.
+
+        vert_obs_angle: float
+            vertical tilt of the renderer. 
+
+        vert_res: int
+            resolution of pixels on the verticle
+
+        focal_length: float
+            focal length in milimeters to calculate the field of view of the camera. This, along with the vertial resolution, sets the resolution on the horizontal.
+
+        atol: float
+            absolute tolerance of ode solver
+
+        rtol: float
+            relative tolerance of the ode solver
+
+
+        """
 
         if not isinstance(calc,Calc):
             raise ValueError("expecting calculator to be instance of Calc base.")
@@ -434,9 +480,61 @@ class Renderer_Composite(object):
 
     @property
     def vfov(self):
+        """vertial field of view for this particular renderer"""
         return self._vfov
 
+    def set_location(self,lat_obs,lon_obs):
+        """This function can be used to change the position of the renderer.
+
+        Parameters
+        ----------
+        lat_obs: float
+            new latitude of observer
+        lon_obs: float
+            new longitude of observer
+
+        """
+        self._lat_obs = float(lat_obs)
+        self._lon_obs = float(lon_obs)
+        _check_gps(self._lat_obs,self._lon_obs)
+
     def render_scene(self,scene,image_names,heading_mins,heading_maxs,surface_color=None,background_color=None,cfunc=_defualt_cfunc,cfunc_args=(),disp=False,eye_level=False):
+        """Renders a composites over a very wide horizontal field.
+
+        Parameters
+        ----------
+        scene: Scene object
+            object which contains data which the renderer can extract and render
+
+        image_names: array_like (n,) or 'str' 
+            name(s) for the image(s) being rendered.
+
+        heading_mins: array_like (n,) or float
+            minimum starting point(s) for composite.
+
+        heading_maxs: array_like (n,) or float
+            maximum starting point(s) for composite, pair with 'heading_mins'.
+
+        background_color: array_like, optional
+            3 element array containing an color via RGB color code (numbered 0 to 255)
+            default value: `[135,206,250]`
+
+        surface_color: array_like, optional
+            3 element array containing an color via RGB color code (numbered 0 to 255)
+            default value: `[0,80,120]`
+
+        cfunc: callable, optional
+            Callable function which is used to color the elevation data. The function takes 
+            in two arrays, the first is distances from the observer    the second is the elevation
+            above the surface of the earth. 
+
+        cfunc_args: array_like, optional
+            extra arguments to pass into `cfunc`
+
+        disp: bool, optional
+            when rendering topographical data this will print out the heading slice which has been rendered.
+
+        """  
         if surface_color is None:
             surface_color = np.array([0,80,120])
         else:
@@ -481,7 +579,12 @@ class Renderer_Composite(object):
 
         land_model = scene._land_model
 
-        for heading_min,heading_max,image_name in zip(heading_mins,heading_maxs,image_names):
+        heading_mins = np.atleast_1d(heading_mins).ravel()
+        heading_maxs = np.atleast_1d(heading_maxs,dtype=np.float).ravel()
+        image_names =  np.atleast_1d(image_names).ravel()
+        tup = np.broadcast_arrays(heading_mins,heading_maxs,image_names)
+
+        for heading_min,heading_max,image_name in zip(*tup):
             h_angles = np.arange(heading_min,heading_max,self._dangles)
 
             png_data = np.empty((len(h_angles),n_v,3),dtype=np.uint8)

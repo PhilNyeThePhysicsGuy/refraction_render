@@ -12,6 +12,8 @@ classes for rendering an image:
    :toctree: generated/
 
    Renderer_35mm
+   Renderer_Composite
+
 
 
 classes for setting up the scene to be rendered:
@@ -21,6 +23,7 @@ classes for setting up the scene to be rendered:
    :toctree: generated/
 
    Scene
+   land_model
 
 
 """
