@@ -110,15 +110,15 @@
 
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">y0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">y0</span><span class="p">,</span><span class="n">dy0</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_yout</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">y0</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">)))</span>
+        <span class="n">y0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">y0</span><span class="p">,</span><span class="n">dy0</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_yout</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">y0</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">solve_ivp</span><span class="p">(</span><span class="bp">self</span><span class="p">,(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">),</span><span class="n">y0</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
 <div class="viewcode-block" id="FermatEquationsEuclid"><a class="viewcode-back" href="../../../generated/refraction_render.calcs.FermatEquationsEuclid.html#refraction_render.calcs.FermatEquationsEuclid">[docs]</a><span class="k">class</span> <span class="nc">FermatEquationsEuclid</span><span class="p">(</span><span class="n">_EulerEquations</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Solver for light ray in a 2D Euclidian geometry.</span>
 
 <span class="sd">    This object takes in three user defined functions:  :math:`n(x,y), \\frac{\\partial n(x,y)}{\\partial x}, \\frac{\\partial n(x,y)}{\\partial y}`</span>
-<span class="sd">    and uses these functions to solve Fermat&#39;s equations for the path of a light ray.</span>
+<span class="sd">    and uses these functions to solve Fermat&#39;s equations for the path of a light ray. This is only really useful</span>
 
 
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -214,6 +214,58 @@
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_yout</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">shape0</span><span class="p">)</span></div>
 
+<span class="k">class</span> <span class="nc">FermatEquationsCurve</span><span class="p">(</span><span class="n">_EulerEquations</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Solver for light ray in a 2D Polar geometry.</span>
+
+<span class="sd">    This object takes in three user defined functions:  :math:`n(\\theta,r), \\frac{\partial n(\\theta,r)}{\partial\\theta}, \\frac{\partial n(\\theta,r)}{\partial r}`</span>
+<span class="sd">    and uses these functions to solve Fermat&#39;s equations for the path of a light ray.</span>
+
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">R0</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">dndx</span><span class="p">,</span><span class="n">dndy</span><span class="p">,</span><span class="n">args</span><span class="o">=</span><span class="p">()):</span>
+        <span class="sd">&quot;&quot;&quot;Intializes the `FermatEquationsCurve` object.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        n : callable</span>
+<span class="sd">            function which returns the index of refraction :math:`n(x,y)`.</span>
+<span class="sd">        dndx : callable</span>
+<span class="sd">            function which returns :math:`\\frac{\\partial n(x,y)}{\\partial x}`.</span>
+<span class="sd">        dndy : callable</span>
+<span class="sd">            function which returns :math:`\\frac{\\partial n(x,y)}{\\partial y}`.</span>
+<span class="sd">        args : array_like, optional</span>
+<span class="sd">            optional arguments which go into the functions. </span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_n</span> <span class="o">=</span> <span class="n">n</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dndx</span> <span class="o">=</span> <span class="n">dndx</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dndy</span> <span class="o">=</span> <span class="n">dndy</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_args</span> <span class="o">=</span> <span class="n">args</span>    
+
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">theta</span><span class="p">,</span><span class="n">yin</span><span class="p">):</span>
+        <span class="n">shape0</span> <span class="o">=</span> <span class="n">yin</span><span class="o">.</span><span class="n">shape</span>
+        <span class="n">yin</span> <span class="o">=</span> <span class="n">yin</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_yout</span><span class="p">[</span><span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="n">yin</span><span class="p">[</span><span class="o">...</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_yout</span> <span class="o">=</span> <span class="n">yin</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="n">y</span><span class="p">,</span><span class="n">dydx</span> <span class="o">=</span> <span class="n">yin</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">yin</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="n">n_val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_args</span><span class="p">)</span>
+        <span class="n">dndx_val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dndx</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_args</span><span class="p">)</span>
+        <span class="n">dndy_val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dndy</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_args</span><span class="p">)</span>
+        <span class="n">R02</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_R0</span><span class="o">**</span><span class="mi">2</span>
+        <span class="n">R0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_R0</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_yout</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">dydx</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_yout</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">dydx</span><span class="o">*</span><span class="n">R02</span><span class="o">*</span><span class="n">dndx_val</span> <span class="o">-</span> <span class="p">((</span><span class="o">-</span><span class="mi">1</span> <span class="o">+</span> <span class="n">dydx</span><span class="p">)</span><span class="o">*</span><span class="n">R0</span> <span class="o">-</span> <span class="n">y</span><span class="p">)</span><span class="o">*</span><span class="p">((</span><span class="mi">1</span> <span class="o">+</span> <span class="n">dydx</span><span class="p">)</span><span class="o">*</span><span class="n">R0</span> <span class="o">+</span> <span class="n">y</span><span class="p">)</span><span class="o">*</span><span class="n">dndy_val</span> <span class="o">+</span> <span class="p">(</span><span class="n">R0</span> <span class="o">+</span> <span class="n">y</span><span class="p">)</span><span class="o">*</span><span class="n">n_val</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">R02</span><span class="o">*</span><span class="n">n_val</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_yout</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">shape0</span><span class="p">)</span>
+
+
+
 <div class="viewcode-block" id="CurveCalc"><a class="viewcode-back" href="../../../generated/refraction_render.calcs.CurveCalc.html#refraction_render.calcs.CurveCalc">[docs]</a><span class="k">class</span> <span class="nc">CurveCalc</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Ray trace calculator for a curved earth.</span>
@@ -281,16 +333,17 @@
                 
 
             <span class="k">if</span> <span class="n">T_prof</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">dT_prof</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">T_prof0</span> <span class="o">=</span> <span class="n">T_prof</span><span class="p">(</span><span class="n">h0</span><span class="o">+</span><span class="n">R0</span><span class="p">,</span><span class="o">*</span><span class="n">T_prof_args</span><span class="p">)</span>
-                <span class="n">T</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">r</span><span class="p">:</span><span class="n">T0</span><span class="o">-</span><span class="n">dT</span><span class="o">*</span><span class="p">(</span><span class="n">r</span><span class="o">-</span><span class="p">(</span><span class="n">h0</span><span class="o">+</span><span class="n">R0</span><span class="p">))</span><span class="o">+</span><span class="p">(</span><span class="n">T_prof</span><span class="p">(</span><span class="n">r</span><span class="o">-</span><span class="n">R0</span><span class="p">,</span><span class="o">*</span><span class="n">T_prof_args</span><span class="p">)</span><span class="o">-</span><span class="n">T_prof0</span><span class="p">)</span>
-                <span class="n">dTdr</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">r</span><span class="p">:</span><span class="o">-</span><span class="n">dT</span><span class="o">+</span><span class="n">dT_prof</span><span class="p">(</span><span class="n">r</span><span class="o">-</span><span class="n">h0</span><span class="p">)</span>
+                <span class="n">T_prof0</span> <span class="o">=</span> <span class="n">T_prof</span><span class="p">(</span><span class="n">h0</span><span class="p">,</span><span class="o">*</span><span class="n">T_prof_args</span><span class="p">)</span>
+                <span class="n">T</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">r</span><span class="p">:</span><span class="n">T0</span><span class="o">-</span><span class="n">dT</span><span class="o">*</span><span class="p">(</span><span class="n">r</span><span class="o">-</span><span class="n">h0</span><span class="o">-</span><span class="n">R0</span><span class="p">)</span><span class="o">+</span><span class="p">(</span><span class="n">T_prof</span><span class="p">(</span><span class="n">r</span><span class="o">-</span><span class="n">R0</span><span class="p">,</span><span class="o">*</span><span class="n">T_prof_args</span><span class="p">)</span><span class="o">-</span><span class="n">T_prof0</span><span class="p">)</span>
+                <span class="n">dTdr</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">r</span><span class="p">:</span><span class="o">-</span><span class="n">dT</span><span class="o">+</span><span class="n">dT_prof</span><span class="p">(</span><span class="n">r</span><span class="o">-</span><span class="n">R0</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">T_prof</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">T_prof0</span> <span class="o">=</span> <span class="n">T_prof</span><span class="p">(</span><span class="n">h0</span><span class="o">+</span><span class="n">R0</span><span class="p">,</span><span class="o">*</span><span class="n">T_prof_args</span><span class="p">)</span>
-                <span class="n">T</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">r</span><span class="p">:</span><span class="n">T0</span><span class="o">-</span><span class="n">dT</span><span class="o">*</span><span class="p">(</span><span class="n">r</span><span class="o">-</span><span class="p">(</span><span class="n">h0</span><span class="o">+</span><span class="n">R0</span><span class="p">))</span><span class="o">+</span><span class="p">(</span><span class="n">T_prof</span><span class="p">(</span><span class="n">r</span><span class="o">-</span><span class="n">R0</span><span class="p">,</span><span class="o">*</span><span class="n">T_prof_args</span><span class="p">)</span><span class="o">-</span><span class="n">T_prof0</span><span class="p">)</span>
-                <span class="n">dTdr</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">r</span><span class="p">:</span><span class="o">-</span><span class="n">dT</span><span class="o">+</span><span class="p">(</span><span class="n">T_prof</span><span class="p">((</span><span class="n">r</span><span class="o">-</span><span class="n">R0</span><span class="p">)</span><span class="o">+</span><span class="mf">1.1e-7</span><span class="p">,</span><span class="o">*</span><span class="n">T_prof_args</span><span class="p">)</span><span class="o">-</span><span class="n">T_prof</span><span class="p">((</span><span class="n">r</span><span class="o">-</span><span class="n">R0</span><span class="p">)</span><span class="o">-</span><span class="mf">1.1e-7</span><span class="p">,</span><span class="o">*</span><span class="n">T_prof_args</span><span class="p">))</span><span class="o">/</span><span class="p">(</span><span class="mf">2.2e-7</span><span class="p">)</span>
+                <span class="n">T_prof0</span> <span class="o">=</span> <span class="n">T_prof</span><span class="p">(</span><span class="n">h0</span><span class="p">,</span><span class="o">*</span><span class="n">T_prof_args</span><span class="p">)</span>
+                <span class="n">T</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">r</span><span class="p">:</span><span class="n">T0</span><span class="o">-</span><span class="n">dT</span><span class="o">*</span><span class="p">(</span><span class="n">r</span><span class="o">-</span><span class="n">h0</span><span class="o">-</span><span class="n">R0</span><span class="p">)</span><span class="o">+</span><span class="p">(</span><span class="n">T_prof</span><span class="p">(</span><span class="n">r</span><span class="o">-</span><span class="n">R0</span><span class="p">,</span><span class="o">*</span><span class="n">T_prof_args</span><span class="p">)</span><span class="o">-</span><span class="n">T_prof0</span><span class="p">)</span>
+                <span class="n">dTdr</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">r</span><span class="p">:</span><span class="o">-</span><span class="n">dT</span><span class="o">+</span><span class="p">(</span><span class="n">T_prof</span><span class="p">(</span><span class="n">r</span><span class="o">-</span><span class="n">R0</span><span class="o">+</span><span class="mf">1.1e-7</span><span class="p">,</span><span class="o">*</span><span class="n">T_prof_args</span><span class="p">)</span><span class="o">-</span><span class="n">T_prof</span><span class="p">(</span><span class="n">r</span><span class="o">-</span><span class="n">R0</span><span class="o">-</span><span class="mf">1.1e-7</span><span class="p">,</span><span class="o">*</span><span class="n">T_prof_args</span><span class="p">))</span><span class="o">/</span><span class="p">(</span><span class="mf">2.2e-7</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">T</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">r</span><span class="p">:</span><span class="n">T0</span><span class="o">-</span><span class="n">dT</span><span class="o">*</span><span class="p">(</span><span class="n">r</span><span class="o">-</span><span class="p">(</span><span class="n">h0</span><span class="o">+</span><span class="n">R0</span><span class="p">))</span>
+                <span class="n">T</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">r</span><span class="p">:</span><span class="n">T0</span><span class="o">-</span><span class="n">dT</span><span class="o">*</span><span class="p">(</span><span class="n">r</span><span class="o">-</span><span class="n">h0</span><span class="o">-</span><span class="n">R0</span><span class="p">)</span>
                 <span class="n">dTdr</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">r</span><span class="p">:</span><span class="o">-</span><span class="n">dT</span>
+
 
             <span class="n">dPdh</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">r</span><span class="p">,</span><span class="n">P</span><span class="p">:</span><span class="o">-</span><span class="n">g</span><span class="o">*</span><span class="n">P</span><span class="o">/</span><span class="p">(</span><span class="n">R</span><span class="o">*</span><span class="n">T</span><span class="p">(</span><span class="n">r</span><span class="p">))</span>
 
@@ -351,25 +404,24 @@
         <span class="sd">&quot;&quot;&quot; Radius of the earth for this calcuulator. &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_R0</span>
 
-<div class="viewcode-block" id="CurveCalc.solve_ivp"><a class="viewcode-back" href="../../../generated/refraction_render.calcs.CurveCalc.html#refraction_render.calcs.CurveCalc.solve_ivp">[docs]</a>    <span class="k">def</span> <span class="nf">solve_ivp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">d</span><span class="p">,</span><span class="n">h</span><span class="p">,</span><span class="n">dh</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">R0</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="CurveCalc.solve_ivp"><a class="viewcode-back" href="../../../generated/refraction_render.calcs.CurveCalc.html#refraction_render.calcs.CurveCalc.solve_ivp">[docs]</a>    <span class="k">def</span> <span class="nf">solve_ivp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">d</span><span class="p">,</span><span class="n">h</span><span class="p">,</span><span class="n">dh</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">theta_a</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="n">theta_b</span> <span class="o">=</span> <span class="n">d</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">_R0</span>
-        <span class="n">h</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">R0</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">R_a</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">R0</span><span class="o">+</span><span class="n">h</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">R_a</span> <span class="o">=</span> <span class="n">R0</span><span class="o">+</span><span class="n">h</span>
-            
-        <span class="k">if</span> <span class="n">alpha</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">dR_a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">R_a</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">alpha</span><span class="p">)))</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">dR_a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dh</span><span class="p">)</span>
+        <span class="n">theta_b</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">d</span><span class="p">)</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">_R0</span>
         
+        <span class="n">h</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+
+        <span class="n">R_a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_R0</span><span class="o">+</span><span class="n">h</span>
+
+        <span class="k">if</span> <span class="n">alpha</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">dR_a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">R_a</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">alpha</span><span class="p">)))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dR_a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">dh</span><span class="p">)</span>
+
         <span class="n">R_a</span><span class="p">,</span><span class="n">dR_a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">broadcast_arrays</span><span class="p">(</span><span class="n">R_a</span><span class="p">,</span><span class="n">dR_a</span><span class="p">)</span>
+
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ee</span><span class="o">.</span><span class="n">solve_ivp</span><span class="p">(</span><span class="n">theta_a</span><span class="p">,</span><span class="n">theta_b</span><span class="p">,</span><span class="n">R_a</span><span class="p">,</span><span class="n">dR_a</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
 
@@ -433,11 +485,12 @@
                     <span class="n">dT</span> <span class="o">=</span> <span class="mf">0.0098</span>
 
             <span class="k">if</span> <span class="n">T_prof</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">dT_prof</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">T_prof0</span> <span class="o">=</span> <span class="n">T_prof</span><span class="p">(</span><span class="n">h0</span><span class="o">+</span><span class="n">R0</span><span class="p">,</span><span class="o">*</span><span class="n">T_prof_args</span><span class="p">)</span>
-                <span class="n">T</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">r</span><span class="p">:</span><span class="n">T0</span><span class="o">-</span><span class="n">dT</span><span class="o">*</span><span class="p">(</span><span class="n">r</span><span class="o">-</span><span class="p">(</span><span class="n">h0</span><span class="o">+</span><span class="n">R0</span><span class="p">))</span><span class="o">+</span><span class="p">(</span><span class="n">T_prof</span><span class="p">(</span><span class="n">r</span><span class="o">-</span><span class="n">R0</span><span class="p">,</span><span class="o">*</span><span class="n">T_prof_args</span><span class="p">)</span><span class="o">-</span><span class="n">T_prof0</span><span class="p">)</span>
-                <span class="n">dTdr</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">r</span><span class="p">:</span><span class="o">-</span><span class="n">dT</span><span class="o">+</span><span class="n">dT_prof</span><span class="p">(</span><span class="n">r</span><span class="o">-</span><span class="n">h0</span><span class="p">)</span>
+                <span class="n">T_prof0</span> <span class="o">=</span> <span class="n">T_prof</span><span class="p">(</span><span class="n">h0</span><span class="p">,</span><span class="o">*</span><span class="n">T_prof_args</span><span class="p">)</span>
+                <span class="n">T</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">r</span><span class="p">:</span><span class="n">T0</span><span class="o">-</span><span class="n">dT</span><span class="o">*</span><span class="p">(</span><span class="n">r</span><span class="o">-</span><span class="n">h0</span><span class="p">)</span><span class="o">+</span><span class="p">(</span><span class="n">T_prof</span><span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="o">*</span><span class="n">T_prof_args</span><span class="p">)</span><span class="o">-</span><span class="n">T_prof0</span><span class="p">)</span>
+                <span class="n">dTdr</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">r</span><span class="p">:</span><span class="o">-</span><span class="n">dT</span><span class="o">+</span><span class="n">dT_prof</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">T_prof</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">T</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">r</span><span class="p">:</span><span class="n">T0</span><span class="o">-</span><span class="n">dT</span><span class="o">*</span><span class="p">(</span><span class="n">r</span><span class="o">-</span><span class="n">h0</span><span class="p">)</span><span class="o">+</span><span class="n">T_prof</span><span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="o">*</span><span class="n">T_prof_args</span><span class="p">)</span>
+                <span class="n">T_prof0</span> <span class="o">=</span> <span class="n">T_prof</span><span class="p">(</span><span class="n">h0</span><span class="p">,</span><span class="o">*</span><span class="n">T_prof_args</span><span class="p">)</span>
+                <span class="n">T</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">r</span><span class="p">:</span><span class="n">T0</span><span class="o">-</span><span class="n">dT</span><span class="o">*</span><span class="p">(</span><span class="n">r</span><span class="o">-</span><span class="n">h0</span><span class="p">)</span><span class="o">+</span><span class="p">(</span><span class="n">T_prof</span><span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="o">*</span><span class="n">T_prof_args</span><span class="p">)</span><span class="o">-</span><span class="n">T_prof0</span><span class="p">)</span>
                 <span class="n">dTdr</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">r</span><span class="p">:</span><span class="o">-</span><span class="n">dT</span><span class="o">+</span><span class="p">(</span><span class="n">T_prof</span><span class="p">(</span><span class="n">r</span><span class="o">+</span><span class="mf">1.1e-7</span><span class="p">,</span><span class="o">*</span><span class="n">T_prof_args</span><span class="p">)</span><span class="o">-</span><span class="n">T_prof</span><span class="p">(</span><span class="n">r</span><span class="o">-</span><span class="mf">1.1e-7</span><span class="p">,</span><span class="o">*</span><span class="n">T_prof_args</span><span class="p">))</span><span class="o">/</span><span class="p">(</span><span class="mf">2.2e-7</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">T</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">r</span><span class="p">:</span><span class="n">T0</span><span class="o">-</span><span class="n">dT</span><span class="o">*</span><span class="p">(</span><span class="n">r</span><span class="o">-</span><span class="n">h0</span><span class="p">)</span>
@@ -512,6 +565,9 @@
         <span class="n">h</span><span class="p">,</span><span class="n">dh</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">broadcast_arrays</span><span class="p">(</span><span class="n">h</span><span class="p">,</span><span class="n">dh</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ee</span><span class="o">.</span><span class="n">solve_ivp</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">d</span><span class="p">,</span><span class="n">h</span><span class="p">,</span><span class="n">dh</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
+
+
+
 
 
 </pre></div>

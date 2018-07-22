@@ -1,0 +1,264 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>refraction_render.calcs.CurveCalc &#8212; refraction_render 1.0.0 documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">refraction_render 1.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../calcs.html" accesskey="U">Calcs module (<code class="docutils literal"><span class="pre">refraction_render.calcs</span></code>)</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="refraction-render-calcs-curvecalc">
+<h1>refraction_render.calcs.CurveCalc<a class="headerlink" href="#refraction-render-calcs-curvecalc" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="refraction_render.calcs.CurveCalc">
+<em class="property">class </em><code class="descclassname">refraction_render.calcs.</code><code class="descname">CurveCalc</code><span class="sig-paren">(</span><em>h0=0.0</em>, <em>T0=15.0</em>, <em>P0=101325.0</em>, <em>g=9.8076</em>, <em>dT=None</em>, <em>moist_lapse_rate=False</em>, <em>R0=6370997.0</em>, <em>T_prof=None</em>, <em>dT_prof=None</em>, <em>T_prof_args=()</em>, <em>n_funcs=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/refraction_render/calcs/refraction.html#CurveCalc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.calcs.CurveCalc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ray trace calculator for a curved earth.</p>
+<p class="rubric">Attributes</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#refraction_render.calcs.CurveCalc.R0" title="refraction_render.calcs.CurveCalc.R0"><code class="xref py py-obj docutils literal"><span class="pre">R0</span></code></a></td>
+<td>Radius of the earth for this calcuulator.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#refraction_render.calcs.CurveCalc.dT" title="refraction_render.calcs.CurveCalc.dT"><code class="xref py py-obj docutils literal"><span class="pre">dT</span></code></a></td>
+<td>Temperature Lapse rate for this atmospheric model.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#refraction_render.calcs.CurveCalc.P" title="refraction_render.calcs.CurveCalc.P"><code class="xref py py-obj docutils literal"><span class="pre">P</span></code></a>(h)</td>
+<td>Pressure function for this atmospheric model.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#refraction_render.calcs.CurveCalc.T" title="refraction_render.calcs.CurveCalc.T"><code class="xref py py-obj docutils literal"><span class="pre">T</span></code></a>(h)</td>
+<td>Temperature function for this atmospheric model.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#refraction_render.calcs.CurveCalc.n" title="refraction_render.calcs.CurveCalc.n"><code class="xref py py-obj docutils literal"><span class="pre">n</span></code></a>(h)</td>
+<td>Index of refraction function for this atmospheric model.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#refraction_render.calcs.CurveCalc.rho" title="refraction_render.calcs.CurveCalc.rho"><code class="xref py py-obj docutils literal"><span class="pre">rho</span></code></a>(h)</td>
+<td>density function for this atmospheric model.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#refraction_render.calcs.CurveCalc.solve_ivp" title="refraction_render.calcs.CurveCalc.solve_ivp"><code class="xref py py-obj docutils literal"><span class="pre">solve_ivp</span></code></a>(d,&nbsp;h[,&nbsp;dh,&nbsp;alpha])</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="refraction_render.calcs.CurveCalc.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>h0=0.0</em>, <em>T0=15.0</em>, <em>P0=101325.0</em>, <em>g=9.8076</em>, <em>dT=None</em>, <em>moist_lapse_rate=False</em>, <em>R0=6370997.0</em>, <em>T_prof=None</em>, <em>dT_prof=None</em>, <em>T_prof_args=()</em>, <em>n_funcs=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/refraction_render/calcs/refraction.html#CurveCalc.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.calcs.CurveCalc.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Intializes the <cite>CurveCalc</cite> object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>h0: float, optional</strong></p>
+<blockquote>
+<div><blockquote>
+<div><p>height (in <span class="math">\(m\)</span>) to determine initial conditions on atmospheric model</p>
+</div></blockquote>
+<dl class="docutils">
+<dt>T0: float, optional</dt>
+<dd><p class="first last">Temperature (in degrees <span class="math">\(C\)</span>) at <cite>h0</cite></p>
+</dd>
+<dt>P0: float, optional</dt>
+<dd><p class="first last">Pressure (in <span class="math">\(Pa\)</span>) at <cite>h0</cite></p>
+</dd>
+<dt>g: float, optional</dt>
+<dd><p class="first last">gravitational acceleration (in <span class="math">\(m/s^2\)</span>)</p>
+</dd>
+<dt>dT: float, optional</dt>
+<dd><p class="first last">Temperature lapse rate (in <span class="math">\(C/m\)</span>) defined as minus the slope of the temperature</p>
+</dd>
+<dt>moist_lapse_rate: bool, optional</dt>
+<dd><p class="first last">Uses the temperature and pressure to calculate the moist lapse rate, use when the humidity is at 100%</p>
+</dd>
+<dt>R0: float, optional</dt>
+<dd><p class="first last">radius of the earth for calculation.</p>
+</dd>
+<dt>T_prof: callable, optional</dt>
+<dd><p class="first last">user defined function, see description.</p>
+</dd>
+<dt>dT_prof: callable, optional</dt>
+<dd><p class="first last">derivative of <cite>T_prof</cite>, see description.</p>
+</dd>
+<dt>T_prof_args: array_like, optional</dt>
+<dd><p class="first last">optional arguments to pass into <cite>T_prof</cite> and <cite>dT_prof</cite>.</p>
+</dd>
+<dt>n_funcs: array_like, optional</dt>
+<dd><p class="first last">object which contains three callable functions: :math:<a href="#id1"><span class="problematic" id="id2">`</span></a>n(   heta,r),</p>
+</dd>
+</dl>
+</div></blockquote>
+<p><strong>rac{partial n(        heta,r)}{partial       heta},</strong></p>
+<p class="last"><strong>rac{partial n(  heta,r)}{partial r}` in this order.</strong></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#refraction_render.calcs.CurveCalc.P" title="refraction_render.calcs.CurveCalc.P"><code class="xref py py-obj docutils literal"><span class="pre">P</span></code></a>(h)</td>
+<td>Pressure function for this atmospheric model.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#refraction_render.calcs.CurveCalc.T" title="refraction_render.calcs.CurveCalc.T"><code class="xref py py-obj docutils literal"><span class="pre">T</span></code></a>(h)</td>
+<td>Temperature function for this atmospheric model.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#refraction_render.calcs.CurveCalc.__init__" title="refraction_render.calcs.CurveCalc.__init__"><code class="xref py py-obj docutils literal"><span class="pre">__init__</span></code></a>([h0,&nbsp;T0,&nbsp;P0,&nbsp;g,&nbsp;dT,&nbsp;…])</td>
+<td>Intializes the <cite>CurveCalc</cite> object.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#refraction_render.calcs.CurveCalc.n" title="refraction_render.calcs.CurveCalc.n"><code class="xref py py-obj docutils literal"><span class="pre">n</span></code></a>(h)</td>
+<td>Index of refraction function for this atmospheric model.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#refraction_render.calcs.CurveCalc.rho" title="refraction_render.calcs.CurveCalc.rho"><code class="xref py py-obj docutils literal"><span class="pre">rho</span></code></a>(h)</td>
+<td>density function for this atmospheric model.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#refraction_render.calcs.CurveCalc.solve_ivp" title="refraction_render.calcs.CurveCalc.solve_ivp"><code class="xref py py-obj docutils literal"><span class="pre">solve_ivp</span></code></a>(d,&nbsp;h[,&nbsp;dh,&nbsp;alpha])</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="refraction_render.calcs.CurveCalc.P">
+<code class="descname">P</code><span class="sig-paren">(</span><em>h</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/refraction_render/calcs/refraction.html#CurveCalc.P"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.calcs.CurveCalc.P" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pressure function for this atmospheric model.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="refraction_render.calcs.CurveCalc.R0">
+<code class="descname">R0</code><a class="headerlink" href="#refraction_render.calcs.CurveCalc.R0" title="Permalink to this definition">¶</a></dt>
+<dd><p>Radius of the earth for this calcuulator.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="refraction_render.calcs.CurveCalc.T">
+<code class="descname">T</code><span class="sig-paren">(</span><em>h</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/refraction_render/calcs/refraction.html#CurveCalc.T"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.calcs.CurveCalc.T" title="Permalink to this definition">¶</a></dt>
+<dd><p>Temperature function for this atmospheric model.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="refraction_render.calcs.CurveCalc.dT">
+<code class="descname">dT</code><a class="headerlink" href="#refraction_render.calcs.CurveCalc.dT" title="Permalink to this definition">¶</a></dt>
+<dd><p>Temperature Lapse rate for this atmospheric model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="refraction_render.calcs.CurveCalc.n">
+<code class="descname">n</code><span class="sig-paren">(</span><em>h</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/refraction_render/calcs/refraction.html#CurveCalc.n"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.calcs.CurveCalc.n" title="Permalink to this definition">¶</a></dt>
+<dd><p>Index of refraction function for this atmospheric model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="refraction_render.calcs.CurveCalc.rho">
+<code class="descname">rho</code><span class="sig-paren">(</span><em>h</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/refraction_render/calcs/refraction.html#CurveCalc.rho"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.calcs.CurveCalc.rho" title="Permalink to this definition">¶</a></dt>
+<dd><p>density function for this atmospheric model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="refraction_render.calcs.CurveCalc.solve_ivp">
+<code class="descname">solve_ivp</code><span class="sig-paren">(</span><em>d</em>, <em>h</em>, <em>dh=None</em>, <em>alpha=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/refraction_render/calcs/refraction.html#CurveCalc.solve_ivp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.calcs.CurveCalc.solve_ivp" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/generated/refraction_render.calcs.CurveCalc.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">refraction_render 1.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../calcs.html" >Calcs module (<code class="docutils literal"><span class="pre">refraction_render.calcs</span></code>)</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Phillip Weinberg.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
+    </div>
+  </body>
+</html>
