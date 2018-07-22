@@ -39,11 +39,11 @@ def maugold_lighthouse(calc):
 	s.add_image(image_path,(43.7,theta_f,phi_f),dimensions=(-1,23))
 	s.add_elevation_model(lats,lons,data)
 
-	renderer.render_scene(s,'lighthouse_render.png',cfunc=cfunc)	
-	renderer.change_direction(252)
-	renderer.render_scene(s,'nose_cone_render.png',cfunc=cfunc)
-	renderer.change_direction(256)
-	renderer.render_scene(s,'shallag_render.png',cfunc=cfunc)
+	renderer.render_scene(s,'lighthouse_render.png',cfunc=cfunc,disp=True)	
+	renderer.set_location(theta_i,phi_i,252)
+	renderer.render_scene(s,'nose_cone_render.png',cfunc=cfunc,disp=True)
+	renderer.set_location(theta_i,phi_i,256)
+	renderer.render_scene(s,'shallag_render.png',cfunc=cfunc,disp=True)
 
 
 def T_prof(h):
