@@ -40,6 +40,7 @@ extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.autosummary',
               'sphinx.ext.viewcode',
               'numpydoc',
+              "sphinxtogithub",
             ]
 
 autodoc_default_flags = [
@@ -54,8 +55,12 @@ autodoc_default_flags = [
 
 autosummary_generate = True  # Make _autosummary files and include them
 
+sphinx_to_github = True
+sphinx_to_github_verbose = True
+sphinx_to_github_encoding = "utf-8"
+
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['templates']
+templates_path = ['_templates']
 
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
@@ -108,7 +113,7 @@ todo_include_todos = True
 html_theme = 'classic'
 html_theme_options = {
     "linkcolor": "blue",
-    "externalrefs": "true"
+    "externalrefs": "true",
 }
 
 # Theme options are theme-specific and customize the look and feel of a theme
@@ -120,7 +125,7 @@ html_theme_options = {
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['static']
+html_static_path = ['_static']
 
 # Custom sidebar templates, must be a dictionary that maps document names
 # to template names.
