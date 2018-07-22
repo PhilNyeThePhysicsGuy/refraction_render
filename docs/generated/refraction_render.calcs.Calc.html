@@ -5,7 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>refraction_render.calcs.FlatCalc &#8212; refraction_render 1.0.0 documentation</title>
+    <title>refraction_render.calcs.Calc &#8212; refraction_render 1.0.0 documentation</title>
     <link rel="stylesheet" href="../static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../static/pygments.css" type="text/css" />
     <script type="text/javascript">
@@ -45,24 +45,12 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="refraction-render-calcs-flatcalc">
-<h1>refraction_render.calcs.FlatCalc<a class="headerlink" href="#refraction-render-calcs-flatcalc" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="refraction-render-calcs-calc">
+<h1>refraction_render.calcs.Calc<a class="headerlink" href="#refraction-render-calcs-calc" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
-<dt id="refraction_render.calcs.FlatCalc">
-<em class="property">class </em><code class="descclassname">refraction_render.calcs.</code><code class="descname">FlatCalc</code><span class="sig-paren">(</span><em>**std_atmosphere_args</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/calcs/calculators.html#FlatCalc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.calcs.FlatCalc" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculator used for calculating rays on a flat earth in an atmosphere.</p>
-<p class="rubric">Attributes</p>
-<table border="1" class="longtable docutils">
-<colgroup>
-<col width="10%" />
-<col width="90%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#refraction_render.calcs.FlatCalc.atm_model" title="refraction_render.calcs.FlatCalc.atm_model"><code class="xref py py-obj docutils literal"><span class="pre">atm_model</span></code></a></td>
-<td>Atmospheric model used for this calculator.</td>
-</tr>
-</tbody>
-</table>
+<dt id="refraction_render.calcs.Calc">
+<em class="property">class </em><code class="descclassname">refraction_render.calcs.</code><code class="descname">Calc</code><span class="sig-paren">(</span><em>FermatEquations_obj</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/calcs/calculators.html#Calc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.calcs.Calc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base class for Calculators.</p>
 <p class="rubric">Methods</p>
 <table border="1" class="longtable docutils">
 <colgroup>
@@ -70,20 +58,15 @@
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#refraction_render.calcs.FlatCalc.solve_ivp" title="refraction_render.calcs.FlatCalc.solve_ivp"><code class="xref py py-obj docutils literal"><span class="pre">solve_ivp</span></code></a>(d,&nbsp;h[,&nbsp;dh,&nbsp;alpha])</td>
+<tr class="row-odd"><td><a class="reference internal" href="#refraction_render.calcs.Calc.solve_ivp" title="refraction_render.calcs.Calc.solve_ivp"><code class="xref py py-obj docutils literal"><span class="pre">solve_ivp</span></code></a>(d,&nbsp;h[,&nbsp;dh,&nbsp;alpha])</td>
 <td>Solve initial value problem for light rays.</td>
 </tr>
 </tbody>
 </table>
 <dl class="method">
-<dt id="refraction_render.calcs.FlatCalc.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>**std_atmosphere_args</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/calcs/calculators.html#FlatCalc.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.calcs.FlatCalc.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Initialize ‘FlatCalc’ object.</p>
-<dl class="docutils">
-<dt><a href="#id1"><span class="problematic" id="id2">**</span></a>std_atmosphere_args: optional</dt>
-<dd>arguments to ‘std_atmosphere’ object.</dd>
-</dl>
-</dd></dl>
+<dt id="refraction_render.calcs.Calc.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>FermatEquations_obj</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/calcs/calculators.html#Calc.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.calcs.Calc.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <p class="rubric">Methods</p>
 <table border="1" class="longtable docutils">
@@ -92,35 +75,17 @@
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">FlatCalc.P</span></code></td>
+<tr class="row-odd"><td><a class="reference internal" href="#refraction_render.calcs.Calc.__init__" title="refraction_render.calcs.Calc.__init__"><code class="xref py py-obj docutils literal"><span class="pre">__init__</span></code></a>(FermatEquations_obj)</td>
 <td></td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">FlatCalc.T</span></code></td>
-<td></td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="#refraction_render.calcs.FlatCalc.__init__" title="refraction_render.calcs.FlatCalc.__init__"><code class="xref py py-obj docutils literal"><span class="pre">__init__</span></code></a>(**std_atmosphere_args)</td>
-<td>Initialize ‘FlatCalc’ object.</td>
-</tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">FlatCalc.n</span></code></td>
-<td></td>
-</tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">FlatCalc.rho</span></code></td>
-<td></td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="#refraction_render.calcs.FlatCalc.solve_ivp" title="refraction_render.calcs.FlatCalc.solve_ivp"><code class="xref py py-obj docutils literal"><span class="pre">solve_ivp</span></code></a>(d,&nbsp;h[,&nbsp;dh,&nbsp;alpha])</td>
+<tr class="row-even"><td><a class="reference internal" href="#refraction_render.calcs.Calc.solve_ivp" title="refraction_render.calcs.Calc.solve_ivp"><code class="xref py py-obj docutils literal"><span class="pre">solve_ivp</span></code></a>(d,&nbsp;h[,&nbsp;dh,&nbsp;alpha])</td>
 <td>Solve initial value problem for light rays.</td>
 </tr>
 </tbody>
 </table>
-<dl class="attribute">
-<dt id="refraction_render.calcs.FlatCalc.atm_model">
-<code class="descname">atm_model</code><a class="headerlink" href="#refraction_render.calcs.FlatCalc.atm_model" title="Permalink to this definition">¶</a></dt>
-<dd><p>Atmospheric model used for this calculator.</p>
-</dd></dl>
-
 <dl class="method">
-<dt id="refraction_render.calcs.FlatCalc.solve_ivp">
-<code class="descname">solve_ivp</code><span class="sig-paren">(</span><em>d</em>, <em>h</em>, <em>dh=None</em>, <em>alpha=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#refraction_render.calcs.FlatCalc.solve_ivp" title="Permalink to this definition">¶</a></dt>
+<dt id="refraction_render.calcs.Calc.solve_ivp">
+<code class="descname">solve_ivp</code><span class="sig-paren">(</span><em>d</em>, <em>h</em>, <em>dh=None</em>, <em>alpha=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/calcs/calculators.html#Calc.solve_ivp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.calcs.Calc.solve_ivp" title="Permalink to this definition">¶</a></dt>
 <dd><p>Solve initial value problem for light rays.</p>
 <dl class="docutils">
 <dt>d: float</dt>
@@ -131,7 +96,7 @@
 <dd>initial derivatives of the rays.</dd>
 <dt>alpha:  array_like (n,), optional</dt>
 <dd>initial angle of the rays.</dd>
-<dt><a href="#id3"><span class="problematic" id="id4">**</span></a>kwargs: optional</dt>
+<dt><a href="#id1"><span class="problematic" id="id2">**</span></a>kwargs: optional</dt>
 <dd>extra arguments which get passed into Fermat equatino solver.</dd>
 </dl>
 </dd></dl>
@@ -149,7 +114,7 @@
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../sources/generated/refraction_render.calcs.FlatCalc.rst.txt"
+      <li><a href="../sources/generated/refraction_render.calcs.Calc.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>

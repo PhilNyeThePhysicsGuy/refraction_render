@@ -5,7 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>refraction_render.calcs.FermatEquationsEuclid &#8212; refraction_render 1.0.0 documentation</title>
+    <title>refraction_render.calcs.UniformFermatEquationsCurve &#8212; refraction_render 1.0.0 documentation</title>
     <link rel="stylesheet" href="../static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../static/pygments.css" type="text/css" />
     <script type="text/javascript">
@@ -23,8 +23,7 @@
     <script type="text/javascript" src="../static/doctools.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" />
-    <link rel="prev" title="Calcs module (refraction_render.calcs)" href="../calcs.html" /> 
+    <link rel="search" title="Search" href="../search.html" /> 
   </head>
   <body>
     <div class="related" role="navigation" aria-label="related navigation">
@@ -36,9 +35,6 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="right" >
-          <a href="../calcs.html" title="Calcs module (refraction_render.calcs)"
-             accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">refraction_render 1.0.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../calcs.html" accesskey="U">Calcs module (<code class="docutils literal"><span class="pre">refraction_render.calcs</span></code>)</a> &#187;</li> 
       </ul>
@@ -49,14 +45,14 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="refraction-render-calcs-fermatequationseuclid">
-<h1>refraction_render.calcs.FermatEquationsEuclid<a class="headerlink" href="#refraction-render-calcs-fermatequationseuclid" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="refraction-render-calcs-uniformfermatequationscurve">
+<h1>refraction_render.calcs.UniformFermatEquationsCurve<a class="headerlink" href="#refraction-render-calcs-uniformfermatequationscurve" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
-<dt id="refraction_render.calcs.FermatEquationsEuclid">
-<em class="property">class </em><code class="descclassname">refraction_render.calcs.</code><code class="descname">FermatEquationsEuclid</code><span class="sig-paren">(</span><em>n</em>, <em>dndx</em>, <em>dndy</em>, <em>args=()</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/calcs/euler_equations.html#FermatEquationsEuclid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.calcs.FermatEquationsEuclid" title="Permalink to this definition">¶</a></dt>
-<dd><p>Solver for light ray in a 2D Euclidian geometry for <span class="math">\(n=n(x,y)\)</span>.</p>
-<p>This object takes in three user defined functions:  <span class="math">\(n(x,y), \frac{\partial n(x,y)}{\partial x}, \frac{\partial n(x,y)}{\partial y}\)</span>
-and uses these functions to solve Fermat’s equations for the path of a light ray. This is only really useful</p>
+<dt id="refraction_render.calcs.UniformFermatEquationsCurve">
+<em class="property">class </em><code class="descclassname">refraction_render.calcs.</code><code class="descname">UniformFermatEquationsCurve</code><span class="sig-paren">(</span><em>R0</em>, <em>n</em>, <em>dndy</em>, <em>args=()</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/calcs/euler_equations.html#UniformFermatEquationsCurve"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.calcs.UniformFermatEquationsCurve" title="Permalink to this definition">¶</a></dt>
+<dd><p>Solver for light ray in a 2D Polar geometry with <span class="math">\(n=n(y)\)</span>.</p>
+<p>This object takes in three user defined functions:  <span class="math">\(n(y), \frac{\partial n(y)}{\partial y}\)</span>
+and uses these functions to solve Fermat’s equations for the path of a light ray.</p>
 <p class="rubric">Methods</p>
 <table border="1" class="longtable docutils">
 <colgroup>
@@ -64,29 +60,25 @@ and uses these functions to solve Fermat’s equations for the path of a light r
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">__call__</span></code>(x,&nbsp;yin)</td>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">__call__</span></code>(s,&nbsp;yin)</td>
 <td></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#refraction_render.calcs.FermatEquationsEuclid.solve_ivp" title="refraction_render.calcs.FermatEquationsEuclid.solve_ivp"><code class="xref py py-obj docutils literal"><span class="pre">solve_ivp</span></code></a>(a,&nbsp;b,&nbsp;y0,&nbsp;dy0,&nbsp;**kwargs)</td>
+<tr class="row-even"><td><a class="reference internal" href="#refraction_render.calcs.UniformFermatEquationsCurve.solve_ivp" title="refraction_render.calcs.UniformFermatEquationsCurve.solve_ivp"><code class="xref py py-obj docutils literal"><span class="pre">solve_ivp</span></code></a>(a,&nbsp;b,&nbsp;y0,&nbsp;dy0,&nbsp;**kwargs)</td>
 <td>Solve initial value problem for light rays.</td>
 </tr>
 </tbody>
 </table>
 <dl class="method">
-<dt id="refraction_render.calcs.FermatEquationsEuclid.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>n</em>, <em>dndx</em>, <em>dndy</em>, <em>args=()</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/calcs/euler_equations.html#FermatEquationsEuclid.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.calcs.FermatEquationsEuclid.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Intializes the <cite>FermatEquationsEuclid</cite> object.</p>
+<dt id="refraction_render.calcs.UniformFermatEquationsCurve.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>R0</em>, <em>n</em>, <em>dndy</em>, <em>args=()</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/calcs/euler_equations.html#UniformFermatEquationsCurve.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.calcs.UniformFermatEquationsCurve.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Intializes the <cite>FermatEquationsCurve</cite> object.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>n</strong> : callable</p>
 <blockquote>
-<div><p>function which returns the index of refraction <span class="math">\(n(x,y)\)</span>.</p>
-</div></blockquote>
-<p><strong>dndx</strong> : callable</p>
-<blockquote>
-<div><p>function which returns <span class="math">\(\frac{\partial n(x,y)}{\partial x}\)</span>.</p>
+<div><p>function which returns the index of refraction <span class="math">\(n(y)\)</span>.</p>
 </div></blockquote>
 <p><strong>dndy</strong> : callable</p>
 <blockquote>
@@ -109,17 +101,17 @@ and uses these functions to solve Fermat’s equations for the path of a light r
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#refraction_render.calcs.FermatEquationsEuclid.__init__" title="refraction_render.calcs.FermatEquationsEuclid.__init__"><code class="xref py py-obj docutils literal"><span class="pre">__init__</span></code></a>(n,&nbsp;dndx,&nbsp;dndy[,&nbsp;args])</td>
-<td>Intializes the <cite>FermatEquationsEuclid</cite> object.</td>
+<tr class="row-odd"><td><a class="reference internal" href="#refraction_render.calcs.UniformFermatEquationsCurve.__init__" title="refraction_render.calcs.UniformFermatEquationsCurve.__init__"><code class="xref py py-obj docutils literal"><span class="pre">__init__</span></code></a>(R0,&nbsp;n,&nbsp;dndy[,&nbsp;args])</td>
+<td>Intializes the <cite>FermatEquationsCurve</cite> object.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#refraction_render.calcs.FermatEquationsEuclid.solve_ivp" title="refraction_render.calcs.FermatEquationsEuclid.solve_ivp"><code class="xref py py-obj docutils literal"><span class="pre">solve_ivp</span></code></a>(a,&nbsp;b,&nbsp;y0,&nbsp;dy0,&nbsp;**kwargs)</td>
+<tr class="row-even"><td><a class="reference internal" href="#refraction_render.calcs.UniformFermatEquationsCurve.solve_ivp" title="refraction_render.calcs.UniformFermatEquationsCurve.solve_ivp"><code class="xref py py-obj docutils literal"><span class="pre">solve_ivp</span></code></a>(a,&nbsp;b,&nbsp;y0,&nbsp;dy0,&nbsp;**kwargs)</td>
 <td>Solve initial value problem for light rays.</td>
 </tr>
 </tbody>
 </table>
 <dl class="method">
-<dt id="refraction_render.calcs.FermatEquationsEuclid.solve_ivp">
-<code class="descname">solve_ivp</code><span class="sig-paren">(</span><em>a</em>, <em>b</em>, <em>y0</em>, <em>dy0</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#refraction_render.calcs.FermatEquationsEuclid.solve_ivp" title="Permalink to this definition">¶</a></dt>
+<dt id="refraction_render.calcs.UniformFermatEquationsCurve.solve_ivp">
+<code class="descname">solve_ivp</code><span class="sig-paren">(</span><em>a</em>, <em>b</em>, <em>y0</em>, <em>dy0</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#refraction_render.calcs.UniformFermatEquationsCurve.solve_ivp" title="Permalink to this definition">¶</a></dt>
 <dd><p>Solve initial value problem for light rays.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -219,13 +211,10 @@ however the format of the solutions has the y(x) positions stacked on top of the
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="../calcs.html"
-                        title="previous chapter">Calcs module (<code class="docutils literal"><span class="pre">refraction_render.calcs</span></code>)</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../sources/generated/refraction_render.calcs.FermatEquationsEuclid.rst.txt"
+      <li><a href="../sources/generated/refraction_render.calcs.UniformFermatEquationsCurve.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -252,9 +241,6 @@ however the format of the solutions has the y(x) positions stacked on top of the
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="right" >
-          <a href="../calcs.html" title="Calcs module (refraction_render.calcs)"
-             >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">refraction_render 1.0.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../calcs.html" >Calcs module (<code class="docutils literal"><span class="pre">refraction_render.calcs</span></code>)</a> &#187;</li> 
       </ul>
