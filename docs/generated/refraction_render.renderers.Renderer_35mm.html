@@ -6,8 +6,8 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>refraction_render.renderers.Renderer_35mm &#8212; refraction_render 1.0.0 documentation</title>
-    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
@@ -18,9 +18,9 @@
         SOURCELINK_SUFFIX: '.txt'
       };
     </script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../static/jquery.js"></script>
+    <script type="text/javascript" src="../static/underscore.js"></script>
+    <script type="text/javascript" src="../static/doctools.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -53,7 +53,7 @@
 <h1>refraction_render.renderers.Renderer_35mm<a class="headerlink" href="#refraction-render-renderers-renderer-35mm" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="refraction_render.renderers.Renderer_35mm">
-<em class="property">class </em><code class="descclassname">refraction_render.renderers.</code><code class="descname">Renderer_35mm</code><span class="sig-paren">(</span><em>calc</em>, <em>h_obs</em>, <em>lat_obs</em>, <em>lon_obs</em>, <em>direction</em>, <em>max_distance</em>, <em>distance_res=10</em>, <em>vert_obs_angle=0.0</em>, <em>vert_res=1000</em>, <em>focal_length=2000</em>, <em>atol=0.0011</em>, <em>rtol=1.1e-05</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/refraction_render/renderers/render.html#Renderer_35mm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.renderers.Renderer_35mm" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">refraction_render.renderers.</code><code class="descname">Renderer_35mm</code><span class="sig-paren">(</span><em>calc</em>, <em>h_obs</em>, <em>lat_obs</em>, <em>lon_obs</em>, <em>direction</em>, <em>max_distance</em>, <em>distance_res=10</em>, <em>vert_obs_angle=0.0</em>, <em>vert_res=1000</em>, <em>focal_length=2000</em>, <em>atol=0.0011</em>, <em>rtol=1.1e-05</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/renderers/render.html#Renderer_35mm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.renderers.Renderer_35mm" title="Permalink to this definition">¶</a></dt>
 <dd><p>Object used to set a camera angle and position to render a scene.</p>
 <p class="rubric">Attributes</p>
 <table border="1" class="longtable docutils">
@@ -84,7 +84,7 @@
 </table>
 <dl class="method">
 <dt id="refraction_render.renderers.Renderer_35mm.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>calc</em>, <em>h_obs</em>, <em>lat_obs</em>, <em>lon_obs</em>, <em>direction</em>, <em>max_distance</em>, <em>distance_res=10</em>, <em>vert_obs_angle=0.0</em>, <em>vert_res=1000</em>, <em>focal_length=2000</em>, <em>atol=0.0011</em>, <em>rtol=1.1e-05</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/refraction_render/renderers/render.html#Renderer_35mm.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.renderers.Renderer_35mm.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>calc</em>, <em>h_obs</em>, <em>lat_obs</em>, <em>lon_obs</em>, <em>direction</em>, <em>max_distance</em>, <em>distance_res=10</em>, <em>vert_obs_angle=0.0</em>, <em>vert_res=1000</em>, <em>focal_length=2000</em>, <em>atol=0.0011</em>, <em>rtol=1.1e-05</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/renderers/render.html#Renderer_35mm.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.renderers.Renderer_35mm.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -172,7 +172,7 @@ float: heading to point the renderer in.</p>
 </table>
 <dl class="method">
 <dt id="refraction_render.renderers.Renderer_35mm.render_scene">
-<code class="descname">render_scene</code><span class="sig-paren">(</span><em>scene</em>, <em>image_name</em>, <em>surface_color=None</em>, <em>background_color=None</em>, <em>cfunc=&lt;function _defualt_cfunc&gt;</em>, <em>cfunc_args=()</em>, <em>disp=False</em>, <em>eye_level=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/refraction_render/renderers/render.html#Renderer_35mm.render_scene"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.renderers.Renderer_35mm.render_scene" title="Permalink to this definition">¶</a></dt>
+<code class="descname">render_scene</code><span class="sig-paren">(</span><em>scene</em>, <em>image_name</em>, <em>surface_color=None</em>, <em>background_color=None</em>, <em>cfunc=&lt;function _defualt_cfunc&gt;</em>, <em>cfunc_args=()</em>, <em>disp=False</em>, <em>eye_level=False</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/renderers/render.html#Renderer_35mm.render_scene"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.renderers.Renderer_35mm.render_scene" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function can be used to change the heading of the renderer.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -214,7 +214,7 @@ above the surface of the earth.</p>
 
 <dl class="method">
 <dt id="refraction_render.renderers.Renderer_35mm.set_location">
-<code class="descname">set_location</code><span class="sig-paren">(</span><em>lat_obs</em>, <em>lon_obs</em>, <em>direction</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/refraction_render/renderers/render.html#Renderer_35mm.set_location"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.renderers.Renderer_35mm.set_location" title="Permalink to this definition">¶</a></dt>
+<code class="descname">set_location</code><span class="sig-paren">(</span><em>lat_obs</em>, <em>lon_obs</em>, <em>direction</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/renderers/render.html#Renderer_35mm.set_location"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.renderers.Renderer_35mm.set_location" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function can be used to change the heading of the renderer.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -255,7 +255,7 @@ float: heading to point the renderer in.</p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../_sources/generated/refraction_render.renderers.Renderer_35mm.rst.txt"
+      <li><a href="../sources/generated/refraction_render.renderers.Renderer_35mm.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
