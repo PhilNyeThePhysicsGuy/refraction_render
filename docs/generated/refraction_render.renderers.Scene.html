@@ -1,0 +1,195 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>refraction_render.renderers.Scene &#8212; refraction_render 1.0.0 documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">refraction_render 1.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../renderers.html" accesskey="U">Renderers module (<code class="docutils literal"><span class="pre">refraction_render.renderers</span></code>)</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="refraction-render-renderers-scene">
+<h1>refraction_render.renderers.Scene<a class="headerlink" href="#refraction-render-renderers-scene" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="refraction_render.renderers.Scene">
+<em class="property">class </em><code class="descclassname">refraction_render.renderers.</code><code class="descname">Scene</code><a class="reference internal" href="../_modules/refraction_render/renderers/render.html#Scene"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.renderers.Scene" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simple wrapper which keeps track of data used to render an image.</p>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#refraction_render.renderers.Scene.add_elevation_model" title="refraction_render.renderers.Scene.add_elevation_model"><code class="xref py py-obj docutils literal"><span class="pre">add_elevation_model</span></code></a>(lats,&nbsp;lons,&nbsp;elevation)</td>
+<td>Add elevation data to the scene.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#refraction_render.renderers.Scene.add_image" title="refraction_render.renderers.Scene.add_image"><code class="xref py py-obj docutils literal"><span class="pre">add_image</span></code></a>(image,&nbsp;image_pos,&nbsp;dimensions[,&nbsp;…])</td>
+<td>Add image to scene.</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="refraction_render.renderers.Scene.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/refraction_render/renderers/render.html#Scene.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.renderers.Scene.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function initialized <cite>Scene</cite> object.</p>
+</dd></dl>
+
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#refraction_render.renderers.Scene.__init__" title="refraction_render.renderers.Scene.__init__"><code class="xref py py-obj docutils literal"><span class="pre">__init__</span></code></a>()</td>
+<td>This function initialized <cite>Scene</cite> object.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#refraction_render.renderers.Scene.add_elevation_model" title="refraction_render.renderers.Scene.add_elevation_model"><code class="xref py py-obj docutils literal"><span class="pre">add_elevation_model</span></code></a>(lats,&nbsp;lons,&nbsp;elevation)</td>
+<td>Add elevation data to the scene.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#refraction_render.renderers.Scene.add_image" title="refraction_render.renderers.Scene.add_image"><code class="xref py py-obj docutils literal"><span class="pre">add_image</span></code></a>(image,&nbsp;image_pos,&nbsp;dimensions[,&nbsp;…])</td>
+<td>Add image to scene.</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="refraction_render.renderers.Scene.add_elevation_model">
+<code class="descname">add_elevation_model</code><span class="sig-paren">(</span><em>lats</em>, <em>lons</em>, <em>elevation</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/refraction_render/renderers/render.html#Scene.add_elevation_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.renderers.Scene.add_elevation_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add elevation data to the scene.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>lats</strong> : array_like of shape (n,)</p>
+<blockquote>
+<div><p>list of latitudes which define the grid of data.</p>
+</div></blockquote>
+<p><strong>lons</strong> : array_like of shape (m,)</p>
+<blockquote>
+<div><p>list of longitudes which define the grid of data.</p>
+</div></blockquote>
+<p><strong>elevation</strong> : array_like of shape (n,m)</p>
+<blockquote class="last">
+<div><p>list of elevation data at the points defined by the grid of <cite>lats</cite> and <cite>lons</cite>.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="refraction_render.renderers.Scene.add_image">
+<code class="descname">add_image</code><span class="sig-paren">(</span><em>image</em>, <em>image_pos</em>, <em>dimensions</em>, <em>direction=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/refraction_render/renderers/render.html#Scene.add_image"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.renderers.Scene.add_image" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add image to scene.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>image: str</strong></p>
+<blockquote>
+<div><p>string which contains path to image file.</p>
+</div></blockquote>
+<p><strong>image_pos: array_like</strong></p>
+<blockquote>
+<div><p>either has (h0,lat,lon) or (lat,lon) h0 is height above the earth’s surface</p>
+</div></blockquote>
+<p><strong>dimensions: tuple</strong></p>
+<blockquote class="last">
+<div><p>contains dimensions of the image is in meters. If either one has value <cite>-1</cite> 
+then that dimension is determined by the resolution of the picture.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/generated/refraction_render.renderers.Scene.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">refraction_render 1.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../renderers.html" >Renderers module (<code class="docutils literal"><span class="pre">refraction_render.renderers</span></code>)</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Phillip Weinberg.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
+    </div>
+  </body>
+</html>

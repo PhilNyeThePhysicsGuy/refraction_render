@@ -1,0 +1,556 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>refraction_render.calcs.refraction &#8212; refraction_render 1.0.0 documentation</title>
+    <link rel="stylesheet" href="../../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">refraction_render 1.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for refraction_render.calcs.refraction</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">scipy.integrate</span> <span class="k">import</span> <span class="n">solve_bvp</span><span class="p">,</span><span class="n">solve_ivp</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="n">__all__</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;CurveCalc&quot;</span><span class="p">,</span><span class="s2">&quot;FlatCalc&quot;</span><span class="p">,</span><span class="s2">&quot;FermatEquationsEuclid&quot;</span><span class="p">,</span><span class="s2">&quot;FermatEquationsPolar&quot;</span><span class="p">]</span>
+
+<span class="k">class</span> <span class="nc">_EulerEquations</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">solve_ivp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">y0</span><span class="p">,</span><span class="n">dy0</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Solve initial value problem for light rays.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        The solver can solve the path of an arbitrary number of light rays in one function call</span>
+<span class="sd">        however the format of the solutions has the y(x) positions stacked on top of the derivatives.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        a : scalar</span>
+<span class="sd">            initial position for the solution of the ray&#39;s path.</span>
+<span class="sd">        b : scalar</span>
+<span class="sd">            final position for the solution of the ray&#39;s path.</span>
+<span class="sd">        y0 : array_like of shape (n,)</span>
+<span class="sd">            initial position of the ray&#39;s.</span>
+<span class="sd">        dy0 : array_like of shape (n,)</span>
+<span class="sd">            initial derivative (with respect to the independent variable) of the ray&#39;s trajectory.</span>
+<span class="sd">        kwargs : optional</span>
+<span class="sd">            additional arguments to pass into solver, </span>
+<span class="sd">            see scipy.integrate.solve_ivp for more details.</span>
+
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Bunch object with the following fields defined:</span>
+<span class="sd">        t : ndarray, shape (n_points,)</span>
+<span class="sd">            Time points.</span>
+<span class="sd">        y : ndarray, shape (n, n_points)</span>
+<span class="sd">            Values of the solution at `t`.</span>
+<span class="sd">        sol : `OdeSolution` or None</span>
+<span class="sd">            Found solution as `OdeSolution` instance; None if `dense_output` was</span>
+<span class="sd">            set to False.</span>
+<span class="sd">        t_events : list of ndarray or None</span>
+<span class="sd">            Contains for each event type a list of arrays at which an event of</span>
+<span class="sd">            that type event was detected. None if `events` was None.</span>
+<span class="sd">        nfev : int</span>
+<span class="sd">            Number of evaluations of the right-hand side.</span>
+<span class="sd">        njev : int</span>
+<span class="sd">            Number of evaluations of the Jacobian.</span>
+<span class="sd">        nlu : int</span>
+<span class="sd">            Number of LU decompositions.</span>
+<span class="sd">        status : int</span>
+<span class="sd">            Reason for algorithm termination:</span>
+<span class="sd">                * -1: Integration step failed.</span>
+<span class="sd">                *  0: The solver successfully reached the end of `tspan`.</span>
+<span class="sd">                *  1: A termination event occurred.</span>
+<span class="sd">        message : string</span>
+<span class="sd">            Human-readable description of the termination reason.</span>
+<span class="sd">        success : bool</span>
+<span class="sd">            True if the solver reached the interval end or a termination event</span>
+<span class="sd">            occurred (``status &gt;= 0``).</span>
+
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">y0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">y0</span><span class="p">,</span><span class="n">dy0</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_yout</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">y0</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">)))</span>
+        <span class="k">return</span> <span class="n">solve_ivp</span><span class="p">(</span><span class="bp">self</span><span class="p">,(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">),</span><span class="n">y0</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+<div class="viewcode-block" id="FermatEquationsEuclid"><a class="viewcode-back" href="../../../generated/refraction_render.calcs.FermatEquationsEuclid.html#refraction_render.calcs.FermatEquationsEuclid">[docs]</a><span class="k">class</span> <span class="nc">FermatEquationsEuclid</span><span class="p">(</span><span class="n">_EulerEquations</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Solver for light ray in a 2D Euclidian geometry.</span>
+
+<span class="sd">    This object takes in three user defined functions:  :math:`n(x,y), \\frac{\\partial n(x,y)}{\\partial x}, \\frac{\\partial n(x,y)}{\\partial y}`</span>
+<span class="sd">    and uses these functions to solve Fermat&#39;s equations for the path of a light ray.</span>
+
+
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="FermatEquationsEuclid.__init__"><a class="viewcode-back" href="../../../generated/refraction_render.calcs.FermatEquationsEuclid.html#refraction_render.calcs.FermatEquationsEuclid.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">dndx</span><span class="p">,</span><span class="n">dndy</span><span class="p">,</span><span class="n">args</span><span class="o">=</span><span class="p">()):</span>
+        <span class="sd">&quot;&quot;&quot;Intializes the `FermatEquationsEuclid` object.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        n : callable</span>
+<span class="sd">            function which returns the index of refraction :math:`n(x,y)`.</span>
+<span class="sd">        dndx : callable</span>
+<span class="sd">            function which returns :math:`\\frac{\\partial n(x,y)}{\\partial x}`.</span>
+<span class="sd">        dndy : callable</span>
+<span class="sd">            function which returns :math:`\\frac{\\partial n(x,y)}{\\partial y}`.</span>
+<span class="sd">        args : array_like, optional</span>
+<span class="sd">            optional arguments which go into the functions. </span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_n</span> <span class="o">=</span> <span class="n">n</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dndx</span> <span class="o">=</span> <span class="n">dndx</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dndy</span> <span class="o">=</span> <span class="n">dndy</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_args</span> <span class="o">=</span> <span class="n">args</span></div>
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">yin</span><span class="p">):</span> <span class="c1"># object(args,...)</span>
+        <span class="n">shape0</span> <span class="o">=</span> <span class="n">yin</span><span class="o">.</span><span class="n">shape</span>
+        <span class="n">yin</span> <span class="o">=</span> <span class="n">yin</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_yout</span><span class="p">[</span><span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="n">yin</span><span class="p">[</span><span class="o">...</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_yout</span> <span class="o">=</span> <span class="n">yin</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="n">y</span><span class="p">,</span><span class="n">dydx</span> <span class="o">=</span> <span class="n">yin</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">yin</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="n">n_val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_args</span><span class="p">)</span>
+        <span class="n">dndx_val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dndx</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_args</span><span class="p">)</span>
+        <span class="n">dndy_val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dndy</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_args</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_yout</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">dydx</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_yout</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">dydx</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">dndy_val</span><span class="o">-</span><span class="n">dydx</span><span class="o">*</span><span class="n">dndx_val</span><span class="p">)</span><span class="o">/</span><span class="n">n_val</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_yout</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">shape0</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FermatEquationsPolar"><a class="viewcode-back" href="../../../generated/refraction_render.calcs.FermatEquationsPolar.html#refraction_render.calcs.FermatEquationsPolar">[docs]</a><span class="k">class</span> <span class="nc">FermatEquationsPolar</span><span class="p">(</span><span class="n">_EulerEquations</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Solver for light ray in a 2D Polar geometry.</span>
+
+<span class="sd">    This object takes in three user defined functions:  :math:`n(\\theta,r), \\frac{\partial n(\\theta,r)}{\partial\\theta}, \\frac{\partial n(\\theta,r)}{\partial r}`</span>
+<span class="sd">    and uses these functions to solve Fermat&#39;s equations for the path of a light ray.</span>
+
+
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="FermatEquationsPolar.__init__"><a class="viewcode-back" href="../../../generated/refraction_render.calcs.FermatEquationsPolar.html#refraction_render.calcs.FermatEquationsPolar.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">dndtheta</span><span class="p">,</span><span class="n">dndr</span><span class="p">,</span><span class="n">args</span><span class="o">=</span><span class="p">()):</span>
+        <span class="sd">&quot;&quot;&quot;Intializes the `FermatEquationsPolar` object.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        n : callable</span>
+<span class="sd">            function which returns the index of refraction: :math:`n(\theta,r)`.</span>
+<span class="sd">        dndx : callable</span>
+<span class="sd">            function which returns :math:`\\frac{\partial n(\\theta,r)}{\\partial\\theta}`.</span>
+<span class="sd">        dndy : callable</span>
+<span class="sd">            function which returns :math:`\\frac{\partial n(\\theta,r)}{\\partial r}`.</span>
+<span class="sd">        args : array_like, optional</span>
+<span class="sd">            optional arguments which go into the functions. </span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_n</span> <span class="o">=</span> <span class="n">n</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dndtheta</span> <span class="o">=</span> <span class="n">dndtheta</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dndr</span> <span class="o">=</span> <span class="n">dndr</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_args</span> <span class="o">=</span> <span class="n">args</span>    </div>
+
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">theta</span><span class="p">,</span><span class="n">yin</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">yin</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span>
+        <span class="n">shape0</span> <span class="o">=</span> <span class="n">yin</span><span class="o">.</span><span class="n">shape</span>
+        <span class="n">yin</span> <span class="o">=</span> <span class="n">yin</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_yout</span><span class="p">[</span><span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="n">yin</span><span class="p">[</span><span class="o">...</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_yout</span> <span class="o">=</span> <span class="n">yin</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            
+        <span class="n">r</span><span class="p">,</span><span class="n">dr</span> <span class="o">=</span> <span class="n">yin</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">yin</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">n_val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span><span class="n">r</span><span class="p">,</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_args</span><span class="p">)</span>
+        <span class="n">dndtheta_val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dndtheta</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span><span class="n">r</span><span class="p">,</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_args</span><span class="p">)</span>
+        <span class="n">dndr_val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dndr</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span><span class="n">r</span><span class="p">,</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_args</span><span class="p">)</span>
+
+        <span class="n">r2</span> <span class="o">=</span> <span class="n">r</span><span class="o">**</span><span class="mi">2</span>
+        <span class="n">dr2</span> <span class="o">=</span> <span class="n">dr</span><span class="o">**</span><span class="mi">2</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_yout</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">dr</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_yout</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">n_val</span><span class="o">*</span><span class="n">r</span><span class="o">*</span><span class="p">(</span><span class="n">r2</span><span class="o">+</span><span class="mi">2</span><span class="o">*</span><span class="n">dr</span><span class="p">)</span><span class="o">+</span><span class="p">(</span><span class="n">r2</span><span class="o">+</span><span class="n">dr2</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">r2</span><span class="o">*</span><span class="n">dndr_val</span><span class="o">-</span><span class="n">dr</span><span class="o">*</span><span class="n">dndtheta_val</span><span class="p">))</span><span class="o">/</span><span class="p">(</span><span class="n">n_val</span> <span class="o">*</span> <span class="n">r2</span><span class="p">)</span>
+        <span class="c1"># yout[1] = ((-dndtheta_val)*dr*(dr2 + r2) + r*(r2*(n_val + dndr_val*r) + dr2*(2*n_val + dndr_val*r)))/(n_val*r2)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_yout</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">shape0</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CurveCalc"><a class="viewcode-back" href="../../../generated/refraction_render.calcs.CurveCalc.html#refraction_render.calcs.CurveCalc">[docs]</a><span class="k">class</span> <span class="nc">CurveCalc</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Ray trace calculator for a curved earth.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="CurveCalc.__init__"><a class="viewcode-back" href="../../../generated/refraction_render.calcs.CurveCalc.html#refraction_render.calcs.CurveCalc.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">h0</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span><span class="n">T0</span><span class="o">=</span><span class="mf">15.0</span><span class="p">,</span><span class="n">P0</span><span class="o">=</span><span class="mf">101325.0</span><span class="p">,</span><span class="n">g</span><span class="o">=</span><span class="mf">9.8076</span><span class="p">,</span><span class="n">dT</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">moist_lapse_rate</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                 <span class="n">R0</span><span class="o">=</span><span class="mf">6370997.0</span><span class="p">,</span><span class="n">T_prof</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">dT_prof</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">T_prof_args</span><span class="o">=</span><span class="p">(),</span><span class="n">n_funcs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Intializes the `CurveCalc` object.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        h0: float, optional</span>
+<span class="sd">            height (in :math:`m`) to determine initial conditions on atmospheric model</span>
+
+<span class="sd">        T0: float, optional</span>
+<span class="sd">            Temperature (in degrees :math:`C`) at `h0`</span>
+
+<span class="sd">        P0: float, optional</span>
+<span class="sd">            Pressure (in :math:`Pa`) at `h0`</span>
+
+<span class="sd">        g: float, optional</span>
+<span class="sd">            gravitational acceleration (in :math:`m/s^2`)</span>
+
+<span class="sd">        dT: float, optional</span>
+<span class="sd">            Temperature lapse rate (in :math:`C/m`) defined as minus the slope of the temperature</span>
+
+<span class="sd">        moist_lapse_rate: bool, optional</span>
+<span class="sd">            Uses the temperature and pressure to calculate the moist lapse rate, use when the humidity is at 100%</span>
+
+<span class="sd">        R0: float, optional</span>
+<span class="sd">            radius of the earth for calculation.</span>
+
+<span class="sd">        T_prof: callable, optional</span>
+<span class="sd">            user defined function, see description. </span>
+
+<span class="sd">        dT_prof: callable, optional</span>
+<span class="sd">            derivative of `T_prof`, see description.</span>
+
+<span class="sd">        T_prof_args: array_like, optional</span>
+<span class="sd">            optional arguments to pass into `T_prof` and `dT_prof`.</span>
+
+<span class="sd">        n_funcs: array_like, optional</span>
+<span class="sd">            object which contains three callable functions: :math:`n(\theta,r),\frac{\partial n(\theta,r)}{\partial\theta},\frac{\partial n(\theta,r)}{\partial r}` in this order.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">wavelength</span><span class="o">=</span><span class="mf">545.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_R0</span> <span class="o">=</span> <span class="n">R0</span>
+
+        <span class="k">if</span> <span class="n">n_funcs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    
+            <span class="n">T0</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">T0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">e</span> <span class="o">=</span> <span class="mf">611.21</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">((</span><span class="mf">18.678</span><span class="o">-</span><span class="n">T0</span><span class="o">/</span><span class="mf">234.5</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">T0</span><span class="o">/</span><span class="p">(</span><span class="mf">557.14</span><span class="o">+</span><span class="n">T0</span><span class="p">)))</span>
+            <span class="n">T0</span> <span class="o">+=</span> <span class="mi">273</span>
+            <span class="n">eps</span> <span class="o">=</span> <span class="mf">0.622</span>
+            <span class="n">cpd</span> <span class="o">=</span> <span class="mf">1003.5</span>
+            <span class="n">Hv</span> <span class="o">=</span> <span class="mi">2501000</span>
+            <span class="n">R</span> <span class="o">=</span> <span class="mf">287.058</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">eps</span><span class="o">*</span><span class="n">e</span><span class="o">/</span><span class="p">(</span><span class="n">P0</span><span class="o">-</span><span class="n">e</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">dT</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">moist_lapse_rate</span><span class="p">:</span>
+                    <span class="n">dT</span> <span class="o">=</span> <span class="n">g</span><span class="o">*</span><span class="p">(</span><span class="n">R</span><span class="o">*</span><span class="n">T0</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="n">Hv</span><span class="o">*</span><span class="n">r</span><span class="o">*</span><span class="n">T0</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">cpd</span><span class="o">*</span><span class="n">R</span><span class="o">*</span><span class="n">T0</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="n">r</span><span class="o">*</span><span class="n">eps</span><span class="o">*</span><span class="n">Hv</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">dT</span> <span class="o">=</span> <span class="mf">0.0098</span>
+                
+
+            <span class="k">if</span> <span class="n">T_prof</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">dT_prof</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">T_prof0</span> <span class="o">=</span> <span class="n">T_prof</span><span class="p">(</span><span class="n">h0</span><span class="o">+</span><span class="n">R0</span><span class="p">,</span><span class="o">*</span><span class="n">T_prof_args</span><span class="p">)</span>
+                <span class="n">T</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">r</span><span class="p">:</span><span class="n">T0</span><span class="o">-</span><span class="n">dT</span><span class="o">*</span><span class="p">(</span><span class="n">r</span><span class="o">-</span><span class="p">(</span><span class="n">h0</span><span class="o">+</span><span class="n">R0</span><span class="p">))</span><span class="o">+</span><span class="p">(</span><span class="n">T_prof</span><span class="p">(</span><span class="n">r</span><span class="o">-</span><span class="n">R0</span><span class="p">,</span><span class="o">*</span><span class="n">T_prof_args</span><span class="p">)</span><span class="o">-</span><span class="n">T_prof0</span><span class="p">)</span>
+                <span class="n">dTdr</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">r</span><span class="p">:</span><span class="o">-</span><span class="n">dT</span><span class="o">+</span><span class="n">dT_prof</span><span class="p">(</span><span class="n">r</span><span class="o">-</span><span class="n">h0</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">T_prof</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">T_prof0</span> <span class="o">=</span> <span class="n">T_prof</span><span class="p">(</span><span class="n">h0</span><span class="o">+</span><span class="n">R0</span><span class="p">,</span><span class="o">*</span><span class="n">T_prof_args</span><span class="p">)</span>
+                <span class="n">T</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">r</span><span class="p">:</span><span class="n">T0</span><span class="o">-</span><span class="n">dT</span><span class="o">*</span><span class="p">(</span><span class="n">r</span><span class="o">-</span><span class="p">(</span><span class="n">h0</span><span class="o">+</span><span class="n">R0</span><span class="p">))</span><span class="o">+</span><span class="p">(</span><span class="n">T_prof</span><span class="p">(</span><span class="n">r</span><span class="o">-</span><span class="n">R0</span><span class="p">,</span><span class="o">*</span><span class="n">T_prof_args</span><span class="p">)</span><span class="o">-</span><span class="n">T_prof0</span><span class="p">)</span>
+                <span class="n">dTdr</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">r</span><span class="p">:</span><span class="o">-</span><span class="n">dT</span><span class="o">+</span><span class="p">(</span><span class="n">T_prof</span><span class="p">((</span><span class="n">r</span><span class="o">-</span><span class="n">R0</span><span class="p">)</span><span class="o">+</span><span class="mf">1.1e-7</span><span class="p">,</span><span class="o">*</span><span class="n">T_prof_args</span><span class="p">)</span><span class="o">-</span><span class="n">T_prof</span><span class="p">((</span><span class="n">r</span><span class="o">-</span><span class="n">R0</span><span class="p">)</span><span class="o">-</span><span class="mf">1.1e-7</span><span class="p">,</span><span class="o">*</span><span class="n">T_prof_args</span><span class="p">))</span><span class="o">/</span><span class="p">(</span><span class="mf">2.2e-7</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">T</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">r</span><span class="p">:</span><span class="n">T0</span><span class="o">-</span><span class="n">dT</span><span class="o">*</span><span class="p">(</span><span class="n">r</span><span class="o">-</span><span class="p">(</span><span class="n">h0</span><span class="o">+</span><span class="n">R0</span><span class="p">))</span>
+                <span class="n">dTdr</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">r</span><span class="p">:</span><span class="o">-</span><span class="n">dT</span>
+
+            <span class="n">dPdh</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">r</span><span class="p">,</span><span class="n">P</span><span class="p">:</span><span class="o">-</span><span class="n">g</span><span class="o">*</span><span class="n">P</span><span class="o">/</span><span class="p">(</span><span class="n">R</span><span class="o">*</span><span class="n">T</span><span class="p">(</span><span class="n">r</span><span class="p">))</span>
+
+            <span class="n">sol</span> <span class="o">=</span> <span class="n">solve_ivp</span><span class="p">(</span><span class="n">dPdh</span><span class="p">,(</span><span class="n">R0</span><span class="o">+</span><span class="n">h0</span><span class="p">,</span><span class="n">R0</span><span class="o">-</span><span class="mi">10000</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">P0</span><span class="p">]),</span><span class="n">atol</span><span class="o">=</span><span class="mf">1e-7</span><span class="p">,</span><span class="n">rtol</span><span class="o">=</span><span class="mf">1e-13</span><span class="p">)</span>
+
+            <span class="n">P</span> <span class="o">=</span> <span class="n">sol</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">sol</span> <span class="o">=</span> <span class="n">solve_ivp</span><span class="p">(</span><span class="n">dPdh</span><span class="p">,(</span><span class="n">R0</span><span class="o">-</span><span class="mi">10000</span><span class="p">,</span><span class="n">R0</span><span class="o">+</span><span class="mi">10000</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">P</span><span class="p">]),</span><span class="n">dense_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">atol</span><span class="o">=</span><span class="mf">1e-7</span><span class="p">,</span><span class="n">rtol</span><span class="o">=</span><span class="mf">1e-13</span><span class="p">)</span>
+
+
+            <span class="k">def</span> <span class="nf">drhodr</span><span class="p">(</span><span class="n">r</span><span class="p">):</span>
+                <span class="n">t</span> <span class="o">=</span> <span class="n">T</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+                <span class="n">p</span> <span class="o">=</span> <span class="n">sol</span><span class="o">.</span><span class="n">sol</span><span class="p">(</span><span class="n">r</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">dpdr</span> <span class="o">=</span> <span class="o">-</span><span class="n">g</span><span class="o">*</span><span class="n">p</span><span class="o">/</span><span class="p">(</span><span class="n">R</span><span class="o">*</span><span class="n">t</span><span class="p">)</span>
+                <span class="k">return</span> <span class="p">(</span><span class="n">dpdr</span><span class="o">*</span><span class="n">t</span><span class="o">-</span><span class="n">dTdr</span><span class="p">(</span><span class="n">r</span><span class="p">)</span><span class="o">*</span><span class="n">p</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">R</span><span class="o">*</span><span class="n">t</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+
+            <span class="n">rho</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">r</span><span class="p">:</span><span class="n">sol</span><span class="o">.</span><span class="n">sol</span><span class="p">(</span><span class="n">r</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="p">(</span><span class="n">R</span><span class="o">*</span><span class="n">T</span><span class="p">(</span><span class="n">r</span><span class="p">))</span>
+
+
+            <span class="n">deltan</span> <span class="o">=</span> <span class="mf">0.0002879</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="mf">0.0000567</span><span class="o">/</span><span class="n">wavelength</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">n</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">theta</span><span class="p">,</span><span class="n">r</span><span class="p">:(</span><span class="mi">1</span><span class="o">+</span><span class="n">rho</span><span class="p">(</span><span class="n">r</span><span class="p">)</span><span class="o">*</span><span class="n">deltan</span><span class="p">)</span>
+            <span class="n">dndr</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">theta</span><span class="p">,</span><span class="n">r</span><span class="p">:</span><span class="n">drhodr</span><span class="p">(</span><span class="n">r</span><span class="p">)</span><span class="o">*</span><span class="n">deltan</span>
+            <span class="n">dndtheta</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">theta</span><span class="p">,</span><span class="n">r</span><span class="p">:</span><span class="mf">0.0</span>
+
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_rho</span> <span class="o">=</span> <span class="n">rho</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_dT</span> <span class="o">=</span> <span class="n">dT</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_n</span> <span class="o">=</span> <span class="n">n</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_P</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">r</span><span class="p">:</span><span class="n">sol</span><span class="o">.</span><span class="n">sol</span><span class="p">(</span><span class="n">r</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_T</span> <span class="o">=</span> <span class="n">T</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">n</span><span class="p">,</span><span class="n">dndtheta</span><span class="p">,</span><span class="n">dndr</span> <span class="o">=</span> <span class="n">n_funcs</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ee</span> <span class="o">=</span> <span class="n">FermatEquationsPolar</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">dndtheta</span><span class="p">,</span><span class="n">dndr</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">dT</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Temperature Lapse rate for this atmospheric model. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dT</span>
+
+<div class="viewcode-block" id="CurveCalc.T"><a class="viewcode-back" href="../../../generated/refraction_render.calcs.CurveCalc.html#refraction_render.calcs.CurveCalc.T">[docs]</a>    <span class="k">def</span> <span class="nf">T</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">h</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Temperature function for this atmospheric model. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_T</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_R0</span><span class="o">+</span><span class="n">h</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CurveCalc.P"><a class="viewcode-back" href="../../../generated/refraction_render.calcs.CurveCalc.html#refraction_render.calcs.CurveCalc.P">[docs]</a>    <span class="k">def</span> <span class="nf">P</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">h</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Pressure function for this atmospheric model. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_P</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_R0</span><span class="o">+</span><span class="n">h</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CurveCalc.n"><a class="viewcode-back" href="../../../generated/refraction_render.calcs.CurveCalc.html#refraction_render.calcs.CurveCalc.n">[docs]</a>    <span class="k">def</span> <span class="nf">n</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">h</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Index of refraction function for this atmospheric model. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_R0</span><span class="o">+</span><span class="n">h</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CurveCalc.rho"><a class="viewcode-back" href="../../../generated/refraction_render.calcs.CurveCalc.html#refraction_render.calcs.CurveCalc.rho">[docs]</a>    <span class="k">def</span> <span class="nf">rho</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">h</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; density function for this atmospheric model. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rho</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_R0</span><span class="o">+</span><span class="n">h</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">R0</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Radius of the earth for this calcuulator. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_R0</span>
+
+<div class="viewcode-block" id="CurveCalc.solve_ivp"><a class="viewcode-back" href="../../../generated/refraction_render.calcs.CurveCalc.html#refraction_render.calcs.CurveCalc.solve_ivp">[docs]</a>    <span class="k">def</span> <span class="nf">solve_ivp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">d</span><span class="p">,</span><span class="n">h</span><span class="p">,</span><span class="n">dh</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">R0</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">theta_a</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">theta_b</span> <span class="o">=</span> <span class="n">d</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">_R0</span>
+        <span class="n">h</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">R0</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">R_a</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">R0</span><span class="o">+</span><span class="n">h</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">R_a</span> <span class="o">=</span> <span class="n">R0</span><span class="o">+</span><span class="n">h</span>
+            
+        <span class="k">if</span> <span class="n">alpha</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">dR_a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">R_a</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">alpha</span><span class="p">)))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dR_a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dh</span><span class="p">)</span>
+        
+        <span class="n">R_a</span><span class="p">,</span><span class="n">dR_a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">broadcast_arrays</span><span class="p">(</span><span class="n">R_a</span><span class="p">,</span><span class="n">dR_a</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ee</span><span class="o">.</span><span class="n">solve_ivp</span><span class="p">(</span><span class="n">theta_a</span><span class="p">,</span><span class="n">theta_b</span><span class="p">,</span><span class="n">R_a</span><span class="p">,</span><span class="n">dR_a</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
+
+<div class="viewcode-block" id="FlatCalc"><a class="viewcode-back" href="../../../generated/refraction_render.calcs.FlatCalc.html#refraction_render.calcs.FlatCalc">[docs]</a><span class="k">class</span> <span class="nc">FlatCalc</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Ray trace calculator for a flat earth.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="FlatCalc.__init__"><a class="viewcode-back" href="../../../generated/refraction_render.calcs.FlatCalc.html#refraction_render.calcs.FlatCalc.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">h0</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span><span class="n">T0</span><span class="o">=</span><span class="mf">15.0</span><span class="p">,</span><span class="n">P0</span><span class="o">=</span><span class="mf">101325.0</span><span class="p">,</span><span class="n">g</span><span class="o">=</span><span class="mf">9.81</span><span class="p">,</span><span class="n">dT</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">moist_lapse_rate</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                 <span class="n">T_prof</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">dT_prof</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">T_prof_args</span><span class="o">=</span><span class="p">(),</span><span class="n">n_funcs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Intializes the `FlatCalc` object.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        h0: float, optional</span>
+<span class="sd">            height (in :math:`m`) to determine initial conditions on atmospheric model</span>
+
+<span class="sd">        T0: float, optional</span>
+<span class="sd">            Temperature (in degrees :math:`C`) at `h0`</span>
+
+<span class="sd">        P0: float, optional</span>
+<span class="sd">            Pressure (in :math:`Pa`) at `h0`</span>
+
+<span class="sd">        g: float, optional</span>
+<span class="sd">            gravitational acceleration (in :math:`m/s^2`)</span>
+
+<span class="sd">        dT: float, optional</span>
+<span class="sd">            Temperature lapse rate (in :math:`C/m`) defined as minus the slope of the temperature</span>
+
+<span class="sd">        moist_lapse_rate: bool, optional</span>
+<span class="sd">            Uses the temperature and pressure to calculate the moist lapse rate, use when the humidity is at 100%</span>
+
+<span class="sd">        T_prof: callable, optional</span>
+<span class="sd">            user defined function, see description. </span>
+
+<span class="sd">        dT_prof: callable, optional</span>
+<span class="sd">            derivative of `T_prof`, see description.</span>
+
+<span class="sd">        T_prof_args: array_like, optional</span>
+<span class="sd">            optional arguments to pass into `T_prof` and `dT_prof`.</span>
+
+<span class="sd">        n_funcs: array_like, optional</span>
+<span class="sd">            object which contains three callable functions: :math:`n(x,y),\frac{\partial n(x,y)}{\partial x},\frac{\partial n(x,y)}{\partial y}` in this order.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">wavelength</span><span class="o">=</span><span class="mi">545</span>
+        <span class="k">if</span> <span class="n">n_funcs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">T0</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">T0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">e</span> <span class="o">=</span> <span class="mf">611.21</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">((</span><span class="mf">18.678</span><span class="o">-</span><span class="n">T0</span><span class="o">/</span><span class="mf">234.5</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">T0</span><span class="o">/</span><span class="p">(</span><span class="mf">557.14</span><span class="o">+</span><span class="n">T0</span><span class="p">)))</span>
+            <span class="n">T0</span> <span class="o">+=</span> <span class="mi">273</span>
+            <span class="n">eps</span> <span class="o">=</span> <span class="mf">0.622</span>
+            <span class="n">cpd</span> <span class="o">=</span> <span class="mf">1003.5</span>
+            <span class="n">Hv</span> <span class="o">=</span> <span class="mi">2501000</span>
+            <span class="n">R</span> <span class="o">=</span> <span class="mf">287.058</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">eps</span><span class="o">*</span><span class="n">e</span><span class="o">/</span><span class="p">(</span><span class="n">P0</span><span class="o">-</span><span class="n">e</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">dT</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">moist_lapse_rate</span><span class="p">:</span>
+                    <span class="n">dT</span> <span class="o">=</span> <span class="n">g</span><span class="o">*</span><span class="p">(</span><span class="n">R</span><span class="o">*</span><span class="n">T0</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="n">Hv</span><span class="o">*</span><span class="n">r</span><span class="o">*</span><span class="n">T0</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">cpd</span><span class="o">*</span><span class="n">R</span><span class="o">*</span><span class="n">T0</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="n">r</span><span class="o">*</span><span class="n">eps</span><span class="o">*</span><span class="n">Hv</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">dT</span> <span class="o">=</span> <span class="mf">0.0098</span>
+
+            <span class="k">if</span> <span class="n">T_prof</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">dT_prof</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">T_prof0</span> <span class="o">=</span> <span class="n">T_prof</span><span class="p">(</span><span class="n">h0</span><span class="o">+</span><span class="n">R0</span><span class="p">,</span><span class="o">*</span><span class="n">T_prof_args</span><span class="p">)</span>
+                <span class="n">T</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">r</span><span class="p">:</span><span class="n">T0</span><span class="o">-</span><span class="n">dT</span><span class="o">*</span><span class="p">(</span><span class="n">r</span><span class="o">-</span><span class="p">(</span><span class="n">h0</span><span class="o">+</span><span class="n">R0</span><span class="p">))</span><span class="o">+</span><span class="p">(</span><span class="n">T_prof</span><span class="p">(</span><span class="n">r</span><span class="o">-</span><span class="n">R0</span><span class="p">,</span><span class="o">*</span><span class="n">T_prof_args</span><span class="p">)</span><span class="o">-</span><span class="n">T_prof0</span><span class="p">)</span>
+                <span class="n">dTdr</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">r</span><span class="p">:</span><span class="o">-</span><span class="n">dT</span><span class="o">+</span><span class="n">dT_prof</span><span class="p">(</span><span class="n">r</span><span class="o">-</span><span class="n">h0</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">T_prof</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">T</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">r</span><span class="p">:</span><span class="n">T0</span><span class="o">-</span><span class="n">dT</span><span class="o">*</span><span class="p">(</span><span class="n">r</span><span class="o">-</span><span class="n">h0</span><span class="p">)</span><span class="o">+</span><span class="n">T_prof</span><span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="o">*</span><span class="n">T_prof_args</span><span class="p">)</span>
+                <span class="n">dTdr</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">r</span><span class="p">:</span><span class="o">-</span><span class="n">dT</span><span class="o">+</span><span class="p">(</span><span class="n">T_prof</span><span class="p">(</span><span class="n">r</span><span class="o">+</span><span class="mf">1.1e-7</span><span class="p">,</span><span class="o">*</span><span class="n">T_prof_args</span><span class="p">)</span><span class="o">-</span><span class="n">T_prof</span><span class="p">(</span><span class="n">r</span><span class="o">-</span><span class="mf">1.1e-7</span><span class="p">,</span><span class="o">*</span><span class="n">T_prof_args</span><span class="p">))</span><span class="o">/</span><span class="p">(</span><span class="mf">2.2e-7</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">T</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">r</span><span class="p">:</span><span class="n">T0</span><span class="o">-</span><span class="n">dT</span><span class="o">*</span><span class="p">(</span><span class="n">r</span><span class="o">-</span><span class="n">h0</span><span class="p">)</span>
+                <span class="n">dTdr</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">r</span><span class="p">:</span><span class="o">-</span><span class="n">dT</span>
+
+            <span class="n">dPdh</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">r</span><span class="p">,</span><span class="n">P</span><span class="p">:</span><span class="o">-</span><span class="n">g</span><span class="o">*</span><span class="n">P</span><span class="o">/</span><span class="p">(</span><span class="n">R</span><span class="o">*</span><span class="n">T</span><span class="p">(</span><span class="n">r</span><span class="p">))</span>
+
+            <span class="n">sol</span> <span class="o">=</span> <span class="n">solve_ivp</span><span class="p">(</span><span class="n">dPdh</span><span class="p">,(</span><span class="n">h0</span><span class="p">,</span><span class="o">-</span><span class="mi">10000</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">P0</span><span class="p">]))</span>
+
+            <span class="n">P</span> <span class="o">=</span> <span class="n">sol</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">sol</span> <span class="o">=</span> <span class="n">solve_ivp</span><span class="p">(</span><span class="n">dPdh</span><span class="p">,(</span><span class="o">-</span><span class="mi">10000</span><span class="p">,</span><span class="mi">10000</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">P</span><span class="p">]),</span><span class="n">dense_output</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="k">def</span> <span class="nf">drhody</span><span class="p">(</span><span class="n">r</span><span class="p">):</span>
+                <span class="n">t</span> <span class="o">=</span> <span class="n">T</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+                <span class="n">p</span> <span class="o">=</span> <span class="n">sol</span><span class="o">.</span><span class="n">sol</span><span class="p">(</span><span class="n">r</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">dpdr</span> <span class="o">=</span> <span class="o">-</span><span class="n">g</span><span class="o">*</span><span class="n">p</span><span class="o">/</span><span class="p">(</span><span class="n">R</span><span class="o">*</span><span class="n">t</span><span class="p">)</span>
+                <span class="k">return</span> <span class="p">(</span><span class="n">dpdr</span><span class="o">*</span><span class="n">t</span><span class="o">-</span><span class="n">dTdr</span><span class="p">(</span><span class="n">r</span><span class="p">)</span><span class="o">*</span><span class="n">p</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">R</span><span class="o">*</span><span class="n">t</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+
+            <span class="n">rho</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">r</span><span class="p">:</span><span class="n">sol</span><span class="o">.</span><span class="n">sol</span><span class="p">(</span><span class="n">r</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="p">(</span><span class="n">R</span><span class="o">*</span><span class="n">T</span><span class="p">(</span><span class="n">r</span><span class="p">))</span>
+
+
+            <span class="n">deltan</span> <span class="o">=</span> <span class="mf">0.0002879</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="mf">0.0000567</span><span class="o">/</span><span class="n">wavelength</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">n</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">theta</span><span class="p">,</span><span class="n">r</span><span class="p">:(</span><span class="mi">1</span><span class="o">+</span><span class="n">rho</span><span class="p">(</span><span class="n">r</span><span class="p">)</span><span class="o">*</span><span class="n">deltan</span><span class="p">)</span>
+            <span class="n">dndr</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">theta</span><span class="p">,</span><span class="n">r</span><span class="p">:</span><span class="n">drhodr</span><span class="p">(</span><span class="n">r</span><span class="p">)</span><span class="o">*</span><span class="n">deltan</span>
+            <span class="n">dndtheta</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">theta</span><span class="p">,</span><span class="n">r</span><span class="p">:</span><span class="mf">0.0</span>
+
+
+            <span class="n">deltan</span> <span class="o">=</span> <span class="mf">0.0002879</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="mf">0.0000567</span><span class="o">/</span><span class="n">wavelength</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">n</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">theta</span><span class="p">,</span><span class="n">r</span><span class="p">:(</span><span class="mi">1</span><span class="o">+</span><span class="n">rho</span><span class="p">(</span><span class="n">r</span><span class="p">)</span><span class="o">*</span><span class="n">deltan</span><span class="p">)</span>
+            <span class="n">dndy</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">theta</span><span class="p">,</span><span class="n">r</span><span class="p">:</span><span class="n">drhody</span><span class="p">(</span><span class="n">r</span><span class="p">)</span><span class="o">*</span><span class="n">deltan</span>
+            <span class="n">dndx</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">theta</span><span class="p">,</span><span class="n">r</span><span class="p">:</span><span class="mf">0.0</span>
+            
+            <span class="bp">self</span><span class="o">.</span><span class="n">_rho</span> <span class="o">=</span> <span class="n">rho</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_dT</span> <span class="o">=</span> <span class="n">dT</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_n</span> <span class="o">=</span> <span class="n">n</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_P</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">h</span><span class="p">:</span><span class="n">P</span><span class="p">(</span><span class="n">h</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_T</span> <span class="o">=</span> <span class="n">T</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">n</span><span class="p">,</span><span class="n">dndy</span><span class="p">,</span><span class="n">dndx</span> <span class="o">=</span> <span class="n">n_funcs</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ee</span> <span class="o">=</span> <span class="n">FermatEquationsEuclid</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">dndx</span><span class="p">,</span><span class="n">dndy</span><span class="p">)</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">dT</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Temperature Lapse rate for this atmospheric model. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dT</span>
+
+<div class="viewcode-block" id="FlatCalc.T"><a class="viewcode-back" href="../../../generated/refraction_render.calcs.FlatCalc.html#refraction_render.calcs.FlatCalc.T">[docs]</a>    <span class="k">def</span> <span class="nf">T</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">h</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Temperature function for this atmospheric model. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_T</span><span class="p">(</span><span class="n">h</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FlatCalc.P"><a class="viewcode-back" href="../../../generated/refraction_render.calcs.FlatCalc.html#refraction_render.calcs.FlatCalc.P">[docs]</a>    <span class="k">def</span> <span class="nf">P</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">h</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Pressure function for this atmospheric model. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_P</span><span class="p">(</span><span class="n">h</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FlatCalc.n"><a class="viewcode-back" href="../../../generated/refraction_render.calcs.FlatCalc.html#refraction_render.calcs.FlatCalc.n">[docs]</a>    <span class="k">def</span> <span class="nf">n</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">h</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Index of refraction function for this atmospheric model. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">h</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FlatCalc.rho"><a class="viewcode-back" href="../../../generated/refraction_render.calcs.FlatCalc.html#refraction_render.calcs.FlatCalc.rho">[docs]</a>    <span class="k">def</span> <span class="nf">rho</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">h</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; density function for this atmospheric model. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rho</span><span class="p">(</span><span class="n">h</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FlatCalc.solve_ivp"><a class="viewcode-back" href="../../../generated/refraction_render.calcs.FlatCalc.html#refraction_render.calcs.FlatCalc.solve_ivp">[docs]</a>    <span class="k">def</span> <span class="nf">solve_ivp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">d</span><span class="p">,</span><span class="n">h</span><span class="p">,</span><span class="n">dh</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">alpha</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">dh</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">alpha</span><span class="p">))</span>
+        
+        <span class="n">h</span><span class="p">,</span><span class="n">dh</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">broadcast_arrays</span><span class="p">(</span><span class="n">h</span><span class="p">,</span><span class="n">dh</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ee</span><span class="o">.</span><span class="n">solve_ivp</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">d</span><span class="p">,</span><span class="n">h</span><span class="p">,</span><span class="n">dh</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
+
+
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">refraction_render 1.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Phillip Weinberg.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
+    </div>
+  </body>
+</html>
