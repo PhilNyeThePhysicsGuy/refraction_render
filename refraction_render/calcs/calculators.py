@@ -9,7 +9,7 @@ __all__=["Calc","CurveCalc","FlatCalc","CurveNoRefraction","FlatNoRefraction"]
 class Calc(object):
     """Base class for Calculators."""
     def __init__(self,FermatEquations_obj):
-        if not isinstance(FermatEquations_obj,_FermatEquations_base):
+        if not isinstance(FermatEquations_obj,FermatEquations):
             raise ValueError("FermatEquations_obj must be an instance of FermatEquations")
         self.FermatEquations_obj = FermatEquations_obj
 

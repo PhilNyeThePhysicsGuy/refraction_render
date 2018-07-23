@@ -580,11 +580,12 @@ class Renderer_Composite(object):
         land_model = scene._land_model
 
         heading_mins = np.atleast_1d(heading_mins).ravel()
-        heading_maxs = np.atleast_1d(heading_maxs,dtype=np.float).ravel()
+        heading_maxs = np.atleast_1d(heading_maxs).ravel()
         image_names =  np.atleast_1d(image_names).ravel()
         tup = np.broadcast_arrays(heading_mins,heading_maxs,image_names)
 
         for heading_min,heading_max,image_name in zip(*tup):
+            print(heading_min,heading_max,image_name)
             h_angles = np.arange(heading_min,heading_max,self._dangles)
 
             png_data = np.empty((len(h_angles),n_v,3),dtype=np.uint8)
