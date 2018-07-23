@@ -49,7 +49,7 @@
 <h1>refraction_render.calcs.FermatEquationsCurve<a class="headerlink" href="#refraction-render-calcs-fermatequationscurve" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="refraction_render.calcs.FermatEquationsCurve">
-<em class="property">class </em><code class="descclassname">refraction_render.calcs.</code><code class="descname">FermatEquationsCurve</code><span class="sig-paren">(</span><em>R0</em>, <em>n</em>, <em>dndx</em>, <em>dndy</em>, <em>args=()</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/calcs/euler_equations.html#FermatEquationsCurve"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.calcs.FermatEquationsCurve" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">refraction_render.calcs.</code><code class="descname">FermatEquationsCurve</code><span class="sig-paren">(</span><em>R0</em>, <em>n</em>, <em>dnds</em>, <em>dndy</em>, <em>args=()</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/calcs/euler_equations.html#FermatEquationsCurve"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.calcs.FermatEquationsCurve" title="Permalink to this definition">¶</a></dt>
 <dd><p>Solver for light ray in a 2D Polar geometry for <span class="math">\(n=n(s,y)\)</span>.</p>
 <p>This object takes in three user defined functions:  <span class="math">\(n(s,y), \frac{\partial n(s,y)}{\partial s}, \frac{\partial n(s,y)}{\partial y}\)</span>
 and uses these functions to solve Fermat’s equations for the path of a light ray. Here <span class="math">\(s=R0  heta\)</span> and <span class="math">\(y=r-R0\)</span> in order to make 
@@ -71,7 +71,7 @@ this equation comparable to the Euclidian geometric.</p>
 </table>
 <dl class="method">
 <dt id="refraction_render.calcs.FermatEquationsCurve.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>R0</em>, <em>n</em>, <em>dndx</em>, <em>dndy</em>, <em>args=()</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/calcs/euler_equations.html#FermatEquationsCurve.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.calcs.FermatEquationsCurve.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>R0</em>, <em>n</em>, <em>dnds</em>, <em>dndy</em>, <em>args=()</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/calcs/euler_equations.html#FermatEquationsCurve.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.calcs.FermatEquationsCurve.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Intializes the <cite>FermatEquationsCurve</cite> object.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -106,7 +106,7 @@ this equation comparable to the Euclidian geometric.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#refraction_render.calcs.FermatEquationsCurve.__init__" title="refraction_render.calcs.FermatEquationsCurve.__init__"><code class="xref py py-obj docutils literal"><span class="pre">__init__</span></code></a>(R0,&nbsp;n,&nbsp;dndx,&nbsp;dndy[,&nbsp;args])</td>
+<tr class="row-odd"><td><a class="reference internal" href="#refraction_render.calcs.FermatEquationsCurve.__init__" title="refraction_render.calcs.FermatEquationsCurve.__init__"><code class="xref py py-obj docutils literal"><span class="pre">__init__</span></code></a>(R0,&nbsp;n,&nbsp;dnds,&nbsp;dndy[,&nbsp;args])</td>
 <td>Intializes the <cite>FermatEquationsCurve</cite> object.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="#refraction_render.calcs.FermatEquationsCurve.solve_ivp" title="refraction_render.calcs.FermatEquationsCurve.solve_ivp"><code class="xref py py-obj docutils literal"><span class="pre">solve_ivp</span></code></a>(a,&nbsp;b,&nbsp;y0,&nbsp;dy0,&nbsp;**kwargs)</td>

@@ -126,7 +126,7 @@ class FermatEquationsCurve(FermatEquations):
 
 
     """
-    def __init__(self,R0,n,dndx,dndy,args=()):
+    def __init__(self,R0,n,dnds,dndy,args=()):
         """Intializes the `FermatEquationsCurve` object.
 
         Parameters
