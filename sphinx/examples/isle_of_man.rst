@@ -20,7 +20,7 @@ Results
 
 Here is a a composite which was composed out of a video panning across the Isle of Man:
 
-.. image:: ../../examples/images/isle_of_man_composite.png
+.. image:: ../../examples/images/isle_of_man_composite.jpg
    :align: center
 
 Compare this to the rendered version of the composite, here we have tried to guess the correct temperature profile for the inferior mirage.
