@@ -13,11 +13,7 @@ refraction\_render\.calcs\.CurveCalc
 
    .. autosummary::
    
-      ~CurveCalc.P
-      ~CurveCalc.T
       ~CurveCalc.__init__
-      ~CurveCalc.n
-      ~CurveCalc.rho
       ~CurveCalc.solve_ivp
    
    

@@ -13,11 +13,7 @@ refraction\_render\.calcs\.FlatCalc
 
    .. autosummary::
    
-      ~FlatCalc.P
-      ~FlatCalc.T
       ~FlatCalc.__init__
-      ~FlatCalc.n
-      ~FlatCalc.rho
       ~FlatCalc.solve_ivp
    
    
