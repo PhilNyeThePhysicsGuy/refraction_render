@@ -112,7 +112,7 @@ class std_atmosphere(object):
 
     def T(self,h):
         """ Temperature function for this atmospheric model. """
-        return self._T(h)
+        return self._T(h)-273
 
     def P(self,h):
         """ Pressure function for this atmospheric model. """
