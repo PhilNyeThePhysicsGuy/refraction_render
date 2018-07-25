@@ -18,12 +18,14 @@ Here is the result of the render:
 
 .. image:: ../../examples/example_renders/boat_superior_mirage.png
    :align: center
+   :scale: 10 %
 
 
 Compared to an image of an actual superior mirage:
 
 .. image:: ../../examples/images/boat_superior_mirage.png
    :align: center
+   :scale: 100 %
 
 
 

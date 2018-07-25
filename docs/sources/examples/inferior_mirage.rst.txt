@@ -16,10 +16,12 @@ Here is a result of rendering:
 
 .. image:: ../../examples/example_renders/boat_inferior_mirage.png
    :align: center
+   :scale: 15 %
 
 Compare this to an image taken by a Youtuber named Ranty Flat Earth:
 
 .. image:: ../../examples/images/boat_inferior_mirage.jpg
    :align: center
+   :scale: 10 %
 
 Thanks Ranty for showing the earth is NOT flat!

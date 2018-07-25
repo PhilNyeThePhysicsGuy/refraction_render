@@ -19,21 +19,25 @@ Now to compare reality to our render! Here is one of Soundly's original images o
 
 .. image:: ../../examples/images/pylons.jpg
    :align: center
+   :scale: 50 %
 
 Here is a render trying to reproduce that result.
 
 .. image:: ../../examples/example_renders/soundly_pylons.png
    :align: center
+   :scale: 10 %
 
 One interesting effect which can't really be seen is the inferior mirage which is creating a distortion of the bottom parts of the pylons. Here is a zoomed in view of the actual pylons:
 
 .. image:: ../../examples/images/pylons_zoom.jpg
    :align: center
+   :scale: 50 %
 
 Compared to the rendered model zoomed in:
 
 .. image:: ../../examples/example_renders/soundly_pylons_zoom.png
    :align: center
+   :scale: 10 %
 
 
 
