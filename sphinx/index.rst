@@ -12,7 +12,7 @@ This is a python package which is a very simple ray tracer which allows the user
 
 This is a python package which uses SciPy, NumPy, Numba, pyproj and six so make sure these packages are installed before installing this code. Another useful package is gdal, this is not a requirement to run this code however it is sueful for loading topographical data into python. 
 
-To install simply download the code and from the top directory run `python setup.py install`. To record the installation directory add the option `--record <file_name>` to record the installation path to a file. On unix systems one can easily uninstall the package by running `cat <file_name> | xargs rm -rf`. 
+To install simply download the code and from the top directory run ``python setup.py install``. To record the installation directory add the option ``--record <file_name>`` to record the installation path to a file. On unix systems one can easily uninstall the package by running `cat <file_name> | xargs rm -rf`. 
 
 
 refraction_render API reference
