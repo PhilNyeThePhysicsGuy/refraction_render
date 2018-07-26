@@ -8,7 +8,7 @@ In this example we show how to render an superior mirage.
 
 :download:`download files <../../examples/zips/superior_mirage.zip>`
 
-.. literalinclude:: ../../examples/scripts/superior_mirage.py
+.. literalinclude:: ../../examples/zips/superior_mirage/superior_mirage.py
 	:linenos:
 	:language: python
 	:lines: 1-

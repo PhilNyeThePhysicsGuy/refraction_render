@@ -101,10 +101,7 @@
 50
 51
 52
-53
-54</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span>
-<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="s2">&quot;../&quot;</span><span class="p">)</span>
-<span class="kn">from</span> <span class="nn">refraction_render.renderers</span> <span class="kn">import</span> <span class="n">Scene</span><span class="p">,</span><span class="n">Renderer_35mm</span>
+53</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">refraction_render.renderers</span> <span class="kn">import</span> <span class="n">Scene</span><span class="p">,</span><span class="n">Renderer_35mm</span>
 <span class="kn">from</span> <span class="nn">refraction_render.calcs</span> <span class="kn">import</span> <span class="n">CurveCalc</span><span class="p">,</span><span class="n">FlatCalc</span>
 <span class="kn">from</span> <span class="nn">pyproj</span> <span class="kn">import</span> <span class="n">Geod</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
@@ -112,8 +109,9 @@
 
 
 <span class="k">def</span> <span class="nf">T_prof</span><span class="p">(</span><span class="n">h</span><span class="p">):</span>
-	<span class="n">e</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan_to_num</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">h</span><span class="o">/</span><span class="mf">0.5</span><span class="p">))</span>
-	<span class="k">return</span> <span class="p">(</span><span class="mi">2</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">e</span><span class="p">))</span><span class="o">*</span><span class="mf">0.25</span>
+	<span class="n">e1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">h</span><span class="o">/</span><span class="mf">1.5</span><span class="p">)</span>
+	<span class="n">e2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">h</span><span class="o">/</span><span class="mf">0.1</span><span class="p">)</span>
+	<span class="k">return</span> <span class="p">(</span><span class="mi">2</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">e1</span><span class="p">))</span><span class="o">*</span><span class="mf">0.1</span><span class="o">+</span><span class="p">(</span><span class="mi">2</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">e2</span><span class="p">))</span><span class="o">*</span><span class="mf">0.05</span>
 
 <span class="n">calc_args</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">T_prof</span><span class="o">=</span><span class="n">T_prof</span><span class="p">)</span>
 <span class="n">calc</span> <span class="o">=</span> <span class="n">CurveCalc</span><span class="p">(</span><span class="o">**</span><span class="n">calc_args</span><span class="p">)</span>
@@ -148,24 +146,24 @@
 <span class="n">lat_f</span><span class="p">,</span> <span class="n">lon_f</span> <span class="o">=</span> <span class="n">lat_f</span><span class="o">/</span><span class="n">dists</span><span class="o">.</span><span class="n">sum</span><span class="p">(),</span> <span class="n">lon_f</span><span class="o">/</span><span class="n">dists</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
 
 <span class="c1"># render image with wide field of view</span>
-<span class="n">renderer</span> <span class="o">=</span> <span class="n">Renderer_35mm</span><span class="p">(</span><span class="n">calc</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="n">lat_i</span><span class="p">,</span><span class="n">lon_i</span><span class="p">,(</span><span class="n">lat_f</span><span class="p">,</span><span class="n">lon_f</span><span class="p">),</span><span class="mi">40000</span><span class="p">,</span><span class="n">vert_obs_angle</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
-							<span class="n">vert_res</span><span class="o">=</span><span class="mi">4000</span><span class="p">,</span><span class="n">focal_length</span><span class="o">=</span><span class="mi">600</span><span class="p">)</span>
+<span class="n">renderer</span> <span class="o">=</span> <span class="n">Renderer_35mm</span><span class="p">(</span><span class="n">calc</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="n">lat_i</span><span class="p">,</span><span class="n">lon_i</span><span class="p">,(</span><span class="n">lat_f</span><span class="p">,</span><span class="n">lon_f</span><span class="p">),</span><span class="mi">40000</span><span class="p">,</span>
+	<span class="n">vert_obs_angle</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span><span class="n">vert_res</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span><span class="n">focal_length</span><span class="o">=</span><span class="mi">600</span><span class="p">)</span>
 <span class="n">renderer</span><span class="o">.</span><span class="n">render_scene</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="s2">&quot;soundly_pylons.png&quot;</span><span class="p">)</span>
 
 <span class="c1"># render image with small field of view effectively zooming in</span>
-<span class="n">renderer</span> <span class="o">=</span> <span class="n">Renderer_35mm</span><span class="p">(</span><span class="n">calc</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="n">lat_i</span><span class="p">,</span><span class="n">lon_i</span><span class="p">,(</span><span class="n">lat_f</span><span class="p">,</span><span class="n">lon_f</span><span class="p">),</span><span class="mi">40000</span><span class="p">,</span><span class="n">vert_obs_angle</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
-							<span class="n">vert_res</span><span class="o">=</span><span class="mi">4000</span><span class="p">,</span><span class="n">focal_length</span><span class="o">=</span><span class="mi">2000</span><span class="p">)</span>
+<span class="n">renderer</span> <span class="o">=</span> <span class="n">Renderer_35mm</span><span class="p">(</span><span class="n">calc</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="n">lat_i</span><span class="p">,</span><span class="n">lon_i</span><span class="p">,(</span><span class="n">lat_f</span><span class="p">,</span><span class="n">lon_f</span><span class="p">),</span><span class="mi">40000</span><span class="p">,</span>
+	<span class="n">vert_obs_angle</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span><span class="n">vert_res</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span><span class="n">focal_length</span><span class="o">=</span><span class="mi">2000</span><span class="p">)</span>
 <span class="n">renderer</span><span class="o">.</span><span class="n">render_scene</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="s2">&quot;soundly_pylons_zoom.png&quot;</span><span class="p">)</span>
 </pre></div>
 </td></tr></table></div>
 <p>Now to compare reality to our render! Here is one of Soundly’s original images of the power lines:</p>
 <a class="reference internal image-reference" href="../images/pylons.jpg"><img alt="../images/pylons.jpg" class="align-center" src="../images/pylons.jpg" style="width: 800.0px; height: 447.0px;" /></a>
 <p>Here is a render trying to reproduce that result.</p>
-<a class="reference internal image-reference" href="../images/soundly_pylons.png"><img alt="../images/soundly_pylons.png" class="align-center" src="../images/soundly_pylons.png" style="width: 600.0px; height: 400.0px;" /></a>
+<a class="reference internal image-reference" href="../images/soundly_pylons.png"><img alt="../images/soundly_pylons.png" class="align-center" src="../images/soundly_pylons.png" style="width: 300.0px; height: 200.0px;" /></a>
 <p>One interesting effect which can’t really be seen is the inferior mirage which is creating a distortion of the bottom parts of the pylons. Here is a zoomed in view of the actual pylons:</p>
 <a class="reference internal image-reference" href="../images/pylons_zoom.jpg"><img alt="../images/pylons_zoom.jpg" class="align-center" src="../images/pylons_zoom.jpg" style="width: 640.0px; height: 360.0px;" /></a>
 <p>Compared to the rendered model zoomed in:</p>
-<a class="reference internal image-reference" href="../images/soundly_pylons_zoom.png"><img alt="../images/soundly_pylons_zoom.png" class="align-center" src="../images/soundly_pylons_zoom.png" style="width: 600.0px; height: 400.0px;" /></a>
+<a class="reference internal image-reference" href="../images/soundly_pylons_zoom.png"><img alt="../images/soundly_pylons_zoom.png" class="align-center" src="../images/soundly_pylons_zoom.png" style="width: 300.0px; height: 200.0px;" /></a>
 </div>
 
 

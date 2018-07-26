@@ -28,7 +28,13 @@ classes for solving rays in atmospheric model:
    FlatCalc
    FlatNoRefraction
 
+class for solving standard atmosphere
+-------------------------------------
 
+.. autosummary::
+   :toctree: generated/
+
+   std_atmosphere
 
 """
 

@@ -10,7 +10,7 @@ We have downloaded some elevation data from the SRTM mission which covers the en
 
 :download:`download files <../../examples/zips/isle_of_man.zip>`
 
-.. literalinclude:: ../../examples/scripts/isle_of_man.py
+.. literalinclude:: ../../examples/zips/isle_of_man/isle_of_man.py
 	:linenos:
 	:language: python
 	:lines: 1-
@@ -26,7 +26,7 @@ Here is a a composite which was composed out of a video panning across the Isle 
 
 Compare this to the rendered version of the composite, here we have tried to guess the correct temperature profile for the inferior mirage.
 
-.. image:: ../../examples/example_renders/Isle_of_Man_composite_render.png
+.. image:: ../../examples/example_renders/Isle_of_Man_composite.png
    :align: center
    :scale: 5 %
 

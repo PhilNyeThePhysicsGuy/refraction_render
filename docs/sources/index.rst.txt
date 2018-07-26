@@ -8,6 +8,21 @@
 Welcome to refraction_render's documentation!
 =============================================
 
+.. |logo1| image:: soundly.gif
+   :align: middle
+.. |logo2| image:: stenaline.gif
+   :align: top
+.. |turbine| image:: sphere_composite.png
+   :scale: 10%
+   :align: middle
+
+
++---------+---------+
+| |logo1| | |logo2| |
++---------+---------+
+|       |turbine|   |
++-------------------+
+
 This is a python package which is a very simple ray tracer which allows the user to ray trace simple topographical data as well as images in the presence of atmospheric refraction. The package includes tools to calculate the `standard atmospheric model <https://en.wikipedia.org/wiki/International_Standard_Atmosphere>`_ for an arbitrary temperature profile. From this profile it can generate an index of refraction profile. The Rays trajectories are solved for using `Fermat's principle <https://en.wikipedia.org/wiki/Fermat%27s_principle>`_.
 
 This is a python package which uses SciPy, NumPy, Numba, pyproj and six so make sure these packages are installed before installing this code. Another useful package is gdal, this is not a requirement to run this code however it is sueful for loading topographical data into python. 

@@ -7,7 +7,7 @@ In this example we show how to render an inferior mirage.
 
 :download:`download files <../../examples/zips/inferior_mirage.zip>`
 
-.. literalinclude:: ../../examples/scripts/inferior_mirage.py
+.. literalinclude:: ../../examples/zips/inferior_mirage/inferior_mirage.py
 	:linenos:
 	:language: python
 	:lines: 1-

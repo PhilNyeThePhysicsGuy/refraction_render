@@ -115,15 +115,9 @@
 64
 65
 66
-67
-68
-69</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span>
-<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="s2">&quot;../&quot;</span><span class="p">)</span>
-
-<span class="kn">from</span> <span class="nn">refraction_render.renderers</span> <span class="kn">import</span> <span class="n">Scene</span><span class="p">,</span><span class="n">Renderer_35mm</span><span class="p">,</span><span class="n">Renderer_Composite</span>
+67</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">refraction_render.renderers</span> <span class="kn">import</span> <span class="n">Scene</span><span class="p">,</span><span class="n">Renderer_35mm</span><span class="p">,</span><span class="n">Renderer_Composite</span>
 <span class="kn">from</span> <span class="nn">refraction_render.calcs</span> <span class="kn">import</span> <span class="n">CurveCalc</span><span class="p">,</span><span class="n">FlatCalc</span>
 <span class="kn">from</span> <span class="nn">refraction_render.misc</span> <span class="kn">import</span> <span class="n">mi_to_m</span><span class="p">,</span><span class="n">ft_to_m</span>
-
 <span class="kn">from</span> <span class="nn">pyproj</span> <span class="kn">import</span> <span class="n">Geod</span>
 <span class="kn">import</span> <span class="nn">gdal</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
@@ -132,18 +126,18 @@
 
 
 <span class="k">def</span> <span class="nf">cfunc</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="n">h</span><span class="p">,</span><span class="n">h_max</span><span class="p">,</span><span class="n">d_min</span><span class="p">):</span>
-	<span class="c1"># this is a function which should give the color of the pixels on the</span>
-	<span class="c1"># rendered topographical data. h_max is the maximum value of the elevation</span>
-	<span class="c1"># which for the isle of man is 621 meters, d_min is roughly the minimum distance</span>
-	<span class="c1"># of land away from the observer, which is roughly 50 km. </span>
-	<span class="n">ng</span> <span class="o">=</span> <span class="mi">100</span><span class="o">+</span><span class="p">(</span><span class="mi">255</span><span class="o">-</span><span class="mi">100</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">d</span><span class="o">/</span><span class="n">d_min</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mi">4</span><span class="p">)</span>
-	<span class="n">nr</span> <span class="o">=</span> <span class="n">ng</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">h</span><span class="o">/</span><span class="n">h_max</span><span class="p">)</span>
-	<span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">broadcast_arrays</span><span class="p">(</span><span class="n">nr</span><span class="p">,</span><span class="n">ng</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span><span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="c1"># this is a function which should give the color of the pixels on the</span>
+    <span class="c1"># rendered topographical data. h_max is the maximum value of the elevation</span>
+    <span class="c1"># which for the isle of man is 621 meters, d_min is roughly the minimum distance</span>
+    <span class="c1"># of land away from the observer, which is roughly 50 km. </span>
+    <span class="n">ng</span> <span class="o">=</span> <span class="mi">100</span><span class="o">+</span><span class="p">(</span><span class="mi">255</span><span class="o">-</span><span class="mi">100</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">d</span><span class="o">/</span><span class="n">d_min</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mi">4</span><span class="p">)</span>
+    <span class="n">nr</span> <span class="o">=</span> <span class="n">ng</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">h</span><span class="o">/</span><span class="n">h_max</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">broadcast_arrays</span><span class="p">(</span><span class="n">nr</span><span class="p">,</span><span class="n">ng</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span><span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">T_prof</span><span class="p">(</span><span class="n">h</span><span class="p">):</span>
-	<span class="n">e1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">h</span><span class="o">/</span><span class="mf">1.5</span><span class="p">)</span>
-	<span class="n">e2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">h</span><span class="o">/</span><span class="mf">0.1</span><span class="p">)</span>
-	<span class="k">return</span> <span class="p">(</span><span class="mi">2</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">e1</span><span class="p">))</span><span class="o">*</span><span class="mf">0.1</span><span class="o">+</span><span class="p">(</span><span class="mi">2</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">e2</span><span class="p">))</span><span class="o">*</span><span class="mf">0.15</span>
+    <span class="n">e1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">h</span><span class="o">/</span><span class="mf">1.5</span><span class="p">)</span>
+    <span class="n">e2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">h</span><span class="o">/</span><span class="mf">0.1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="mi">2</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">e1</span><span class="p">))</span><span class="o">*</span><span class="mf">0.1</span><span class="o">+</span><span class="p">(</span><span class="mi">2</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">e2</span><span class="p">))</span><span class="o">*</span><span class="mf">0.15</span>
 
 <span class="c1"># create calculator</span>
 <span class="n">calc_args</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">T0</span><span class="o">=</span><span class="mf">8.3</span><span class="p">,</span><span class="n">P0</span><span class="o">=</span><span class="mi">103000</span><span class="p">,</span><span class="n">T_prof</span><span class="o">=</span><span class="n">T_prof</span><span class="p">)</span>
@@ -156,7 +150,8 @@
 
 <span class="n">lats</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">54</span><span class="p">,</span><span class="mi">55</span><span class="p">,</span><span class="n">n_lat</span><span class="p">)</span> <span class="c1"># get latitudes of raster</span>
 <span class="n">lons</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span><span class="n">n_lon</span><span class="p">)</span> <span class="c1"># get longitudes of raster</span>
-<span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">,:]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="c1"># data must be flipped row whys so that latitude grid is strictly increasing</span>
+<span class="c1"># data must be flipped row whys so that latitude grid is strictly increasing</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">,:]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> 
 
 <span class="n">d_max</span> <span class="o">=</span> <span class="n">mi_to_m</span><span class="p">(</span><span class="mi">40</span><span class="p">)</span>
 <span class="n">h_obs</span><span class="p">,</span><span class="n">lat_obs</span><span class="p">,</span> <span class="n">lon_obs</span> <span class="o">=</span> <span class="mi">35</span><span class="p">,</span> <span class="mf">54.487375</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.599760</span>
@@ -168,16 +163,17 @@
 <span class="n">s</span><span class="o">.</span><span class="n">add_elevation_model</span><span class="p">(</span><span class="n">lats</span><span class="p">,</span><span class="n">lons</span><span class="p">,</span><span class="n">data</span><span class="p">)</span>
 
 
-<span class="n">renderer</span> <span class="o">=</span> <span class="n">Renderer_35mm</span><span class="p">(</span><span class="n">calc</span><span class="p">,</span><span class="n">h_obs</span><span class="p">,</span><span class="n">lat_obs</span><span class="p">,</span><span class="n">lon_obs</span><span class="p">,(</span><span class="n">lat_lighthouse</span><span class="p">,</span><span class="n">lon_lighthouse</span><span class="p">),</span><span class="n">d_max</span><span class="p">,</span>
-							<span class="n">vert_res</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span><span class="n">focal_length</span><span class="o">=</span><span class="mi">2000</span><span class="p">)</span>
+<span class="n">renderer</span> <span class="o">=</span> <span class="n">Renderer_35mm</span><span class="p">(</span><span class="n">calc</span><span class="p">,</span><span class="n">h_obs</span><span class="p">,</span><span class="n">lat_obs</span><span class="p">,</span><span class="n">lon_obs</span><span class="p">,(</span><span class="n">lat_lighthouse</span><span class="p">,</span><span class="n">lon_lighthouse</span><span class="p">),</span>
+	<span class="n">d_max</span><span class="p">,</span><span class="n">vert_res</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span><span class="n">focal_length</span><span class="o">=</span><span class="mi">2000</span><span class="p">)</span>
+
 <span class="n">renderer</span><span class="o">.</span><span class="n">render_scene</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="s1">&#39;lighthouse_render.png&#39;</span><span class="p">,</span><span class="n">cfunc</span><span class="o">=</span><span class="n">cfunc</span><span class="p">,</span><span class="n">cfunc_args</span><span class="o">=</span><span class="p">(</span><span class="mi">621</span><span class="p">,</span><span class="mi">50000</span><span class="p">),</span><span class="n">disp</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
-<span class="n">renderer</span> <span class="o">=</span> <span class="n">Renderer_Composite</span><span class="p">(</span><span class="n">calc</span><span class="p">,</span><span class="n">h_obs</span><span class="p">,</span><span class="n">lat_obs</span><span class="p">,</span><span class="n">lon_obs</span><span class="p">,</span><span class="n">d_max</span><span class="p">,</span>
-							<span class="n">vert_res</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span><span class="n">focal_length</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span><span class="n">disp</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">renderer</span> <span class="o">=</span> <span class="n">Renderer_Composite</span><span class="p">(</span><span class="n">calc</span><span class="p">,</span><span class="n">h_obs</span><span class="p">,</span><span class="n">lat_obs</span><span class="p">,</span><span class="n">lon_obs</span><span class="p">,</span><span class="n">d_max</span><span class="p">,</span><span class="n">vert_res</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span><span class="n">focal_length</span><span class="o">=</span><span class="mi">2000</span><span class="p">)</span>
 
 <span class="n">heading_min</span> <span class="o">=</span> <span class="mi">235</span>
 <span class="n">heading_max</span> <span class="o">=</span> <span class="mi">259</span>
-<span class="n">renderer</span><span class="o">.</span><span class="n">render_scene</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="s2">&quot;Isle_of_Man_composite.png&quot;</span><span class="p">,</span><span class="n">heading_min</span><span class="p">,</span><span class="n">heading_max</span><span class="p">,</span><span class="n">cfunc</span><span class="o">=</span><span class="n">cfunc</span><span class="p">,</span><span class="n">disp</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">renderer</span><span class="o">.</span><span class="n">render_scene</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="s2">&quot;Isle_of_Man_composite.png&quot;</span><span class="p">,</span><span class="n">heading_min</span><span class="p">,</span><span class="n">heading_max</span><span class="p">,</span>
+	<span class="n">cfunc</span><span class="o">=</span><span class="n">cfunc</span><span class="p">,</span><span class="n">cfunc_args</span><span class="o">=</span><span class="p">(</span><span class="mi">621</span><span class="p">,</span><span class="mi">50000</span><span class="p">),</span><span class="n">disp</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
 
 
@@ -194,7 +190,7 @@
 <p>Here is a a composite which was composed out of a video panning across the Isle of Man:</p>
 <a class="reference internal image-reference" href="../images/isle_of_man_composite.jpg"><img alt="../images/isle_of_man_composite.jpg" class="align-center" src="../images/isle_of_man_composite.jpg" style="width: 781.0px; height: 28.9px;" /></a>
 <p>Compare this to the rendered version of the composite, here we have tried to guess the correct temperature profile for the inferior mirage.</p>
-<a class="reference internal image-reference" href="../images/Isle_of_Man_composite_render.png"><img alt="../images/Isle_of_Man_composite_render.png" class="align-center" src="../images/Isle_of_Man_composite_render.png" style="width: 870.95px; height: 25.0px;" /></a>
+<a class="reference internal image-reference" href="../images/Isle_of_Man_composite.png"><img alt="../images/Isle_of_Man_composite.png" class="align-center" src="../images/Isle_of_Man_composite.png" style="width: 870.95px; height: 25.0px;" /></a>
 <p>Another interesting thing to look at on the Island is Maughold lighthouse which stimluated much debate as some have argued that it should not be able to be seen from the location where Sleeping Warrior took his video. However we have modeled the lighthouse in its correct position and it turns out that because of the refraction, the light house is actually being very slightly loomed up. Yet another brilliant observation by Mr. Sleeping Warrior proving the Earth is a globe!</p>
 <a class="reference internal image-reference" href="../images/lighthouse_render.png"><img alt="../images/lighthouse_render.png" class="align-center" src="../images/lighthouse_render.png" style="width: 600.0px; height: 400.0px;" /></a>
 </div>

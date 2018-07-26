@@ -9,7 +9,7 @@ So there is a YouTuber named Soundly who makes observations of various structure
 
 In this example shows how we can use the render to model the observation of some power lines which go across a significant portion of the lake:
 
-.. literalinclude:: ../../examples/scripts/soundly_pylons.py
+.. literalinclude:: ../../examples/zips/soundly_pylons/soundly_pylons.py
 	:linenos:
 	:language: python
 	:lines: 1-
