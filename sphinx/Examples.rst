@@ -1,9 +1,6 @@
 Examples
 --------
 
-.. image:: sphere_composite.png
-   :scale: 100%
-   :align: middle
 
 The following Python scripts demonstrate basic and advanced functionality of the render:
    * :ref:`inferior_mirage-label`, :download:`download files <../examples/zips/inferior_mirage.zip>`

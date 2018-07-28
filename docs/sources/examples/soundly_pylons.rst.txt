@@ -25,7 +25,7 @@ Here is a render trying to reproduce that result.
 
 .. image:: ../../examples/example_renders/soundly_pylons.png
    :align: center
-   :scale: 10 %
+   :scale: 30 %
 
 One interesting effect which can't really be seen is the inferior mirage which is creating a distortion of the bottom parts of the pylons. Here is a zoomed in view of the actual pylons:
 
@@ -37,7 +37,7 @@ Compared to the rendered model zoomed in:
 
 .. image:: ../../examples/example_renders/soundly_pylons_zoom.png
    :align: center
-   :scale: 10 %
+   :scale: 30 %
 
 
 
