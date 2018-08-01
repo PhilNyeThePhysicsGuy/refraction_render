@@ -43,11 +43,11 @@ lat_i, lon_i = 30.077320, -90.404888
 lat_f, lon_f = lat_f/dists.sum(), lon_f/dists.sum()
 
 # render image with wide field of view
-renderer = Renderer_35mm(calc,4,lat_i,lon_i,(lat_f,lon_f),40000,
+renderer = Renderer_35mm(calc,10,lat_i,lon_i,(lat_f,lon_f),40000,
 	vert_obs_angle=0.0,vert_res=2000,focal_length=600)
 renderer.render_scene(s,"soundly_pylons.png")
 
 # render image with small field of view effectively zooming in
-renderer = Renderer_35mm(calc,4,lat_i,lon_i,(lat_f,lon_f),40000,
+renderer = Renderer_35mm(calc,10,lat_i,lon_i,(lat_f,lon_f),40000,
 	vert_obs_angle=0.0,vert_res=2000,focal_length=2000)
 renderer.render_scene(s,"soundly_pylons_zoom.png")
