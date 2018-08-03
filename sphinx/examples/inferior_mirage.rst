@@ -20,8 +20,8 @@ Here is a result of rendering:
 
 Compare this to an image taken by a Youtuber named Ranty Flat Earth:
 
-.. image:: ../../examples/images/boat_inferior_mirage.jpg
+.. image:: ../../examples/images/inferior_mirage.jpg
    :align: center
-   :scale: 10 %
+   :scale: 40 %
 
 Thanks Ranty for showing the earth is NOT flat!
