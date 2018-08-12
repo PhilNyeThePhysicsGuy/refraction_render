@@ -99,7 +99,6 @@ def _defualt_cfunc(d,heights):
     # nr = ng*(1-heights/(heights.max()+1))
     return np.stack(np.broadcast_arrays(0,ng,0),axis=-1)
 
-
 def _render(png_data,rs,ds,h_angles,surface_color,background_color,terrain_args,image_args,disp=False):
 
     lat_obs,lon_obs,terrain,cfunc,cfunc_args = terrain_args
@@ -164,11 +163,49 @@ def _render(png_data,rs,ds,h_angles,surface_color,background_color,terrain_args,
             if np.any(v_mask):
                 i = np.argwhere(h_mask).ravel()
                 j = np.argwhere(v_mask).ravel()
-                k = np.searchsorted(h_px,h_angles[i])
-                l = np.searchsorted(v_px,rh[j])
 
                 _update_png_data(i,j,png_data,k,l,img_png_data)
-                
+
+
+
+def _prep_scene(scene,lat_obs,lon_obs,geod,sol):
+    img_datas = []
+    ray_heights = {}
+
+    for image,(im,image_data) in iteritems(scene._image_dict):
+        px_width,px_height = im.size
+        im_data = np.array(im)
+        im_data = im_data[::-1,:,:].transpose((1,0,2)).copy()
+
+
+
+        for lat,lon,img_height,width,height,heading in image_data:
+            horz_pixel_pos = np.linspace(-width/2,width/2,px_width)
+            v_px = img_height + np.linspace(0,height,px_height)
+
+            f_az,b_az,dist = geod.inv(lon_obs,lat_obs,lon,lat)
+
+            if heading is None:
+                alpha = 0.0
+            else:
+                b_az = b_az%360
+                heading = heading%360
+                alpha = np.deg2rad(heading - b_az)
+
+            h_px=np.arctan(horz_pixel_pos*np.cos(alpha)/dist)
+            np.rad2deg(h_px,out=h_px)
+            h_px += (f_az % 360)
+            np.mod(h_px,360,out=h_px)
+
+            if dist not in ray_heights:
+                ray_heights[dist] = sol(dist)
+
+            img_datas.append((im_data,h_px,v_px,dist))
+
+    img_datas.sort(key=lambda x:-x[-1])
+
+    return img_datas,ray_heights
+
 
 class Renderer_35mm(object):
     """
@@ -306,6 +343,7 @@ class Renderer_35mm(object):
         x_grid = np.linspace(-18,18,self._horz_res)
         self._h_angles = np.rad2deg(np.arctan(x_grid/self._focal_length))+f_az
 
+
     def render_scene(self,scene,image_name,surface_color=None,background_color=None,cfunc=_defualt_cfunc,cfunc_args=(),disp=False,eye_level=False):
         """Render a scene object for the renderer's given field of view and direction. 
 
@@ -347,35 +385,7 @@ class Renderer_35mm(object):
         else:
             background_color = np.fromiter(background_color,dtype=np.uint8)
 
-        img_datas = []
-        ray_heights = {}
-
-        for image,(im,image_data) in iteritems(scene._image_dict):
-            im_data = np.array(im)
-            im_data = im_data[::-1,:,:].transpose((1,0,2)).copy()
-
-            for lat,lon,vert_pixel_pos,horz_pixel_pos,heading in image_data:
-                v_px = vert_pixel_pos
-                f_az,b_az,dist = self._geod.inv(self._lon_obs,self._lat_obs,lon,lat)
-
-                if heading is None:
-                    alpha = 0.0
-                else:
-                    b_az = b_az%360
-                    heading = heading%360
-                    alpha = np.deg2rad(heading - b_az)
-
-                h_px=np.arctan(horz_pixel_pos*np.cos(alpha)/dist)
-                np.rad2deg(h_px,out=h_px)
-                h_px += (f_az % 360)
-                np.mod(h_px,360,out=h_px)
-
-                if dist not in ray_heights:
-                    ray_heights[dist] = self._sol(dist)
-
-                img_datas.append((im_data,h_px,v_px,dist))
-
-        img_datas.sort(key=lambda x:-x[-1])
+        img_datas,ray_heights = _prep_scene(scene,self._lat_obs,self._lon_obs,self._geod,self._sol)
 
         land_model = scene._land_model
 
@@ -399,8 +409,6 @@ class Renderer_35mm(object):
         png_data = png_data[::-1,:,:]
         im = Image.fromarray(png_data,mode="RGB")
         im.save(image_name)
-
-
 
 
 class Renderer_Composite(object):
@@ -545,38 +553,9 @@ class Renderer_Composite(object):
         else:
             background_color = np.fromiter(background_color)
 
-        img_datas = []
-        ray_heights = {}
-
-        for image,(im,image_data) in iteritems(scene._image_dict):
-            im_data = np.array(im)
-            im_data = im_data[::-1,:,:].transpose((1,0,2)).copy()
-
-            for lat,lon,vert_pixel_pos,horz_pixel_pos,heading in image_data:
-                v_px = vert_pixel_pos
-                f_az,b_az,dist = self._geod.inv(self._lon_obs,self._lat_obs,lon,lat)
-
-                if heading is None:
-                    alpha = 0.0
-                else:
-                    b_az = b_az%360
-                    heading = heading%360
-                    alpha = np.deg2rad(heading - b_az)
-
-                h_px=np.arctan(horz_pixel_pos*np.cos(alpha)/dist)
-                np.rad2deg(h_px,out=h_px)
-                h_px += (f_az % 360)
-                np.mod(h_px,360,out=h_px)
-
-                if dist not in ray_heights:
-                    ray_heights[dist] = self._sol(dist)
-
-                img_datas.append((im_data,h_px,v_px,dist))
-
-        img_datas.sort(key=lambda x:-x[-1])
-        
         n_v = self._rs.shape[0]
-
+        img_datas,ray_heights = _prep_scene(scene,self._lat_obs,self._lon_obs,self._geod,self._sol)
+        
         land_model = scene._land_model
 
         heading_mins = np.atleast_1d(heading_mins).ravel()
@@ -699,11 +678,8 @@ class Scene(object):
         if height == -1:
             height = width*aspect
 
-        vert_pixel_pos = h + np.linspace(0,height,px_height)
-        horz_pixel_pos = np.linspace(-width/2,width/2,px_width)
 
-
-        self._image_dict[image][1].append((lat,lon,vert_pixel_pos,horz_pixel_pos,heading))
+        self._image_dict[image][1].append((lat,lon,h,width,height,heading))
 
 
 class land_model(object):
