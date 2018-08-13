@@ -55,6 +55,7 @@
 <span class="kn">from</span> <span class="nn">pyproj</span> <span class="k">import</span> <span class="n">Geod</span>
 <span class="kn">from</span> <span class="nn">six</span> <span class="k">import</span> <span class="n">iteritems</span>
 <span class="kn">import</span> <span class="nn">scipy.interpolate</span> <span class="k">as</span> <span class="nn">interp</span>
+<span class="kn">import</span> <span class="nn">scipy.signal</span> <span class="k">as</span> <span class="nn">signal</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <span class="n">__all__</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Scene&quot;</span><span class="p">,</span><span class="s2">&quot;Renderer_35mm&quot;</span><span class="p">,</span><span class="s2">&quot;Renderer_Composite&quot;</span><span class="p">,</span><span class="s2">&quot;land_model&quot;</span><span class="p">]</span>
@@ -74,6 +75,16 @@
 <span class="nd">@vectorize</span><span class="p">([</span><span class="s2">&quot;b1(f8,f8,f8)&quot;</span><span class="p">])</span>
 <span class="k">def</span> <span class="nf">_get_bounds</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">a_min</span><span class="p">,</span><span class="n">a_max</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">a</span> <span class="o">&gt;=</span> <span class="n">a_min</span> <span class="ow">and</span> <span class="n">a</span> <span class="o">&lt;</span> <span class="n">a_max</span>
+
+<span class="nd">@njit</span>
+<span class="k">def</span> <span class="nf">_get_bounds_sum</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">a_min</span><span class="p">,</span><span class="n">a_max</span><span class="p">):</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">a_min</span> <span class="ow">and</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">a_max</span><span class="p">:</span>
+            <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="n">count</span>
 
 <span class="nd">@njit</span>
 <span class="k">def</span> <span class="nf">_get_vertical_mask</span><span class="p">(</span><span class="n">rh</span><span class="p">,</span><span class="n">h_min</span><span class="p">,</span><span class="n">h_max</span><span class="p">,</span><span class="n">inds</span><span class="p">,</span><span class="n">ds</span><span class="p">,</span><span class="n">d</span><span class="p">,</span><span class="n">sky</span><span class="p">,</span><span class="n">mask</span><span class="p">):</span>
@@ -123,17 +134,17 @@
         <span class="n">ii</span> <span class="o">=</span> <span class="n">i</span><span class="p">[</span><span class="n">a</span><span class="p">]</span>
         <span class="n">kk</span> <span class="o">=</span> <span class="n">k</span><span class="p">[</span><span class="n">a</span><span class="p">]</span>
         <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">img_png_data</span><span class="p">[</span><span class="n">kk</span><span class="p">,</span><span class="n">l</span><span class="p">[</span><span class="n">b</span><span class="p">],</span><span class="mi">3</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="n">png_data</span><span class="p">[</span><span class="n">ii</span><span class="p">,</span><span class="n">j</span><span class="p">[</span><span class="n">b</span><span class="p">],:]</span> <span class="o">=</span> <span class="n">img_png_data</span><span class="p">[</span><span class="n">kk</span><span class="p">,</span><span class="n">l</span><span class="p">[</span><span class="n">b</span><span class="p">],:</span><span class="mi">3</span><span class="p">]</span>
+            <span class="n">alpha</span> <span class="o">=</span> <span class="n">img_png_data</span><span class="p">[</span><span class="n">kk</span><span class="p">,</span><span class="n">l</span><span class="p">[</span><span class="n">b</span><span class="p">],</span><span class="mi">3</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="mf">255.0</span><span class="p">)</span>
+            <span class="n">png_data</span><span class="p">[</span><span class="n">ii</span><span class="p">,</span><span class="n">j</span><span class="p">[</span><span class="n">b</span><span class="p">],:]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">alpha</span><span class="p">)</span><span class="o">*</span><span class="n">png_data</span><span class="p">[</span><span class="n">ii</span><span class="p">,</span><span class="n">j</span><span class="p">[</span><span class="n">b</span><span class="p">],:]</span> <span class="o">+</span> <span class="n">alpha</span><span class="o">*</span><span class="n">img_png_data</span><span class="p">[</span><span class="n">kk</span><span class="p">,</span><span class="n">l</span><span class="p">[</span><span class="n">b</span><span class="p">],:</span><span class="mi">3</span><span class="p">]</span>
 
 <span class="nd">@njit</span>
 <span class="k">def</span> <span class="nf">_update_png_data_slice</span><span class="p">(</span><span class="n">j</span><span class="p">,</span><span class="n">png_data</span><span class="p">,</span><span class="n">l</span><span class="p">,</span><span class="n">img_png_data</span><span class="p">):</span>
     <span class="n">m</span> <span class="o">=</span> <span class="n">j</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
     <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">img_png_data</span><span class="p">[</span><span class="n">l</span><span class="p">[</span><span class="n">b</span><span class="p">],</span><span class="mi">3</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">png_data</span><span class="p">[</span><span class="n">j</span><span class="p">[</span><span class="n">b</span><span class="p">],:]</span> <span class="o">=</span> <span class="n">img_png_data</span><span class="p">[</span><span class="n">l</span><span class="p">[</span><span class="n">b</span><span class="p">],:</span><span class="mi">3</span><span class="p">]</span>
-
+       <span class="k">if</span> <span class="n">img_png_data</span><span class="p">[</span><span class="n">l</span><span class="p">[</span><span class="n">b</span><span class="p">],</span><span class="mi">3</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">alpha</span> <span class="o">=</span> <span class="n">img_png_data</span><span class="p">[</span><span class="n">l</span><span class="p">[</span><span class="n">b</span><span class="p">],</span><span class="mi">3</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="mf">255.0</span><span class="p">)</span>
+            <span class="n">png_data</span><span class="p">[</span><span class="n">j</span><span class="p">[</span><span class="n">b</span><span class="p">],:]</span> <span class="o">=</span>  <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">alpha</span><span class="p">)</span><span class="o">*</span><span class="n">png_data</span><span class="p">[</span><span class="n">j</span><span class="p">[</span><span class="n">b</span><span class="p">],:]</span> <span class="o">+</span> <span class="n">alpha</span><span class="o">*</span><span class="n">img_png_data</span><span class="p">[</span><span class="n">l</span><span class="p">[</span><span class="n">b</span><span class="p">],:</span><span class="mi">3</span><span class="p">]</span>
 
 <span class="k">def</span> <span class="nf">_check_gps</span><span class="p">(</span><span class="n">lat</span><span class="p">,</span><span class="n">lon</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">lat</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mi">90</span><span class="p">)</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">lat</span> <span class="o">&gt;</span> <span class="mi">90</span><span class="p">):</span>
@@ -146,7 +157,6 @@
     <span class="n">ng</span> <span class="o">=</span> <span class="mi">150</span>
     <span class="c1"># nr = ng*(1-heights/(heights.max()+1))</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">broadcast_arrays</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">ng</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span><span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
-
 
 <span class="k">def</span> <span class="nf">_render</span><span class="p">(</span><span class="n">png_data</span><span class="p">,</span><span class="n">rs</span><span class="p">,</span><span class="n">ds</span><span class="p">,</span><span class="n">h_angles</span><span class="p">,</span><span class="n">surface_color</span><span class="p">,</span><span class="n">background_color</span><span class="p">,</span><span class="n">terrain_args</span><span class="p">,</span><span class="n">image_args</span><span class="p">,</span><span class="n">disp</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 
@@ -216,7 +226,56 @@
                 <span class="n">l</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">searchsorted</span><span class="p">(</span><span class="n">v_px</span><span class="p">,</span><span class="n">rh</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
 
                 <span class="n">_update_png_data</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">png_data</span><span class="p">,</span><span class="n">k</span><span class="p">,</span><span class="n">l</span><span class="p">,</span><span class="n">img_png_data</span><span class="p">)</span>
-                
+
+
+
+<span class="k">def</span> <span class="nf">_prep_scene</span><span class="p">(</span><span class="n">scene</span><span class="p">,</span><span class="n">dh_angle</span><span class="p">,</span><span class="n">lat_obs</span><span class="p">,</span><span class="n">lon_obs</span><span class="p">,</span><span class="n">geod</span><span class="p">,</span><span class="n">sol</span><span class="p">):</span>
+    <span class="n">img_datas</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">ray_heights</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">for</span> <span class="n">image</span><span class="p">,(</span><span class="n">im</span><span class="p">,</span><span class="n">image_data</span><span class="p">)</span> <span class="ow">in</span> <span class="n">iteritems</span><span class="p">(</span><span class="n">scene</span><span class="o">.</span><span class="n">_image_dict</span><span class="p">):</span>
+        <span class="n">px_width</span><span class="p">,</span><span class="n">px_height</span> <span class="o">=</span> <span class="n">im</span><span class="o">.</span><span class="n">size</span>
+
+        <span class="k">for</span> <span class="n">lat</span><span class="p">,</span><span class="n">lon</span><span class="p">,</span><span class="n">img_height</span><span class="p">,</span><span class="n">width</span><span class="p">,</span><span class="n">height</span><span class="p">,</span><span class="n">heading</span> <span class="ow">in</span> <span class="n">image_data</span><span class="p">:</span>
+            <span class="n">horz_pixel_pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="n">width</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span><span class="n">width</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span><span class="n">px_width</span><span class="p">)</span>
+            <span class="n">v_px</span> <span class="o">=</span> <span class="n">img_height</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">height</span><span class="p">,</span><span class="n">px_height</span><span class="p">)</span>
+
+            <span class="n">f_az</span><span class="p">,</span><span class="n">b_az</span><span class="p">,</span><span class="n">dist</span> <span class="o">=</span> <span class="n">geod</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">lon_obs</span><span class="p">,</span><span class="n">lat_obs</span><span class="p">,</span><span class="n">lon</span><span class="p">,</span><span class="n">lat</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">heading</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">b_az</span> <span class="o">=</span> <span class="n">b_az</span><span class="o">%</span><span class="mi">360</span>
+                <span class="n">heading</span> <span class="o">=</span> <span class="n">heading</span><span class="o">%</span><span class="mi">360</span>
+                <span class="n">alpha</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">heading</span> <span class="o">-</span> <span class="n">b_az</span><span class="p">)</span>
+
+            <span class="n">h_px</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arctan</span><span class="p">(</span><span class="n">horz_pixel_pos</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">alpha</span><span class="p">)</span><span class="o">/</span><span class="n">dist</span><span class="p">)</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">rad2deg</span><span class="p">(</span><span class="n">h_px</span><span class="p">,</span><span class="n">out</span><span class="o">=</span><span class="n">h_px</span><span class="p">)</span>
+            <span class="n">h_px</span> <span class="o">+=</span> <span class="p">(</span><span class="n">f_az</span> <span class="o">%</span> <span class="mi">360</span><span class="p">)</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">mod</span><span class="p">(</span><span class="n">h_px</span><span class="p">,</span><span class="mi">360</span><span class="p">,</span><span class="n">out</span><span class="o">=</span><span class="n">h_px</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">dist</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ray_heights</span><span class="p">:</span>
+                <span class="n">rh</span> <span class="o">=</span> <span class="n">sol</span><span class="p">(</span><span class="n">dist</span><span class="p">)</span>
+                <span class="n">ray_heights</span><span class="p">[</span><span class="n">dist</span><span class="p">]</span> <span class="o">=</span> <span class="n">rh</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">rh</span> <span class="o">=</span> <span class="n">ray_heights</span><span class="p">[</span><span class="n">dist</span><span class="p">]</span>
+
+            <span class="n">n_h</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">h_px</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">h_px</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="n">dh_angle</span><span class="p">)</span>
+            <span class="n">n_v</span> <span class="o">=</span> <span class="n">_get_bounds_sum</span><span class="p">(</span><span class="n">rh</span><span class="p">,</span><span class="n">v_px</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">v_px</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+            <span class="k">if</span> <span class="n">n_h</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">n_v</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">new_im</span> <span class="o">=</span> <span class="n">im</span><span class="o">.</span><span class="n">resize</span><span class="p">((</span><span class="n">n_h</span><span class="p">,</span><span class="n">n_v</span><span class="p">),</span><span class="n">Image</span><span class="o">.</span><span class="n">LANCZOS</span><span class="p">)</span>
+                <span class="n">im_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">new_im</span><span class="p">)</span>
+                <span class="n">im_data</span> <span class="o">=</span> <span class="n">im_data</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">,:,:]</span><span class="o">.</span><span class="n">transpose</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+                <span class="n">h_px</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">h_px</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">h_px</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="n">n_h</span><span class="p">)</span>
+                <span class="n">v_px</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">v_px</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">v_px</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="n">n_v</span><span class="p">)</span>
+                <span class="n">img_datas</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">im_data</span><span class="p">,</span><span class="n">h_px</span><span class="p">,</span><span class="n">v_px</span><span class="p">,</span><span class="n">dist</span><span class="p">))</span>
+
+
+    <span class="n">img_datas</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span><span class="o">-</span><span class="n">x</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">img_datas</span><span class="p">,</span><span class="n">ray_heights</span>
+
 
 <div class="viewcode-block" id="Renderer_35mm"><a class="viewcode-back" href="../../../generated/refraction_render.renderers.Renderer_35mm.html#refraction_render.renderers.Renderer_35mm">[docs]</a><span class="k">class</span> <span class="nc">Renderer_35mm</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -354,6 +413,7 @@
         <span class="n">x_grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">18</span><span class="p">,</span><span class="mi">18</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_horz_res</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_h_angles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">rad2deg</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arctan</span><span class="p">(</span><span class="n">x_grid</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">_focal_length</span><span class="p">))</span><span class="o">+</span><span class="n">f_az</span></div>
 
+
 <div class="viewcode-block" id="Renderer_35mm.render_scene"><a class="viewcode-back" href="../../../generated/refraction_render.renderers.Renderer_35mm.html#refraction_render.renderers.Renderer_35mm.render_scene">[docs]</a>    <span class="k">def</span> <span class="nf">render_scene</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">scene</span><span class="p">,</span><span class="n">image_name</span><span class="p">,</span><span class="n">surface_color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">background_color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">cfunc</span><span class="o">=</span><span class="n">_defualt_cfunc</span><span class="p">,</span><span class="n">cfunc_args</span><span class="o">=</span><span class="p">(),</span><span class="n">disp</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">eye_level</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Render a scene object for the renderer&#39;s given field of view and direction. </span>
 
@@ -395,35 +455,8 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">background_color</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fromiter</span><span class="p">(</span><span class="n">background_color</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
 
-        <span class="n">img_datas</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">ray_heights</span> <span class="o">=</span> <span class="p">{}</span>
-
-        <span class="k">for</span> <span class="n">image</span><span class="p">,(</span><span class="n">im</span><span class="p">,</span><span class="n">image_data</span><span class="p">)</span> <span class="ow">in</span> <span class="n">iteritems</span><span class="p">(</span><span class="n">scene</span><span class="o">.</span><span class="n">_image_dict</span><span class="p">):</span>
-            <span class="n">im_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">im</span><span class="p">)</span>
-            <span class="n">im_data</span> <span class="o">=</span> <span class="n">im_data</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">,:,:]</span><span class="o">.</span><span class="n">transpose</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-
-            <span class="k">for</span> <span class="n">lat</span><span class="p">,</span><span class="n">lon</span><span class="p">,</span><span class="n">vert_pixel_pos</span><span class="p">,</span><span class="n">horz_pixel_pos</span><span class="p">,</span><span class="n">heading</span> <span class="ow">in</span> <span class="n">image_data</span><span class="p">:</span>
-                <span class="n">v_px</span> <span class="o">=</span> <span class="n">vert_pixel_pos</span>
-                <span class="n">f_az</span><span class="p">,</span><span class="n">b_az</span><span class="p">,</span><span class="n">dist</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geod</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_lon_obs</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_lat_obs</span><span class="p">,</span><span class="n">lon</span><span class="p">,</span><span class="n">lat</span><span class="p">)</span>
-
-                <span class="k">if</span> <span class="n">heading</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.0</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">b_az</span> <span class="o">=</span> <span class="n">b_az</span><span class="o">%</span><span class="mi">360</span>
-                    <span class="n">heading</span> <span class="o">=</span> <span class="n">heading</span><span class="o">%</span><span class="mi">360</span>
-                    <span class="n">alpha</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">heading</span> <span class="o">-</span> <span class="n">b_az</span><span class="p">)</span>
-
-                <span class="n">h_px</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arctan</span><span class="p">(</span><span class="n">horz_pixel_pos</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">alpha</span><span class="p">)</span><span class="o">/</span><span class="n">dist</span><span class="p">)</span>
-                <span class="n">np</span><span class="o">.</span><span class="n">rad2deg</span><span class="p">(</span><span class="n">h_px</span><span class="p">,</span><span class="n">out</span><span class="o">=</span><span class="n">h_px</span><span class="p">)</span>
-                <span class="n">h_px</span> <span class="o">+=</span> <span class="p">(</span><span class="n">f_az</span> <span class="o">%</span> <span class="mi">360</span><span class="p">)</span>
-                <span class="n">np</span><span class="o">.</span><span class="n">mod</span><span class="p">(</span><span class="n">h_px</span><span class="p">,</span><span class="mi">360</span><span class="p">,</span><span class="n">out</span><span class="o">=</span><span class="n">h_px</span><span class="p">)</span>
-
-                <span class="k">if</span> <span class="n">dist</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ray_heights</span><span class="p">:</span>
-                    <span class="n">ray_heights</span><span class="p">[</span><span class="n">dist</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sol</span><span class="p">(</span><span class="n">dist</span><span class="p">)</span>
-
-                <span class="n">img_datas</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">im_data</span><span class="p">,</span><span class="n">h_px</span><span class="p">,</span><span class="n">v_px</span><span class="p">,</span><span class="n">dist</span><span class="p">))</span>
-
-        <span class="n">img_datas</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span><span class="o">-</span><span class="n">x</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">dh_angle</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_h_angles</span><span class="p">)</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+        <span class="n">img_datas</span><span class="p">,</span><span class="n">ray_heights</span> <span class="o">=</span> <span class="n">_prep_scene</span><span class="p">(</span><span class="n">scene</span><span class="p">,</span><span class="n">dh_angle</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_lat_obs</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_lon_obs</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_geod</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_sol</span><span class="p">)</span>
 
         <span class="n">land_model</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">_land_model</span>
 
@@ -447,8 +480,6 @@
         <span class="n">png_data</span> <span class="o">=</span> <span class="n">png_data</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">,:,:]</span>
         <span class="n">im</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">fromarray</span><span class="p">(</span><span class="n">png_data</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;RGB&quot;</span><span class="p">)</span>
         <span class="n">im</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">image_name</span><span class="p">)</span></div></div>
-
-
 
 
 <div class="viewcode-block" id="Renderer_Composite"><a class="viewcode-back" href="../../../generated/refraction_render.renderers.Renderer_Composite.html#refraction_render.renderers.Renderer_Composite">[docs]</a><span class="k">class</span> <span class="nc">Renderer_Composite</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -593,38 +624,9 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">background_color</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fromiter</span><span class="p">(</span><span class="n">background_color</span><span class="p">)</span>
 
-        <span class="n">img_datas</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">ray_heights</span> <span class="o">=</span> <span class="p">{}</span>
-
-        <span class="k">for</span> <span class="n">image</span><span class="p">,(</span><span class="n">im</span><span class="p">,</span><span class="n">image_data</span><span class="p">)</span> <span class="ow">in</span> <span class="n">iteritems</span><span class="p">(</span><span class="n">scene</span><span class="o">.</span><span class="n">_image_dict</span><span class="p">):</span>
-            <span class="n">im_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">im</span><span class="p">)</span>
-            <span class="n">im_data</span> <span class="o">=</span> <span class="n">im_data</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">,:,:]</span><span class="o">.</span><span class="n">transpose</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-
-            <span class="k">for</span> <span class="n">lat</span><span class="p">,</span><span class="n">lon</span><span class="p">,</span><span class="n">vert_pixel_pos</span><span class="p">,</span><span class="n">horz_pixel_pos</span><span class="p">,</span><span class="n">heading</span> <span class="ow">in</span> <span class="n">image_data</span><span class="p">:</span>
-                <span class="n">v_px</span> <span class="o">=</span> <span class="n">vert_pixel_pos</span>
-                <span class="n">f_az</span><span class="p">,</span><span class="n">b_az</span><span class="p">,</span><span class="n">dist</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geod</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_lon_obs</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_lat_obs</span><span class="p">,</span><span class="n">lon</span><span class="p">,</span><span class="n">lat</span><span class="p">)</span>
-
-                <span class="k">if</span> <span class="n">heading</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.0</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">b_az</span> <span class="o">=</span> <span class="n">b_az</span><span class="o">%</span><span class="mi">360</span>
-                    <span class="n">heading</span> <span class="o">=</span> <span class="n">heading</span><span class="o">%</span><span class="mi">360</span>
-                    <span class="n">alpha</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">heading</span> <span class="o">-</span> <span class="n">b_az</span><span class="p">)</span>
-
-                <span class="n">h_px</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arctan</span><span class="p">(</span><span class="n">horz_pixel_pos</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">alpha</span><span class="p">)</span><span class="o">/</span><span class="n">dist</span><span class="p">)</span>
-                <span class="n">np</span><span class="o">.</span><span class="n">rad2deg</span><span class="p">(</span><span class="n">h_px</span><span class="p">,</span><span class="n">out</span><span class="o">=</span><span class="n">h_px</span><span class="p">)</span>
-                <span class="n">h_px</span> <span class="o">+=</span> <span class="p">(</span><span class="n">f_az</span> <span class="o">%</span> <span class="mi">360</span><span class="p">)</span>
-                <span class="n">np</span><span class="o">.</span><span class="n">mod</span><span class="p">(</span><span class="n">h_px</span><span class="p">,</span><span class="mi">360</span><span class="p">,</span><span class="n">out</span><span class="o">=</span><span class="n">h_px</span><span class="p">)</span>
-
-                <span class="k">if</span> <span class="n">dist</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ray_heights</span><span class="p">:</span>
-                    <span class="n">ray_heights</span><span class="p">[</span><span class="n">dist</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sol</span><span class="p">(</span><span class="n">dist</span><span class="p">)</span>
-
-                <span class="n">img_datas</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">im_data</span><span class="p">,</span><span class="n">h_px</span><span class="p">,</span><span class="n">v_px</span><span class="p">,</span><span class="n">dist</span><span class="p">))</span>
-
-        <span class="n">img_datas</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span><span class="o">-</span><span class="n">x</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-        
         <span class="n">n_v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-
+        
+        
         <span class="n">land_model</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">_land_model</span>
 
         <span class="n">heading_mins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">heading_mins</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
@@ -635,6 +637,8 @@
         <span class="k">for</span> <span class="n">heading_min</span><span class="p">,</span><span class="n">heading_max</span><span class="p">,</span><span class="n">image_name</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">tup</span><span class="p">):</span>
             <span class="nb">print</span><span class="p">(</span><span class="n">heading_min</span><span class="p">,</span><span class="n">heading_max</span><span class="p">,</span><span class="n">image_name</span><span class="p">)</span>
             <span class="n">h_angles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">heading_min</span><span class="p">,</span><span class="n">heading_max</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_dangles</span><span class="p">)</span>
+
+            <span class="n">img_datas</span><span class="p">,</span><span class="n">ray_heights</span> <span class="o">=</span> <span class="n">_prep_scene</span><span class="p">(</span><span class="n">scene</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_dangles</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_lat_obs</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_lon_obs</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_geod</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_sol</span><span class="p">)</span>
 
             <span class="n">png_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">h_angles</span><span class="p">),</span><span class="n">n_v</span><span class="p">,</span><span class="mi">3</span><span class="p">),</span><span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
             <span class="n">png_data</span><span class="p">[</span><span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
@@ -747,11 +751,8 @@
         <span class="k">if</span> <span class="n">height</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
             <span class="n">height</span> <span class="o">=</span> <span class="n">width</span><span class="o">*</span><span class="n">aspect</span>
 
-        <span class="n">vert_pixel_pos</span> <span class="o">=</span> <span class="n">h</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">height</span><span class="p">,</span><span class="n">px_height</span><span class="p">)</span>
-        <span class="n">horz_pixel_pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="n">width</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span><span class="n">width</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span><span class="n">px_width</span><span class="p">)</span>
 
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_image_dict</span><span class="p">[</span><span class="n">image</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">lat</span><span class="p">,</span><span class="n">lon</span><span class="p">,</span><span class="n">vert_pixel_pos</span><span class="p">,</span><span class="n">horz_pixel_pos</span><span class="p">,</span><span class="n">heading</span><span class="p">))</span></div></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_image_dict</span><span class="p">[</span><span class="n">image</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">lat</span><span class="p">,</span><span class="n">lon</span><span class="p">,</span><span class="n">h</span><span class="p">,</span><span class="n">width</span><span class="p">,</span><span class="n">height</span><span class="p">,</span><span class="n">heading</span><span class="p">))</span></div></div>
 
 
 <div class="viewcode-block" id="land_model"><a class="viewcode-back" href="../../../generated/refraction_render.renderers.land_model.html#refraction_render.renderers.land_model">[docs]</a><span class="k">class</span> <span class="nc">land_model</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
