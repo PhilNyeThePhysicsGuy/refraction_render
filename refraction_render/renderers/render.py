@@ -7,6 +7,7 @@ from PIL import Image
 from pyproj import Geod
 from six import iteritems
 import scipy.interpolate as interp
+import scipy.signal as signal
 import numpy as np
 
 __all__=["Scene","Renderer_35mm","Renderer_Composite","land_model"]
@@ -26,6 +27,16 @@ def _get_water(rs,ind):
 @vectorize(["b1(f8,f8,f8)"])
 def _get_bounds(a,a_min,a_max):
     return a >= a_min and a < a_max
+
+@njit
+def _get_bounds_sum(a,a_min,a_max):
+    n = a.shape[0]
+    count = 0
+    for i in range(n):
+        if a[i] >= a_min and a[i] < a_max:
+            count += 1
+
+    return count
 
 @njit
 def _get_vertical_mask(rh,h_min,h_max,inds,ds,d,sky,mask):
@@ -75,17 +86,17 @@ def _update_png_data(i,j,png_data,k,l,img_png_data):
         ii = i[a]
         kk = k[a]
         for b in range(m):
-            if img_png_data[kk,l[b],3] > 0:
-                png_data[ii,j[b],:] = img_png_data[kk,l[b],:3]
+            alpha = img_png_data[kk,l[b],3] / (255.0)
+            png_data[ii,j[b],:] = (1.0 - alpha)*png_data[ii,j[b],:] + alpha*img_png_data[kk,l[b],:3]
 
 @njit
 def _update_png_data_slice(j,png_data,l,img_png_data):
     m = j.shape[0]
 
     for b in range(m):
-        if img_png_data[l[b],3] > 0:
-            png_data[j[b],:] = img_png_data[l[b],:3]
-
+       if img_png_data[l[b],3] > 0:
+            alpha = img_png_data[l[b],3] / (255.0)
+            png_data[j[b],:] =  (1.0 - alpha)*png_data[j[b],:] + alpha*img_png_data[l[b],:3]
 
 def _check_gps(lat,lon):
     if np.any(lat < -90) or np.any(lat > 90):
@@ -163,21 +174,19 @@ def _render(png_data,rs,ds,h_angles,surface_color,background_color,terrain_args,
             if np.any(v_mask):
                 i = np.argwhere(h_mask).ravel()
                 j = np.argwhere(v_mask).ravel()
+                k = np.searchsorted(h_px,h_angle[i])
+                l = np.searchsorted(v_px,rh[j])
 
                 _update_png_data(i,j,png_data,k,l,img_png_data)
 
 
 
-def _prep_scene(scene,lat_obs,lon_obs,geod,sol):
+def _prep_scene(scene,h_angles,lat_obs,lon_obs,geod,sol):
     img_datas = []
     ray_heights = {}
 
     for image,(im,image_data) in iteritems(scene._image_dict):
         px_width,px_height = im.size
-        im_data = np.array(im)
-        im_data = im_data[::-1,:,:].transpose((1,0,2)).copy()
-
-
 
         for lat,lon,img_height,width,height,heading in image_data:
             horz_pixel_pos = np.linspace(-width/2,width/2,px_width)
@@ -198,9 +207,22 @@ def _prep_scene(scene,lat_obs,lon_obs,geod,sol):
             np.mod(h_px,360,out=h_px)
 
             if dist not in ray_heights:
-                ray_heights[dist] = sol(dist)
+                rh = sol(dist)
+                ray_heights[dist] = rh
+            else:
+                rh = ray_heights[dist]
 
-            img_datas.append((im_data,h_px,v_px,dist))
+            n_h = _get_bounds_sum(h_angles,h_px[0],h_px[-1])
+            n_v = _get_bounds_sum(rh,v_px[0],v_px[-1])
+
+            if n_h > 0 and n_v > 0:
+                new_im = im.resize((n_h,n_v),Image.LANCZOS)
+                im_data = np.array(new_im)
+                im_data = im_data[::-1,:,:].transpose((1,0,2)).copy()
+                h_px = np.linspace(h_px[0],h_px[-1],n_h)
+                v_px = np.linspace(v_px[0],v_px[-1],n_v)
+                img_datas.append((im_data,h_px,v_px,dist))
+
 
     img_datas.sort(key=lambda x:-x[-1])
 
@@ -385,7 +407,7 @@ class Renderer_35mm(object):
         else:
             background_color = np.fromiter(background_color,dtype=np.uint8)
 
-        img_datas,ray_heights = _prep_scene(scene,self._lat_obs,self._lon_obs,self._geod,self._sol)
+        img_datas,ray_heights = _prep_scene(scene,self._h_angles,self._lat_obs,self._lon_obs,self._geod,self._sol)
 
         land_model = scene._land_model
 
@@ -554,7 +576,7 @@ class Renderer_Composite(object):
             background_color = np.fromiter(background_color)
 
         n_v = self._rs.shape[0]
-        img_datas,ray_heights = _prep_scene(scene,self._lat_obs,self._lon_obs,self._geod,self._sol)
+        
         
         land_model = scene._land_model
 
@@ -566,6 +588,8 @@ class Renderer_Composite(object):
         for heading_min,heading_max,image_name in zip(*tup):
             print(heading_min,heading_max,image_name)
             h_angles = np.arange(heading_min,heading_max,self._dangles)
+
+            img_datas,ray_heights = _prep_scene(scene,h_angles,self._lat_obs,self._lon_obs,self._geod,self._sol)
 
             png_data = np.empty((len(h_angles),n_v,3),dtype=np.uint8)
             png_data[...] = 0
