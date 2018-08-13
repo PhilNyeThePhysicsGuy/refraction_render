@@ -181,9 +181,10 @@ def _render(png_data,rs,ds,h_angles,surface_color,background_color,terrain_args,
 
 
 
-def _prep_scene(scene,dh_angle,lat_obs,lon_obs,geod,sol):
+def _prep_scene(scene,h_angles,lat_obs,lon_obs,geod,sol):
     img_datas = []
     ray_heights = {}
+    dh_angle = np.diff(h_angles).min()
 
     for image,(im,image_data) in iteritems(scene._image_dict):
         px_width,px_height = im.size
@@ -212,10 +213,11 @@ def _prep_scene(scene,dh_angle,lat_obs,lon_obs,geod,sol):
             else:
                 rh = ray_heights[dist]
 
+            nn = _get_bounds_sum(h_px,h_angles[0],h_angles[-1])
             n_h = int((h_px[-1]-h_px[0])/dh_angle)
             n_v = _get_bounds_sum(rh,v_px[0],v_px[-1])
-
-            if n_h > 0 and n_v > 0:
+            
+            if n_v > 0 and nn > 0:
                 new_im = im.resize((n_h,n_v),Image.LANCZOS)
                 im_data = np.array(new_im)
                 im_data = im_data[::-1,:,:].transpose((1,0,2)).copy()
@@ -407,8 +409,7 @@ class Renderer_35mm(object):
         else:
             background_color = np.fromiter(background_color,dtype=np.uint8)
 
-        dh_angle = np.diff(self._h_angles).min()
-        img_datas,ray_heights = _prep_scene(scene,dh_angle,self._lat_obs,self._lon_obs,self._geod,self._sol)
+        img_datas,ray_heights = _prep_scene(scene,self._h_angles,self._lat_obs,self._lon_obs,self._geod,self._sol)
 
         land_model = scene._land_model
 
@@ -590,7 +591,7 @@ class Renderer_Composite(object):
             print(heading_min,heading_max,image_name)
             h_angles = np.arange(heading_min,heading_max,self._dangles)
 
-            img_datas,ray_heights = _prep_scene(scene,self._dangles,self._lat_obs,self._lon_obs,self._geod,self._sol)
+            img_datas,ray_heights = _prep_scene(scene,h_angles,self._lat_obs,self._lon_obs,self._geod,self._sol)
 
             png_data = np.empty((len(h_angles),n_v,3),dtype=np.uint8)
             png_data[...] = 0
