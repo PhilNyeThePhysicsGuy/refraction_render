@@ -213,7 +213,6 @@ def _prep_scene(scene,dh_angle,lat_obs,lon_obs,geod,sol):
                 rh = ray_heights[dist]
 
             n_h = int((h_px[-1]-h_px[0])/dh_angle)
-            print(n_h)
             n_v = _get_bounds_sum(rh,v_px[0],v_px[-1])
 
             if n_h > 0 and n_v > 0:
