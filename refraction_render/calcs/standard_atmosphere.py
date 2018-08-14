@@ -1,4 +1,5 @@
 from scipy.integrate import solve_bvp,solve_ivp
+from scipy.misc import derivative
 import numpy as np
 
 
@@ -66,7 +67,7 @@ class std_atmosphere(object):
         if T_prof is not None:
             T_prof0 = T_prof(h0,*T_prof_args)
             T = lambda h:T0-dT*(h-h0)+(T_prof(h,*T_prof_args)-T_prof0)
-            dTdr = lambda h:-dT+(T_prof(h+1.1e-7,*T_prof_args)-T_prof(h-1.1e-7,*T_prof_args))/(2.2e-7)
+            dTdr = lambda h:-dT+derivative(T_prof,h,args=T_prof_args,dx=1.1e-7)
         else:
             T = lambda h:T0-dT*(h-h0)
             dTdr = lambda h:-dT
@@ -103,6 +104,7 @@ class std_atmosphere(object):
         self._n = n
         self._P = lambda h:P(h)[0]
         self._T = T
+        self._dTdh = dTdr
             
 
     @property
@@ -125,3 +127,11 @@ class std_atmosphere(object):
     def rho(self,h):
         """ density function for this atmospheric model. """
         return self._rho(h)
+
+    def dTdh(self,h):
+        """ density function for this atmospheric model. """
+        return self._dTdh(h)
+
+    def k(self,h):
+        """ Curvature of light rays at given height."""
+        return 5.03*self._P(h)*(0.0343+self._dTdh(h))/self._T(h)**2
