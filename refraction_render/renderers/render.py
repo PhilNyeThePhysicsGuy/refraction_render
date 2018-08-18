@@ -180,7 +180,6 @@ def _render(png_data,rs,ds,h_angles,surface_color,background_color,terrain_args,
                 _update_png_data(i,j,png_data,k,l,img_png_data)
 
 
-
 def _prep_scene(scene,h_angles,lat_obs,lon_obs,geod,sol):
     img_datas = []
     ray_heights = {}

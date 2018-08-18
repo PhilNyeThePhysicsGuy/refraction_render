@@ -47,6 +47,7 @@
             
   <h1>Source code for refraction_render.calcs.standard_atmosphere</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">scipy.integrate</span> <span class="k">import</span> <span class="n">solve_bvp</span><span class="p">,</span><span class="n">solve_ivp</span>
+<span class="kn">from</span> <span class="nn">scipy.misc</span> <span class="k">import</span> <span class="n">derivative</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 
@@ -114,7 +115,7 @@
         <span class="k">if</span> <span class="n">T_prof</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">T_prof0</span> <span class="o">=</span> <span class="n">T_prof</span><span class="p">(</span><span class="n">h0</span><span class="p">,</span><span class="o">*</span><span class="n">T_prof_args</span><span class="p">)</span>
             <span class="n">T</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">h</span><span class="p">:</span><span class="n">T0</span><span class="o">-</span><span class="n">dT</span><span class="o">*</span><span class="p">(</span><span class="n">h</span><span class="o">-</span><span class="n">h0</span><span class="p">)</span><span class="o">+</span><span class="p">(</span><span class="n">T_prof</span><span class="p">(</span><span class="n">h</span><span class="p">,</span><span class="o">*</span><span class="n">T_prof_args</span><span class="p">)</span><span class="o">-</span><span class="n">T_prof0</span><span class="p">)</span>
-            <span class="n">dTdr</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">h</span><span class="p">:</span><span class="o">-</span><span class="n">dT</span><span class="o">+</span><span class="p">(</span><span class="n">T_prof</span><span class="p">(</span><span class="n">h</span><span class="o">+</span><span class="mf">1.1e-7</span><span class="p">,</span><span class="o">*</span><span class="n">T_prof_args</span><span class="p">)</span><span class="o">-</span><span class="n">T_prof</span><span class="p">(</span><span class="n">h</span><span class="o">-</span><span class="mf">1.1e-7</span><span class="p">,</span><span class="o">*</span><span class="n">T_prof_args</span><span class="p">))</span><span class="o">/</span><span class="p">(</span><span class="mf">2.2e-7</span><span class="p">)</span>
+            <span class="n">dTdr</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">h</span><span class="p">:</span><span class="o">-</span><span class="n">dT</span><span class="o">+</span><span class="n">derivative</span><span class="p">(</span><span class="n">T_prof</span><span class="p">,</span><span class="n">h</span><span class="p">,</span><span class="n">args</span><span class="o">=</span><span class="n">T_prof_args</span><span class="p">,</span><span class="n">dx</span><span class="o">=</span><span class="mf">1.1e-7</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">T</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">h</span><span class="p">:</span><span class="n">T0</span><span class="o">-</span><span class="n">dT</span><span class="o">*</span><span class="p">(</span><span class="n">h</span><span class="o">-</span><span class="n">h0</span><span class="p">)</span>
             <span class="n">dTdr</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">h</span><span class="p">:</span><span class="o">-</span><span class="n">dT</span>
@@ -149,8 +150,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_rho</span> <span class="o">=</span> <span class="n">rho</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_dT</span> <span class="o">=</span> <span class="n">dT</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_n</span> <span class="o">=</span> <span class="n">n</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_P</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">h</span><span class="p">:</span><span class="n">P</span><span class="p">(</span><span class="n">h</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_T</span> <span class="o">=</span> <span class="n">T</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_P</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">h</span><span class="p">:</span><span class="n">sol</span><span class="o">.</span><span class="n">sol</span><span class="p">(</span><span class="n">h</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_T</span> <span class="o">=</span> <span class="n">T</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dTdh</span> <span class="o">=</span> <span class="n">dTdr</span></div>
             
 
     <span class="nd">@property</span>
@@ -172,7 +174,15 @@
 
 <div class="viewcode-block" id="std_atmosphere.rho"><a class="viewcode-back" href="../../../generated/refraction_render.calcs.std_atmosphere.html#refraction_render.calcs.std_atmosphere.rho">[docs]</a>    <span class="k">def</span> <span class="nf">rho</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">h</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; density function for this atmospheric model. &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rho</span><span class="p">(</span><span class="n">h</span><span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rho</span><span class="p">(</span><span class="n">h</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="std_atmosphere.dTdh"><a class="viewcode-back" href="../../../generated/refraction_render.calcs.std_atmosphere.html#refraction_render.calcs.std_atmosphere.dTdh">[docs]</a>    <span class="k">def</span> <span class="nf">dTdh</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">h</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; density function for this atmospheric model. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dTdh</span><span class="p">(</span><span class="n">h</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="std_atmosphere.k"><a class="viewcode-back" href="../../../generated/refraction_render.calcs.std_atmosphere.html#refraction_render.calcs.std_atmosphere.k">[docs]</a>    <span class="k">def</span> <span class="nf">k</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">h</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Curvature of light rays at given height.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="mf">5.03</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_P</span><span class="p">(</span><span class="n">h</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mf">0.0343</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">_dTdh</span><span class="p">(</span><span class="n">h</span><span class="p">))</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">_T</span><span class="p">(</span><span class="n">h</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span></div></div>
 </pre></div>
 
           </div>

@@ -102,7 +102,7 @@ class std_atmosphere(object):
         self._rho = rho
         self._dT = dT
         self._n = n
-        self._P = lambda h:P(h)[0]
+        self._P = lambda h:sol.sol(h)[0]
         self._T = T
         self._dTdh = dTdr
             
