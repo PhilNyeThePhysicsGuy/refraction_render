@@ -212,17 +212,18 @@ def _prep_scene(scene,h_angles,lat_obs,lon_obs,geod,sol):
             else:
                 rh = ray_heights[dist]
 
-            nn = _get_bounds_sum(h_px,h_angles[0],h_angles[-1])
             n_h = int((h_px[-1]-h_px[0])/dh_angle)
             n_v = _get_bounds_sum(rh,v_px[0],v_px[-1])
-            
-            if n_v > 0 and nn > 0:
+
+            try:
                 new_im = im.resize((n_h,n_v),Image.LANCZOS)
-                im_data = np.array(new_im)
-                im_data = im_data[::-1,:,:].transpose((1,0,2)).copy()
-                h_px = np.linspace(h_px[0],h_px[-1],n_h)
-                v_px = np.linspace(v_px[0],v_px[-1],n_v)
-                img_datas.append((im_data,h_px,v_px,dist))
+            except ValueError:
+                continue
+            im_data = np.array(new_im)
+            im_data = im_data[::-1,:,:].transpose((1,0,2)).copy()
+            h_px = np.linspace(h_px[0],h_px[-1],n_h)
+            v_px = np.linspace(v_px[0],v_px[-1],n_v)
+            img_datas.append((im_data,h_px,v_px,dist))
 
 
     img_datas.sort(key=lambda x:-x[-1])
