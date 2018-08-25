@@ -44,7 +44,7 @@ n_v = len(angles)
 #plotting temperature profile
 h = np.linspace(0,50)
 plt.plot(calc.atm_model.T(h),h)
-plt.xlabel("Temperature (Celcius)")
+plt.xlabel("Temperature (Celsius)")
 plt.ylabel("Height (meters)")
 plt.savefig("T_prof.png",bbox_inches="tight",dpi=500)
 plt.clf()

@@ -168,7 +168,7 @@
 <span class="c1">#plotting temperature profile</span>
 <span class="n">h</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">50</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">calc</span><span class="o">.</span><span class="n">atm_model</span><span class="o">.</span><span class="n">T</span><span class="p">(</span><span class="n">h</span><span class="p">),</span><span class="n">h</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Temperature (Celcius)&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Temperature (Celsius)&quot;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Height (meters)&quot;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">&quot;T_prof.png&quot;</span><span class="p">,</span><span class="n">bbox_inches</span><span class="o">=</span><span class="s2">&quot;tight&quot;</span><span class="p">,</span><span class="n">dpi</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
