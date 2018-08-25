@@ -19,9 +19,9 @@ Instead of using the renderer built into the package we use Matplotlib to plot t
    :align: center
    :scale: 20 %
 
-We show the results of a laser at 7 ft above the water level shining light over 10.3 miles to the observers on the other side.
+We show the results of a simulation of various light rays (individual lines in the image below) coming out of a source (the laser) at 7 ft above the water level shining light over 10.3 miles to the observers on the other side. The ray angles are spaced out to represent a guasian distribution of a width of 0.02 degrees which is supposed to simulate the intensity of the beam itself, therefore from the image below the closer together the lines appear the more indense the beam is.
 
 .. image:: ../../examples/example_renders/lake_test.png
    :align: center
 
-The conclusion is that the Laser can be seen at all heights on the opposite side of the lake giving some people the impression that the earth is flat however this conclusion is lacking the sophisticated analysis presented here. 
+The conclusion is that the Laser can be seen at all heights on the opposite side of the lake with the intensity of the light depending on the height giving some people the impression that the earth is flat however this conclusion is lacking the sophisticated analysis presented here. 
