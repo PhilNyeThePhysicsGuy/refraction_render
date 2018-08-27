@@ -13,7 +13,7 @@ Welcome to refraction_render's documentation!
 .. |logo2| image:: stenaline.gif
    :align: top
 .. |turbine| image:: sphere_composite.png
-   :scale: 10%
+   :scale: 8%
    :align: middle
 
 
