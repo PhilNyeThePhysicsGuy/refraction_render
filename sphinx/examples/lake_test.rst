@@ -31,6 +31,7 @@ which we can then convert into an index of refraction using the refractivity. We
 
 .. image:: ../../examples/example_renders/lake_test.png
    :align: center
+   :scale: 10 %
 
 The conclusion from this simulation is that when there is a layer of cool air above the surface of the earth the Laser light is bent downwards which means it can be seen at all heights on the opposite side of the lake with the intensity of the light depending on the height. These results have giving some people the impression that the earth is flat however this conclusion is lacking the sophisticated analysis presented here. 
 
