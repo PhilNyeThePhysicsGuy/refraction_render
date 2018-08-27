@@ -3,6 +3,8 @@
 Isle of Man modeling
 --------------------
 
+back to :ref:`examples`
+
 A Youtuber by the name of Sleeping Warrior has taken it apon himself to prove that the earth is flat. In doing so he has made many observations of distance objects over water, all of which have demonstrated the curvature of the earth. Here we will discuss a particular observation which was done from a beach at a small town called St. Bees in the UK. This area has a lot of hills and cliffs close to the Irish sea in which there is an island called the Isle of Man. This island has some very distinct features which and a varying land profile which we will explore in this example. 
 
 We have downloaded some elevation data from the SRTM mission which covers the entire Isle of Man and we will show how to use this to create a render of that topographical data with refraction:
@@ -36,3 +38,4 @@ Another interesting thing to look at on the Island is Maughold lighthouse which 
    :align: center
    :scale: 20 %
 
+back to :ref:`examples`

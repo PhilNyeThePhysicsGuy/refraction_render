@@ -1,6 +1,7 @@
+.. _examples:
+
 Examples
 --------
-
 
 The following Python scripts demonstrate basic and advanced functionality of the render:
    * :ref:`inferior_mirage-label`, :download:`download files <../examples/zips/inferior_mirage.zip>`

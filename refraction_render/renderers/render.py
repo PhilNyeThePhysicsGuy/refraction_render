@@ -398,6 +398,9 @@ class Renderer_35mm(object):
         disp: bool, optional
             when rendering topographical data this will print out the heading slice which has been rendered.
 
+        eye_level: bool, optional
+            when rendering the image, an orange line is placed at eye level in the image.
+
         """        
         if surface_color is None:
             surface_color = np.array([0,80,120],dtype=np.uint8)
@@ -565,6 +568,9 @@ class Renderer_Composite(object):
 
         disp: bool, optional
             when rendering topographical data this will print out the heading slice which has been rendered.
+
+        eye_level: bool, optional
+            when rendering the image, an orange line is placed at eye level in the image.
 
         """  
         if surface_color is None:

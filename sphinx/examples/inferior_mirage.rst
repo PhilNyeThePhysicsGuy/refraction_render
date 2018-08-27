@@ -3,6 +3,8 @@
 Simulation of an Inferior Mirage
 --------------------------------
 
+back to :ref:`examples`
+
 In this example we show how to render an inferior mirage. 
 
 :download:`download files <../../examples/zips/inferior_mirage.zip>`
@@ -25,3 +27,5 @@ Compare this to an image taken by a Youtuber named Ranty Flat Earth:
    :scale: 40 %
 
 Thanks Ranty for showing the earth is NOT flat!
+
+back to :ref:`examples`

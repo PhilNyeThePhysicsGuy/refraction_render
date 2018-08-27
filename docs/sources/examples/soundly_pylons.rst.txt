@@ -3,6 +3,8 @@
 Lake Pontchartrain Pylons
 -------------------------
 
+back to :ref:`examples`
+
 :download:`download files <../../examples/zips/soundly_pylons.zip>`
 
 So there is a YouTuber named Soundly who makes observations of various structures over Lake Pontchartrain. This lake has a bunch of structures which line along a perfectly straight line path across the water which makes them perfect for showing the curvature of the earth!
@@ -39,5 +41,4 @@ Compared to the rendered model zoomed in:
    :align: center
    :scale: 30 %
 
-
-
+back to :ref:`examples`

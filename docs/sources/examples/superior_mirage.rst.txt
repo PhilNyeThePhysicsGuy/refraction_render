@@ -3,6 +3,7 @@
 Simulation of an Superior Mirage
 --------------------------------
 
+back to :ref:`examples`
 
 In this example we show how to render an superior mirage. 
 
@@ -27,5 +28,4 @@ Compared to an image of an actual superior mirage:
    :align: center
    :scale: 100 %
 
-
-
+back to :ref:`examples`
