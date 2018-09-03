@@ -426,7 +426,7 @@ class Renderer_35mm(object):
 
 
         if eye_level:
-            i_horz = np.argwhere(np.abs(self._v_angles)<(self._vfov/400.0)).ravel()
+            i_horz = np.argwhere(np.abs(self._v_angles)<(self._vfov/800.0)).ravel()
             png_data[:,i_horz,0] = 255
             png_data[:,i_horz,1] = 100
             png_data[:,i_horz,2] = 0
@@ -608,7 +608,7 @@ class Renderer_Composite(object):
             _render(png_data,self._rs,self._ds,h_angles,surface_color,background_color,terrain_args,image_args,disp)
 
             if eye_level:
-                i_horz = np.argwhere(np.abs(self._v_angles)<(self._vfov/400.0)).ravel()
+                i_horz = np.argwhere(np.abs(self._v_angles)<(self._vfov/800.0)).ravel()
                 png_data[:,i_horz,0] = 255
                 png_data[:,i_horz,1] = 100
                 png_data[:,i_horz,2] = 0
