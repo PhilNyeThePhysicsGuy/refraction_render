@@ -1,7 +1,7 @@
 .. _blackpool_ferriswheel-label:
 
-Black Pool Ferriswheel from Barrow in Furness
----------------------------------------------
+Black Pool Ferris wheel from Barrow in Furness
+----------------------------------------------
 
 back to :ref:`examples`
 
