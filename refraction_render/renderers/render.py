@@ -576,12 +576,12 @@ class Renderer_Composite(object):
         if surface_color is None:
             surface_color = np.array([0,80,120])
         else:
-            surface_color = np.fromiter(surface_color)
+            surface_color = np.fromiter(surface_color,dtype=np.uint8)
 
         if background_color is None:
             background_color = np.array([135,206,250])
         else:
-            background_color = np.fromiter(background_color)
+            background_color = np.fromiter(background_color,dtype=np.uint8)
 
         n_v = self._rs.shape[0]
         
