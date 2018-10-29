@@ -2,7 +2,7 @@ from __future__ import division,print_function
 
 from ..calcs import Calc
 
-from numba import njit,guvectorize,vectorize
+from numba import njit,guvectorize,vectorize,prange
 from PIL import Image
 from pyproj import Geod
 from six import iteritems
@@ -27,6 +27,17 @@ def _get_water(rs,ind):
 @vectorize(["b1(f8,f8,f8)"])
 def _get_bounds(a,a_min,a_max):
     return a >= a_min and a < a_max
+
+@njit
+def _get_bounds_block(a,a_mins,a_maxs,mask):
+    n = a.shape[0]
+    m = a_mins.shape[0]
+    for i in range(m):
+        mask[i] = False
+        for j in range(n):
+            if a[j] >= a_mins[i] and a[j] < a_maxs[i]:
+                mask[i] = True
+                break
 
 @njit
 def _get_bounds_sum(a,a_min,a_max):
@@ -77,6 +88,13 @@ def _ray_crossing(rs,heights,inds,water,land,sky):
 
         sky[i] = not hit
 
+@njit(parallel=True)
+def _ray_crossing_blocks(rs,heights,inds,water,land,sky):
+    n_blk = heights.shape[0]
+    for i in prange(n_blk):
+        _ray_crossing(rs,heights[i,:],inds[i,:],water[i,:],land[i,:],sky[i,:])
+
+
 @njit
 def _update_png_data(i,j,png_data,k,l,img_png_data):
     n = i.shape[0]
@@ -126,11 +144,13 @@ def _render(png_data,rs,ds,h_angles,surface_color,background_color,terrain_args,
     v_mask = np.zeros(n_v,dtype=np.bool)
     h_mask = np.zeros(h_angles.shape[0],dtype=np.bool)
 
+    h_mins = np.array([h_px.min() for _,h_px,_,_ in img_datas])
+    h_maxs = np.array([h_px.max() for _,h_px,_,_ in img_datas])
+    img_mask = np.zeros_like(h_mins,dtype=np.bool)
+
     if terrain.has_data: # render land model 
 
-        h_mins = np.array([h_px.min() for _,h_px,_,_ in img_datas])
-        h_maxs = np.array([h_px.max() for _,h_px,_,_ in img_datas])
-        img_mask = np.zeros_like(h_mins,dtype=np.bool)
+
         h_angle_max = h_angles.max()
 
         for i,h_angle in enumerate(h_angles):
@@ -167,17 +187,23 @@ def _render(png_data,rs,ds,h_angles,surface_color,background_color,terrain_args,
         png_data[:,water,:] = surface_color
         np.logical_not(water,out=sky)
         png_data[:,sky,:] = background_color
-        for img_png_data,h_px,v_px,d in img_datas:
-            rh = ray_heights[d]
-            _get_bounds(h_angles,h_px[0],h_px[-1],out=h_mask)
-            _get_vertical_mask(rh,v_px[0],v_px[-1],inds,ds,d,sky,v_mask)
-            if np.any(v_mask):
-                i = np.argwhere(h_mask).ravel()
-                j = np.argwhere(v_mask).ravel()
-                k = np.searchsorted(h_px,h_angles[i])
-                l = np.searchsorted(v_px,rh[j])
 
-                _update_png_data(i,j,png_data,k,l,img_png_data)
+        _get_bounds_block(h_angles,h_mins,h_maxs,img_mask)
+        if np.any(img_mask):
+            img_indx = np.argwhere(img_mask).ravel()
+            for I in img_indx:
+                img_png_data,h_px,v_px,d = img_datas[I]
+                
+                rh = ray_heights[d]
+                _get_bounds(h_angles,h_px[0],h_px[-1],out=h_mask)
+                _get_vertical_mask(rh,v_px[0],v_px[-1],inds,ds,d,sky,v_mask)
+                if np.any(v_mask):
+                    i = np.argwhere(h_mask).ravel()
+                    j = np.argwhere(v_mask).ravel()
+                    k = np.searchsorted(h_px,h_angles[i])
+                    l = np.searchsorted(v_px,rh[j])
+
+                    _update_png_data(i,j,png_data,k,l,img_png_data)
 
 
 def _prep_scene(scene,h_angles,lat_obs,lon_obs,geod,sol):
@@ -201,7 +227,8 @@ def _prep_scene(scene,h_angles,lat_obs,lon_obs,geod,sol):
                 heading = heading%360
                 alpha = np.deg2rad(heading - b_az)
 
-            h_px=np.arctan(horz_pixel_pos*np.cos(alpha)/dist)
+            h_px=np.arctan(horz_pixel_pos*np.abs(np.cos(alpha))/dist)
+
             np.rad2deg(h_px,out=h_px)
             h_px += (f_az % 360)
             np.mod(h_px,360,out=h_px)
@@ -212,8 +239,8 @@ def _prep_scene(scene,h_angles,lat_obs,lon_obs,geod,sol):
             else:
                 rh = ray_heights[dist]
 
-            n_h = int((h_px[-1]-h_px[0])/dh_angle)
-            n_v = _get_bounds_sum(rh,v_px[0],v_px[-1])
+            n_h = max(int((h_px[-1]-h_px[0])/dh_angle),2)
+            n_v = max(_get_bounds_sum(rh,v_px[0],v_px[-1]),2)
 
             try:
                 new_im = im.resize((n_h,n_v),Image.LANCZOS)
@@ -368,7 +395,7 @@ class Renderer_35mm(object):
         self._h_angles = np.rad2deg(np.arctan(x_grid/self._focal_length))+f_az
 
 
-    def render_scene(self,scene,image_name,surface_color=None,background_color=None,cfunc=_defualt_cfunc,cfunc_args=(),disp=False,eye_level=False):
+    def render_scene(self,scene,image_name,surface_color=None,background_color=None,cfunc=_defualt_cfunc,cfunc_args=(),disp=False,eye_level=False,postprocess=None):
         """Render a scene object for the renderer's given field of view and direction. 
 
         Parameters
@@ -435,6 +462,10 @@ class Renderer_35mm(object):
         png_data = png_data.transpose((1,0,2))
         png_data = png_data[::-1,:,:]
         im = Image.fromarray(png_data,mode="RGB")
+
+        if postprocess is not None:
+            im = postprocess(im)
+
         im.save(image_name)
 
 
@@ -533,7 +564,7 @@ class Renderer_Composite(object):
         self._lon_obs = float(lon_obs)
         _check_gps(self._lat_obs,self._lon_obs)
 
-    def render_scene(self,scene,image_names,heading_mins,heading_maxs,surface_color=None,background_color=None,cfunc=_defualt_cfunc,cfunc_args=(),disp=False,eye_level=False):
+    def render_scene(self,scene,image_names,heading_mins,heading_maxs,surface_color=None,background_color=None,cfunc=_defualt_cfunc,cfunc_args=(),disp=False,eye_level=False,postprocess=None):
         """Renders a composites over a very wide horizontal field.
 
         Parameters
@@ -616,6 +647,8 @@ class Renderer_Composite(object):
             png_data = png_data.transpose((1,0,2))
             png_data = png_data[::-1,:,:]
             im = Image.fromarray(png_data,mode="RGB")
+            if postprocess is not None:
+                im = postprocess(im)
             im.save(image_name)
 
 
