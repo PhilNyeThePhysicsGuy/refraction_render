@@ -4,28 +4,21 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>refraction_render.calcs.UniformFermatEquationsCurve &#8212; refraction_render 1.0.0 documentation</title>
     <link rel="stylesheet" href="../static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '1.0.0',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../static/documentation_options.js"></script>
     <script type="text/javascript" src="../static/jquery.js"></script>
     <script type="text/javascript" src="../static/underscore.js"></script>
     <script type="text/javascript" src="../static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" /> 
-  </head>
-  <body>
+  </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -36,7 +29,7 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">refraction_render 1.0.0 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="../calcs.html" accesskey="U">Calcs module (<code class="docutils literal"><span class="pre">refraction_render.calcs</span></code>)</a> &#187;</li> 
+          <li class="nav-item nav-item-1"><a href="../calcs.html" accesskey="U">Calcs module (<code class="docutils literal notranslate"><span class="pre">refraction_render.calcs</span></code>)</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -50,8 +43,8 @@
 <dl class="class">
 <dt id="refraction_render.calcs.UniformFermatEquationsCurve">
 <em class="property">class </em><code class="descclassname">refraction_render.calcs.</code><code class="descname">UniformFermatEquationsCurve</code><span class="sig-paren">(</span><em>R0</em>, <em>n</em>, <em>dndy</em>, <em>args=()</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/calcs/euler_equations.html#UniformFermatEquationsCurve"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.calcs.UniformFermatEquationsCurve" title="Permalink to this definition">¶</a></dt>
-<dd><p>Solver for light ray in a 2D Polar geometry with <span class="math">\(n=n(y)\)</span>.</p>
-<p>This object takes in three user defined functions:  <span class="math">\(n(y), \frac{\partial n(y)}{\partial y}\)</span>
+<dd><p>Solver for light ray in a 2D Polar geometry with <span class="math notranslate nohighlight">\(n=n(y)\)</span>.</p>
+<p>This object takes in three user defined functions:  <span class="math notranslate nohighlight">\(n(y), \frac{\partial n(y)}{\partial y}\)</span>
 and uses these functions to solve Fermat’s equations for the path of a light ray.</p>
 <p class="rubric">Methods</p>
 <table border="1" class="longtable docutils">
@@ -60,11 +53,19 @@ and uses these functions to solve Fermat’s equations for the path of a light r
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">__call__</span></code>(s,&nbsp;yin)</td>
-<td></td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="#refraction_render.calcs.UniformFermatEquationsCurve.solve_ivp" title="refraction_render.calcs.UniformFermatEquationsCurve.solve_ivp"><code class="xref py py-obj docutils literal"><span class="pre">solve_ivp</span></code></a>(a,&nbsp;b,&nbsp;y0,&nbsp;dy0,&nbsp;**kwargs)</td>
+<tr class="row-odd"><td><a class="reference internal" href="#refraction_render.calcs.UniformFermatEquationsCurve.solve_ivp" title="refraction_render.calcs.UniformFermatEquationsCurve.solve_ivp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">solve_ivp</span></code></a>(a,&nbsp;b,&nbsp;y0,&nbsp;dy0,&nbsp;**kwargs)</td>
 <td>Solve initial value problem for light rays.</td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="docutils">
+<colgroup>
+<col width="55%" />
+<col width="45%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><strong>__call__</strong></td>
+<td>&#160;</td>
 </tr>
 </tbody>
 </table>
@@ -76,18 +77,17 @@ and uses these functions to solve Fermat’s equations for the path of a light r
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>n</strong> : callable</p>
-<blockquote>
-<div><p>function which returns the index of refraction <span class="math">\(n(y)\)</span>.</p>
-</div></blockquote>
-<p><strong>dndy</strong> : callable</p>
-<blockquote>
-<div><p>function which returns <span class="math">\(\frac{\partial n(x,y)}{\partial y}\)</span>.</p>
-</div></blockquote>
-<p><strong>args</strong> : array_like, optional</p>
-<blockquote class="last">
-<div><p>optional arguments which go into the functions.</p>
-</div></blockquote>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>n</strong> <span class="classifier-delimiter">:</span> <span class="classifier">callable</span></dt>
+<dd><p class="first last">function which returns the index of refraction <span class="math notranslate nohighlight">\(n(y)\)</span>.</p>
+</dd>
+<dt><strong>dndy</strong> <span class="classifier-delimiter">:</span> <span class="classifier">callable</span></dt>
+<dd><p class="first last">function which returns <span class="math notranslate nohighlight">\(\frac{\partial n(x,y)}{\partial y}\)</span>.</p>
+</dd>
+<dt><strong>args</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array_like, optional</span></dt>
+<dd><p class="first last">optional arguments which go into the functions.</p>
+</dd>
+</dl>
 </td>
 </tr>
 </tbody>
@@ -101,10 +101,10 @@ and uses these functions to solve Fermat’s equations for the path of a light r
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#refraction_render.calcs.UniformFermatEquationsCurve.__init__" title="refraction_render.calcs.UniformFermatEquationsCurve.__init__"><code class="xref py py-obj docutils literal"><span class="pre">__init__</span></code></a>(R0,&nbsp;n,&nbsp;dndy[,&nbsp;args])</td>
+<tr class="row-odd"><td><a class="reference internal" href="#refraction_render.calcs.UniformFermatEquationsCurve.__init__" title="refraction_render.calcs.UniformFermatEquationsCurve.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(R0,&nbsp;n,&nbsp;dndy[,&nbsp;args])</td>
 <td>Intializes the <cite>FermatEquationsCurve</cite> object.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#refraction_render.calcs.UniformFermatEquationsCurve.solve_ivp" title="refraction_render.calcs.UniformFermatEquationsCurve.solve_ivp"><code class="xref py py-obj docutils literal"><span class="pre">solve_ivp</span></code></a>(a,&nbsp;b,&nbsp;y0,&nbsp;dy0,&nbsp;**kwargs)</td>
+<tr class="row-even"><td><a class="reference internal" href="#refraction_render.calcs.UniformFermatEquationsCurve.solve_ivp" title="refraction_render.calcs.UniformFermatEquationsCurve.solve_ivp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">solve_ivp</span></code></a>(a,&nbsp;b,&nbsp;y0,&nbsp;dy0,&nbsp;**kwargs)</td>
 <td>Solve initial value problem for light rays.</td>
 </tr>
 </tbody>
@@ -117,63 +117,54 @@ and uses these functions to solve Fermat’s equations for the path of a light r
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>a</strong> : scalar</p>
-<blockquote>
-<div><p>initial position for the solution of the ray’s path.</p>
-</div></blockquote>
-<p><strong>b</strong> : scalar</p>
-<blockquote>
-<div><p>final position for the solution of the ray’s path.</p>
-</div></blockquote>
-<p><strong>y0</strong> : array_like of shape (n,)</p>
-<blockquote>
-<div><p>initial position of the ray’s.</p>
-</div></blockquote>
-<p><strong>dy0</strong> : array_like of shape (n,)</p>
-<blockquote>
-<div><p>initial derivative (with respect to the independent variable) of the ray’s trajectory.</p>
-</div></blockquote>
-<p><strong>kwargs</strong> : optional</p>
-<blockquote>
-<div><p>additional arguments to pass into solver, 
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>a</strong> <span class="classifier-delimiter">:</span> <span class="classifier">scalar</span></dt>
+<dd><p class="first last">initial position for the solution of the ray’s path.</p>
+</dd>
+<dt><strong>b</strong> <span class="classifier-delimiter">:</span> <span class="classifier">scalar</span></dt>
+<dd><p class="first last">final position for the solution of the ray’s path.</p>
+</dd>
+<dt><strong>y0</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array_like of shape (n,)</span></dt>
+<dd><p class="first last">initial position of the ray’s.</p>
+</dd>
+<dt><strong>dy0</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array_like of shape (n,)</span></dt>
+<dd><p class="first last">initial derivative (with respect to the independent variable) of the ray’s trajectory.</p>
+</dd>
+<dt><strong>kwargs</strong> <span class="classifier-delimiter">:</span> <span class="classifier">optional</span></dt>
+<dd><p class="first last">additional arguments to pass into solver, 
 see scipy.integrate.solve_ivp for more details.</p>
-</div></blockquote>
+</dd>
+</dl>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Bunch object with the following fields defined:</p>
-<p><strong>t</strong> : ndarray, shape (n_points,)</p>
-<blockquote>
-<div><p>Time points.</p>
-</div></blockquote>
-<p><strong>y</strong> : ndarray, shape (n, n_points)</p>
-<blockquote>
-<div><p>Values of the solution at <cite>t</cite>.</p>
-</div></blockquote>
-<p><strong>sol</strong> : <cite>OdeSolution</cite> or None</p>
-<blockquote>
-<div><p>Found solution as <cite>OdeSolution</cite> instance; None if <cite>dense_output</cite> was
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>Bunch object with the following fields defined:</strong></dt>
+<dd></dd>
+<dt><strong>t</strong> <span class="classifier-delimiter">:</span> <span class="classifier">ndarray, shape (n_points,)</span></dt>
+<dd><p class="first last">Time points.</p>
+</dd>
+<dt><strong>y</strong> <span class="classifier-delimiter">:</span> <span class="classifier">ndarray, shape (n, n_points)</span></dt>
+<dd><p class="first last">Values of the solution at <cite>t</cite>.</p>
+</dd>
+<dt><strong>sol</strong> <span class="classifier-delimiter">:</span> <span class="classifier"><cite>OdeSolution</cite> or None</span></dt>
+<dd><p class="first last">Found solution as <cite>OdeSolution</cite> instance; None if <cite>dense_output</cite> was
 set to False.</p>
-</div></blockquote>
-<p><strong>t_events</strong> : list of ndarray or None</p>
-<blockquote>
-<div><p>Contains for each event type a list of arrays at which an event of
+</dd>
+<dt><strong>t_events</strong> <span class="classifier-delimiter">:</span> <span class="classifier">list of ndarray or None</span></dt>
+<dd><p class="first last">Contains for each event type a list of arrays at which an event of
 that type event was detected. None if <cite>events</cite> was None.</p>
-</div></blockquote>
-<p><strong>nfev</strong> : int</p>
-<blockquote>
-<div><p>Number of evaluations of the right-hand side.</p>
-</div></blockquote>
-<p><strong>njev</strong> : int</p>
-<blockquote>
-<div><p>Number of evaluations of the Jacobian.</p>
-</div></blockquote>
-<p><strong>nlu</strong> : int</p>
-<blockquote>
-<div><p>Number of LU decompositions.</p>
-</div></blockquote>
-<p><strong>status</strong> : int</p>
-<blockquote>
-<div><dl class="docutils">
+</dd>
+<dt><strong>nfev</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd><p class="first last">Number of evaluations of the right-hand side.</p>
+</dd>
+<dt><strong>njev</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd><p class="first last">Number of evaluations of the Jacobian.</p>
+</dd>
+<dt><strong>nlu</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd><p class="first last">Number of LU decompositions.</p>
+</dd>
+<dt><strong>status</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd><dl class="first last docutils">
 <dt>Reason for algorithm termination:</dt>
 <dd><ul class="first last simple">
 <li>-1: Integration step failed.</li>
@@ -182,16 +173,15 @@ that type event was detected. None if <cite>events</cite> was None.</p>
 </ul>
 </dd>
 </dl>
-</div></blockquote>
-<p><strong>message</strong> : string</p>
-<blockquote>
-<div><p>Human-readable description of the termination reason.</p>
-</div></blockquote>
-<p><strong>success</strong> : bool</p>
-<blockquote class="last">
-<div><p>True if the solver reached the interval end or a termination event
-occurred (<code class="docutils literal"><span class="pre">status</span> <span class="pre">&gt;=</span> <span class="pre">0</span></code>).</p>
-</div></blockquote>
+</dd>
+<dt><strong>message</strong> <span class="classifier-delimiter">:</span> <span class="classifier">string</span></dt>
+<dd><p class="first last">Human-readable description of the termination reason.</p>
+</dd>
+<dt><strong>success</strong> <span class="classifier-delimiter">:</span> <span class="classifier">bool</span></dt>
+<dd><p class="first last">True if the solver reached the interval end or a termination event
+occurred (<code class="docutils literal notranslate"><span class="pre">status</span> <span class="pre">&gt;=</span> <span class="pre">0</span></code>).</p>
+</dd>
+</dl>
 </td>
 </tr>
 </tbody>
@@ -220,12 +210,14 @@ however the format of the solutions has the y(x) positions stacked on top of the
    </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -242,12 +234,12 @@ however the format of the solutions has the y(x) positions stacked on top of the
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">refraction_render 1.0.0 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="../calcs.html" >Calcs module (<code class="docutils literal"><span class="pre">refraction_render.calcs</span></code>)</a> &#187;</li> 
+          <li class="nav-item nav-item-1"><a href="../calcs.html" >Calcs module (<code class="docutils literal notranslate"><span class="pre">refraction_render.calcs</span></code>)</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Phillip Weinberg.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
     </div>
   </body>
 </html>

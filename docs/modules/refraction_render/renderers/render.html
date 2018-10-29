@@ -4,28 +4,21 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>refraction_render.renderers.render &#8212; refraction_render 1.0.0 documentation</title>
     <link rel="stylesheet" href="../../../static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../../../',
-        VERSION:     '1.0.0',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../static/documentation_options.js"></script>
     <script type="text/javascript" src="../../../static/jquery.js"></script>
     <script type="text/javascript" src="../../../static/underscore.js"></script>
     <script type="text/javascript" src="../../../static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
-  </head>
-  <body>
+  </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -50,7 +43,7 @@
 
 <span class="kn">from</span> <span class="nn">..calcs</span> <span class="k">import</span> <span class="n">Calc</span>
 
-<span class="kn">from</span> <span class="nn">numba</span> <span class="k">import</span> <span class="n">njit</span><span class="p">,</span><span class="n">guvectorize</span><span class="p">,</span><span class="n">vectorize</span>
+<span class="kn">from</span> <span class="nn">numba</span> <span class="k">import</span> <span class="n">njit</span><span class="p">,</span><span class="n">guvectorize</span><span class="p">,</span><span class="n">vectorize</span><span class="p">,</span><span class="n">prange</span>
 <span class="kn">from</span> <span class="nn">PIL</span> <span class="k">import</span> <span class="n">Image</span>
 <span class="kn">from</span> <span class="nn">pyproj</span> <span class="k">import</span> <span class="n">Geod</span>
 <span class="kn">from</span> <span class="nn">six</span> <span class="k">import</span> <span class="n">iteritems</span>
@@ -75,6 +68,17 @@
 <span class="nd">@vectorize</span><span class="p">([</span><span class="s2">&quot;b1(f8,f8,f8)&quot;</span><span class="p">])</span>
 <span class="k">def</span> <span class="nf">_get_bounds</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">a_min</span><span class="p">,</span><span class="n">a_max</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">a</span> <span class="o">&gt;=</span> <span class="n">a_min</span> <span class="ow">and</span> <span class="n">a</span> <span class="o">&lt;</span> <span class="n">a_max</span>
+
+<span class="nd">@njit</span>
+<span class="k">def</span> <span class="nf">_get_bounds_block</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">a_mins</span><span class="p">,</span><span class="n">a_maxs</span><span class="p">,</span><span class="n">mask</span><span class="p">):</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">a_mins</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
+        <span class="n">mask</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">a</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">a_mins</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">and</span> <span class="n">a</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">a_maxs</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                <span class="n">mask</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">break</span>
 
 <span class="nd">@njit</span>
 <span class="k">def</span> <span class="nf">_get_bounds_sum</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">a_min</span><span class="p">,</span><span class="n">a_max</span><span class="p">):</span>
@@ -125,6 +129,13 @@
 
         <span class="n">sky</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">hit</span>
 
+<span class="nd">@njit</span><span class="p">(</span><span class="n">parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">_ray_crossing_blocks</span><span class="p">(</span><span class="n">rs</span><span class="p">,</span><span class="n">heights</span><span class="p">,</span><span class="n">inds</span><span class="p">,</span><span class="n">water</span><span class="p">,</span><span class="n">land</span><span class="p">,</span><span class="n">sky</span><span class="p">):</span>
+    <span class="n">n_blk</span> <span class="o">=</span> <span class="n">heights</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">prange</span><span class="p">(</span><span class="n">n_blk</span><span class="p">):</span>
+        <span class="n">_ray_crossing</span><span class="p">(</span><span class="n">rs</span><span class="p">,</span><span class="n">heights</span><span class="p">[</span><span class="n">i</span><span class="p">,:],</span><span class="n">inds</span><span class="p">[</span><span class="n">i</span><span class="p">,:],</span><span class="n">water</span><span class="p">[</span><span class="n">i</span><span class="p">,:],</span><span class="n">land</span><span class="p">[</span><span class="n">i</span><span class="p">,:],</span><span class="n">sky</span><span class="p">[</span><span class="n">i</span><span class="p">,:])</span>
+
+
 <span class="nd">@njit</span>
 <span class="k">def</span> <span class="nf">_update_png_data</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">png_data</span><span class="p">,</span><span class="n">k</span><span class="p">,</span><span class="n">l</span><span class="p">,</span><span class="n">img_png_data</span><span class="p">):</span>
     <span class="n">n</span> <span class="o">=</span> <span class="n">i</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -174,11 +185,13 @@
     <span class="n">v_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_v</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>
     <span class="n">h_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">h_angles</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>
 
+    <span class="n">h_mins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">h_px</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span><span class="n">h_px</span><span class="p">,</span><span class="n">_</span><span class="p">,</span><span class="n">_</span> <span class="ow">in</span> <span class="n">img_datas</span><span class="p">])</span>
+    <span class="n">h_maxs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">h_px</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span><span class="n">h_px</span><span class="p">,</span><span class="n">_</span><span class="p">,</span><span class="n">_</span> <span class="ow">in</span> <span class="n">img_datas</span><span class="p">])</span>
+    <span class="n">img_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">h_mins</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>
+
     <span class="k">if</span> <span class="n">terrain</span><span class="o">.</span><span class="n">has_data</span><span class="p">:</span> <span class="c1"># render land model </span>
 
-        <span class="n">h_mins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">h_px</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span><span class="n">h_px</span><span class="p">,</span><span class="n">_</span><span class="p">,</span><span class="n">_</span> <span class="ow">in</span> <span class="n">img_datas</span><span class="p">])</span>
-        <span class="n">h_maxs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">h_px</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span><span class="n">h_px</span><span class="p">,</span><span class="n">_</span><span class="p">,</span><span class="n">_</span> <span class="ow">in</span> <span class="n">img_datas</span><span class="p">])</span>
-        <span class="n">img_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">h_mins</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>
+
         <span class="n">h_angle_max</span> <span class="o">=</span> <span class="n">h_angles</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
 
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">h_angle</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">h_angles</span><span class="p">):</span>
@@ -215,17 +228,23 @@
         <span class="n">png_data</span><span class="p">[:,</span><span class="n">water</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">surface_color</span>
         <span class="n">np</span><span class="o">.</span><span class="n">logical_not</span><span class="p">(</span><span class="n">water</span><span class="p">,</span><span class="n">out</span><span class="o">=</span><span class="n">sky</span><span class="p">)</span>
         <span class="n">png_data</span><span class="p">[:,</span><span class="n">sky</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">background_color</span>
-        <span class="k">for</span> <span class="n">img_png_data</span><span class="p">,</span><span class="n">h_px</span><span class="p">,</span><span class="n">v_px</span><span class="p">,</span><span class="n">d</span> <span class="ow">in</span> <span class="n">img_datas</span><span class="p">:</span>
-            <span class="n">rh</span> <span class="o">=</span> <span class="n">ray_heights</span><span class="p">[</span><span class="n">d</span><span class="p">]</span>
-            <span class="n">_get_bounds</span><span class="p">(</span><span class="n">h_angles</span><span class="p">,</span><span class="n">h_px</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">h_px</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="n">out</span><span class="o">=</span><span class="n">h_mask</span><span class="p">)</span>
-            <span class="n">_get_vertical_mask</span><span class="p">(</span><span class="n">rh</span><span class="p">,</span><span class="n">v_px</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">v_px</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="n">inds</span><span class="p">,</span><span class="n">ds</span><span class="p">,</span><span class="n">d</span><span class="p">,</span><span class="n">sky</span><span class="p">,</span><span class="n">v_mask</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">v_mask</span><span class="p">):</span>
-                <span class="n">i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argwhere</span><span class="p">(</span><span class="n">h_mask</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
-                <span class="n">j</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argwhere</span><span class="p">(</span><span class="n">v_mask</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
-                <span class="n">k</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">searchsorted</span><span class="p">(</span><span class="n">h_px</span><span class="p">,</span><span class="n">h_angles</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-                <span class="n">l</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">searchsorted</span><span class="p">(</span><span class="n">v_px</span><span class="p">,</span><span class="n">rh</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
 
-                <span class="n">_update_png_data</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">png_data</span><span class="p">,</span><span class="n">k</span><span class="p">,</span><span class="n">l</span><span class="p">,</span><span class="n">img_png_data</span><span class="p">)</span>
+        <span class="n">_get_bounds_block</span><span class="p">(</span><span class="n">h_angles</span><span class="p">,</span><span class="n">h_mins</span><span class="p">,</span><span class="n">h_maxs</span><span class="p">,</span><span class="n">img_mask</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">img_mask</span><span class="p">):</span>
+            <span class="n">img_indx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argwhere</span><span class="p">(</span><span class="n">img_mask</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">I</span> <span class="ow">in</span> <span class="n">img_indx</span><span class="p">:</span>
+                <span class="n">img_png_data</span><span class="p">,</span><span class="n">h_px</span><span class="p">,</span><span class="n">v_px</span><span class="p">,</span><span class="n">d</span> <span class="o">=</span> <span class="n">img_datas</span><span class="p">[</span><span class="n">I</span><span class="p">]</span>
+                
+                <span class="n">rh</span> <span class="o">=</span> <span class="n">ray_heights</span><span class="p">[</span><span class="n">d</span><span class="p">]</span>
+                <span class="n">_get_bounds</span><span class="p">(</span><span class="n">h_angles</span><span class="p">,</span><span class="n">h_px</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">h_px</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="n">out</span><span class="o">=</span><span class="n">h_mask</span><span class="p">)</span>
+                <span class="n">_get_vertical_mask</span><span class="p">(</span><span class="n">rh</span><span class="p">,</span><span class="n">v_px</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">v_px</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="n">inds</span><span class="p">,</span><span class="n">ds</span><span class="p">,</span><span class="n">d</span><span class="p">,</span><span class="n">sky</span><span class="p">,</span><span class="n">v_mask</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">v_mask</span><span class="p">):</span>
+                    <span class="n">i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argwhere</span><span class="p">(</span><span class="n">h_mask</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+                    <span class="n">j</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argwhere</span><span class="p">(</span><span class="n">v_mask</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+                    <span class="n">k</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">searchsorted</span><span class="p">(</span><span class="n">h_px</span><span class="p">,</span><span class="n">h_angles</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                    <span class="n">l</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">searchsorted</span><span class="p">(</span><span class="n">v_px</span><span class="p">,</span><span class="n">rh</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
+
+                    <span class="n">_update_png_data</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">png_data</span><span class="p">,</span><span class="n">k</span><span class="p">,</span><span class="n">l</span><span class="p">,</span><span class="n">img_png_data</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">_prep_scene</span><span class="p">(</span><span class="n">scene</span><span class="p">,</span><span class="n">h_angles</span><span class="p">,</span><span class="n">lat_obs</span><span class="p">,</span><span class="n">lon_obs</span><span class="p">,</span><span class="n">geod</span><span class="p">,</span><span class="n">sol</span><span class="p">):</span>
@@ -249,7 +268,8 @@
                 <span class="n">heading</span> <span class="o">=</span> <span class="n">heading</span><span class="o">%</span><span class="mi">360</span>
                 <span class="n">alpha</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">heading</span> <span class="o">-</span> <span class="n">b_az</span><span class="p">)</span>
 
-            <span class="n">h_px</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arctan</span><span class="p">(</span><span class="n">horz_pixel_pos</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">alpha</span><span class="p">)</span><span class="o">/</span><span class="n">dist</span><span class="p">)</span>
+            <span class="n">h_px</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arctan</span><span class="p">(</span><span class="n">horz_pixel_pos</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">alpha</span><span class="p">))</span><span class="o">/</span><span class="n">dist</span><span class="p">)</span>
+
             <span class="n">np</span><span class="o">.</span><span class="n">rad2deg</span><span class="p">(</span><span class="n">h_px</span><span class="p">,</span><span class="n">out</span><span class="o">=</span><span class="n">h_px</span><span class="p">)</span>
             <span class="n">h_px</span> <span class="o">+=</span> <span class="p">(</span><span class="n">f_az</span> <span class="o">%</span> <span class="mi">360</span><span class="p">)</span>
             <span class="n">np</span><span class="o">.</span><span class="n">mod</span><span class="p">(</span><span class="n">h_px</span><span class="p">,</span><span class="mi">360</span><span class="p">,</span><span class="n">out</span><span class="o">=</span><span class="n">h_px</span><span class="p">)</span>
@@ -260,8 +280,8 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">rh</span> <span class="o">=</span> <span class="n">ray_heights</span><span class="p">[</span><span class="n">dist</span><span class="p">]</span>
 
-            <span class="n">n_h</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">h_px</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">h_px</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="n">dh_angle</span><span class="p">)</span>
-            <span class="n">n_v</span> <span class="o">=</span> <span class="n">_get_bounds_sum</span><span class="p">(</span><span class="n">rh</span><span class="p">,</span><span class="n">v_px</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">v_px</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">n_h</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">int</span><span class="p">((</span><span class="n">h_px</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">h_px</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="n">dh_angle</span><span class="p">),</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">n_v</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">_get_bounds_sum</span><span class="p">(</span><span class="n">rh</span><span class="p">,</span><span class="n">v_px</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">v_px</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span><span class="mi">2</span><span class="p">)</span>
 
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">new_im</span> <span class="o">=</span> <span class="n">im</span><span class="o">.</span><span class="n">resize</span><span class="p">((</span><span class="n">n_h</span><span class="p">,</span><span class="n">n_v</span><span class="p">),</span><span class="n">Image</span><span class="o">.</span><span class="n">LANCZOS</span><span class="p">)</span>
@@ -416,7 +436,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_h_angles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">rad2deg</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arctan</span><span class="p">(</span><span class="n">x_grid</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">_focal_length</span><span class="p">))</span><span class="o">+</span><span class="n">f_az</span></div>
 
 
-<div class="viewcode-block" id="Renderer_35mm.render_scene"><a class="viewcode-back" href="../../../generated/refraction_render.renderers.Renderer_35mm.html#refraction_render.renderers.Renderer_35mm.render_scene">[docs]</a>    <span class="k">def</span> <span class="nf">render_scene</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">scene</span><span class="p">,</span><span class="n">image_name</span><span class="p">,</span><span class="n">surface_color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">background_color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">cfunc</span><span class="o">=</span><span class="n">_defualt_cfunc</span><span class="p">,</span><span class="n">cfunc_args</span><span class="o">=</span><span class="p">(),</span><span class="n">disp</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">eye_level</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="Renderer_35mm.render_scene"><a class="viewcode-back" href="../../../generated/refraction_render.renderers.Renderer_35mm.html#refraction_render.renderers.Renderer_35mm.render_scene">[docs]</a>    <span class="k">def</span> <span class="nf">render_scene</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">scene</span><span class="p">,</span><span class="n">image_name</span><span class="p">,</span><span class="n">surface_color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">background_color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">cfunc</span><span class="o">=</span><span class="n">_defualt_cfunc</span><span class="p">,</span><span class="n">cfunc_args</span><span class="o">=</span><span class="p">(),</span><span class="n">disp</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">eye_level</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">postprocess</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Render a scene object for the renderer&#39;s given field of view and direction. </span>
 
 <span class="sd">        Parameters</span>
@@ -483,6 +503,10 @@
         <span class="n">png_data</span> <span class="o">=</span> <span class="n">png_data</span><span class="o">.</span><span class="n">transpose</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
         <span class="n">png_data</span> <span class="o">=</span> <span class="n">png_data</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">,:,:]</span>
         <span class="n">im</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">fromarray</span><span class="p">(</span><span class="n">png_data</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;RGB&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">postprocess</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">im</span> <span class="o">=</span> <span class="n">postprocess</span><span class="p">(</span><span class="n">im</span><span class="p">)</span>
+
         <span class="n">im</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">image_name</span><span class="p">)</span></div></div>
 
 
@@ -581,7 +605,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_lon_obs</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">lon_obs</span><span class="p">)</span>
         <span class="n">_check_gps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_lat_obs</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_lon_obs</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Renderer_Composite.render_scene"><a class="viewcode-back" href="../../../generated/refraction_render.renderers.Renderer_Composite.html#refraction_render.renderers.Renderer_Composite.render_scene">[docs]</a>    <span class="k">def</span> <span class="nf">render_scene</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">scene</span><span class="p">,</span><span class="n">image_names</span><span class="p">,</span><span class="n">heading_mins</span><span class="p">,</span><span class="n">heading_maxs</span><span class="p">,</span><span class="n">surface_color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">background_color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">cfunc</span><span class="o">=</span><span class="n">_defualt_cfunc</span><span class="p">,</span><span class="n">cfunc_args</span><span class="o">=</span><span class="p">(),</span><span class="n">disp</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">eye_level</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="Renderer_Composite.render_scene"><a class="viewcode-back" href="../../../generated/refraction_render.renderers.Renderer_Composite.html#refraction_render.renderers.Renderer_Composite.render_scene">[docs]</a>    <span class="k">def</span> <span class="nf">render_scene</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">scene</span><span class="p">,</span><span class="n">image_names</span><span class="p">,</span><span class="n">heading_mins</span><span class="p">,</span><span class="n">heading_maxs</span><span class="p">,</span><span class="n">surface_color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">background_color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">cfunc</span><span class="o">=</span><span class="n">_defualt_cfunc</span><span class="p">,</span><span class="n">cfunc_args</span><span class="o">=</span><span class="p">(),</span><span class="n">disp</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">eye_level</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">postprocess</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Renders a composites over a very wide horizontal field.</span>
 
 <span class="sd">        Parameters</span>
@@ -624,12 +648,12 @@
         <span class="k">if</span> <span class="n">surface_color</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">surface_color</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">80</span><span class="p">,</span><span class="mi">120</span><span class="p">])</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">surface_color</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fromiter</span><span class="p">(</span><span class="n">surface_color</span><span class="p">)</span>
+            <span class="n">surface_color</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fromiter</span><span class="p">(</span><span class="n">surface_color</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">background_color</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">background_color</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">135</span><span class="p">,</span><span class="mi">206</span><span class="p">,</span><span class="mi">250</span><span class="p">])</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">background_color</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fromiter</span><span class="p">(</span><span class="n">background_color</span><span class="p">)</span>
+            <span class="n">background_color</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fromiter</span><span class="p">(</span><span class="n">background_color</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
 
         <span class="n">n_v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         
@@ -664,6 +688,8 @@
             <span class="n">png_data</span> <span class="o">=</span> <span class="n">png_data</span><span class="o">.</span><span class="n">transpose</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
             <span class="n">png_data</span> <span class="o">=</span> <span class="n">png_data</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">,:,:]</span>
             <span class="n">im</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">fromarray</span><span class="p">(</span><span class="n">png_data</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;RGB&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">postprocess</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">im</span> <span class="o">=</span> <span class="n">postprocess</span><span class="p">(</span><span class="n">im</span><span class="p">)</span>
             <span class="n">im</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">image_name</span><span class="p">)</span></div></div>
 
 
@@ -853,12 +879,14 @@
         <div class="sphinxsidebarwrapper">
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../../../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -880,7 +908,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Phillip Weinberg.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
     </div>
   </body>
 </html>

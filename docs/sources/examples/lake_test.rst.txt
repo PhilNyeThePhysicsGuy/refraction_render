@@ -17,13 +17,13 @@ In this example we use the refraction calculators to calculate the trajectory of
 
 Instead of using the renderer built into the package we use Matplotlib to plot the actual trajectories of the rays. The model for the atmosphere uses this Temperature profile:
 
-.. image:: ../../examples/example_renders/T_prof.png
+.. image:: ../../examples/example_renders/T_prof_lake_test.png
    :align: center
    :scale: 20 %
 
 That can be used to calculate the air density as a function of height
 
-.. image:: ../../examples/example_renders/rho_prof.png
+.. image:: ../../examples/example_renders/rho_prof_lake_test.png
    :align: center
    :scale: 20 %
 
