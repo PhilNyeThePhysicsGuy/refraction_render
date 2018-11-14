@@ -65,7 +65,7 @@ def _get_vertical_mask(rh,h_min,h_max,inds,ds,d,sky,mask):
                     mask[i] = True                
 
 @njit
-def _ray_crossing(rs,heights,inds,water,land,sky):
+def _ray_crossing(h_min,rs,heights,inds,water,land,sky):
     n_v = rs.shape[0]
     m = rs.shape[1]
     water[:] = False
@@ -77,7 +77,7 @@ def _ray_crossing(rs,heights,inds,water,land,sky):
         for j in range(m):
             if rs[i,j] <= heights[j]:
                 hit = True
-                if heights[j] > 0.01:
+                if heights[j] > h_min:
                     land[i] = True
                     inds[i] = j
                 else:
@@ -89,10 +89,10 @@ def _ray_crossing(rs,heights,inds,water,land,sky):
         sky[i] = not hit
 
 @njit(parallel=True)
-def _ray_crossing_blocks(rs,heights,inds,water,land,sky):
+def _ray_crossing_blocks(h_min,rs,heights,inds,water,land,sky):
     n_blk = heights.shape[0]
     for i in prange(n_blk):
-        _ray_crossing(rs,heights[i,:],inds[i,:],water[i,:],land[i,:],sky[i,:])
+        _ray_crossing(h_min,rs,heights[i,:],inds[i,:],water[i,:],land[i,:],sky[i,:])
 
 
 @njit
@@ -128,7 +128,7 @@ def _defualt_cfunc(d,heights):
     # nr = ng*(1-heights/(heights.max()+1))
     return np.stack(np.broadcast_arrays(0,ng,0),axis=-1)
 
-def _render(png_data,rs,ds,h_angles,surface_color,background_color,terrain_args,image_args,disp=False):
+def _render(png_data,h_min,rs,ds,h_angles,surface_color,background_color,terrain_args,image_args,disp=False):
 
     lat_obs,lon_obs,terrain,cfunc,cfunc_args = terrain_args
     img_datas,ray_heights = image_args
@@ -158,7 +158,7 @@ def _render(png_data,rs,ds,h_angles,surface_color,background_color,terrain_args,
                 print("{:5.5f} {:5.5f}".format(h_angle,h_angle_max))
             heights = terrain.get_terrain(lat_obs,lon_obs,h_angle,ds)
 
-            _ray_crossing(rs,heights,inds,water,land,sky)
+            _ray_crossing(h_min,rs,heights,inds,water,land,sky)
             png_data[i,water,:] = surface_color
             png_data[i,sky,:] = background_color
 
@@ -264,7 +264,7 @@ class Renderer_35mm(object):
     """
     def __init__(self,calc,h_obs,lat_obs,lon_obs,direction,max_distance,
                  distance_res=10,vert_obs_angle=0.0,vert_res=1000,
-                 focal_length=2000,atol=1.1e-7,rtol=1.1e-7):
+                 focal_length=2000,atol=1.1e-7,rtol=1.1e-7,):
 
         """
         Parameters
@@ -395,7 +395,7 @@ class Renderer_35mm(object):
         self._h_angles = np.rad2deg(np.arctan(x_grid/self._focal_length))+f_az
 
 
-    def render_scene(self,scene,image_name,surface_color=None,background_color=None,cfunc=_defualt_cfunc,cfunc_args=(),disp=False,eye_level=False,postprocess=None):
+    def render_scene(self,scene,image_name,surface_color=None,background_color=None,cfunc=_defualt_cfunc,cfunc_args=(),disp=False,eye_level=False,postprocess=None,h_min=0.01):
         """Render a scene object for the renderer's given field of view and direction. 
 
         Parameters
@@ -428,6 +428,13 @@ class Renderer_35mm(object):
         eye_level: bool, optional
             when rendering the image, an orange line is placed at eye level in the image.
 
+        post_process: callable, optional
+            function which processes the final image before saving it.
+
+        h_min: float, optional
+            minimum value for ray to count as crossing water. 
+
+
         """        
         if surface_color is None:
             surface_color = np.array([0,80,120],dtype=np.uint8)
@@ -449,7 +456,7 @@ class Renderer_35mm(object):
         terrain_args = (self._lat_obs,self._lon_obs,land_model,cfunc,cfunc_args)
         image_args = (img_datas,ray_heights)
 
-        _render(png_data,self._rs,self._ds,self._h_angles,surface_color,background_color,terrain_args,image_args,disp)
+        _render(png_data,h_min,self._rs,self._ds,self._h_angles,surface_color,background_color,terrain_args,image_args,disp)
 
 
         if eye_level:
@@ -564,7 +571,7 @@ class Renderer_Composite(object):
         self._lon_obs = float(lon_obs)
         _check_gps(self._lat_obs,self._lon_obs)
 
-    def render_scene(self,scene,image_names,heading_mins,heading_maxs,surface_color=None,background_color=None,cfunc=_defualt_cfunc,cfunc_args=(),disp=False,eye_level=False,postprocess=None):
+    def render_scene(self,scene,image_names,heading_mins,heading_maxs,surface_color=None,background_color=None,cfunc=_defualt_cfunc,cfunc_args=(),disp=False,eye_level=False,postprocess=None,h_min=0.01):
         """Renders a composites over a very wide horizontal field.
 
         Parameters
@@ -603,6 +610,12 @@ class Renderer_Composite(object):
         eye_level: bool, optional
             when rendering the image, an orange line is placed at eye level in the image.
 
+        post_process: callable, optional
+            function which processes the final image before saving it.
+
+        h_min: float, optional
+            minimum value for ray to count as crossing water. 
+
         """  
         if surface_color is None:
             surface_color = np.array([0,80,120])
@@ -636,7 +649,7 @@ class Renderer_Composite(object):
             terrain_args = (self._lat_obs,self._lon_obs,land_model,cfunc,cfunc_args)
             image_args = (img_datas,ray_heights)
 
-            _render(png_data,self._rs,self._ds,h_angles,surface_color,background_color,terrain_args,image_args,disp)
+            _render(h_min,png_data,self._rs,self._ds,h_angles,surface_color,background_color,terrain_args,image_args,disp)
 
             if eye_level:
                 i_horz = np.argwhere(np.abs(self._v_angles)<(self._vfov/800.0)).ravel()

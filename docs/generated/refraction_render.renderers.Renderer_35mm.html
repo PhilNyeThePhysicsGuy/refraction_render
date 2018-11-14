@@ -156,7 +156,7 @@ float: heading to point the renderer in.</p>
 </table>
 <dl class="method">
 <dt id="refraction_render.renderers.Renderer_35mm.render_scene">
-<code class="descname">render_scene</code><span class="sig-paren">(</span><em>scene</em>, <em>image_name</em>, <em>surface_color=None</em>, <em>background_color=None</em>, <em>cfunc=&lt;function _defualt_cfunc&gt;</em>, <em>cfunc_args=()</em>, <em>disp=False</em>, <em>eye_level=False</em>, <em>postprocess=None</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/renderers/render.html#Renderer_35mm.render_scene"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.renderers.Renderer_35mm.render_scene" title="Permalink to this definition">¶</a></dt>
+<code class="descname">render_scene</code><span class="sig-paren">(</span><em>scene</em>, <em>image_name</em>, <em>surface_color=None</em>, <em>background_color=None</em>, <em>cfunc=&lt;function _defualt_cfunc&gt;</em>, <em>cfunc_args=()</em>, <em>disp=False</em>, <em>eye_level=False</em>, <em>postprocess=None</em>, <em>h_min=0.01</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/renderers/render.html#Renderer_35mm.render_scene"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.renderers.Renderer_35mm.render_scene" title="Permalink to this definition">¶</a></dt>
 <dd><p>Render a scene object for the renderer’s given field of view and direction.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -190,6 +190,12 @@ above the surface of the earth.</p>
 </dd>
 <dt><strong>eye_level: bool, optional</strong></dt>
 <dd><p class="first last">when rendering the image, an orange line is placed at eye level in the image.</p>
+</dd>
+<dt><strong>post_process: callable, optional</strong></dt>
+<dd><p class="first last">function which processes the final image before saving it.</p>
+</dd>
+<dt><strong>h_min: float, optional</strong></dt>
+<dd><p class="first last">minimum value for ray to count as crossing water.</p>
 </dd>
 </dl>
 </td>
