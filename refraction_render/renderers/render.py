@@ -153,7 +153,8 @@ def _defualt_cfunc(d,heights):
     # nr = ng*(1-heights/(heights.max()+1))
     return np.stack(np.broadcast_arrays(0,ng,0),axis=-1)
 
-def _render(png_data,h_min,rs,ds,h_angles,surface_color,background_color,terrain_args,image_args,disp=False):
+
+def _render_cpu(png_data,h_min,rs,ds,h_angles,surface_color,background_color,terrain_args,image_args,disp=False):
 
     lat_obs,lon_obs,terrain,cfunc,cfunc_args = terrain_args
     img_datas,ray_heights = image_args
@@ -173,6 +174,9 @@ def _render(png_data,h_min,rs,ds,h_angles,surface_color,background_color,terrain
     h_maxs = np.array([h_px.max() for _,h_px,_,_ in img_datas])
     img_mask = np.zeros_like(h_mins,dtype=np.bool)
 
+    nth = 1024
+    nbk = max(n_v//nth,1)
+
     if terrain.has_data: # render land model 
 
 
@@ -183,7 +187,8 @@ def _render(png_data,h_min,rs,ds,h_angles,surface_color,background_color,terrain
                 print("{:5.5f} {:5.5f}".format(h_angle,h_angle_max))
             heights = terrain.get_terrain(lat_obs,lon_obs,h_angle,ds)
 
-            _ray_crossing_gpu(h_min,rs,heights,inds,water,land,sky)
+            _ray_crossing_cpu(h_min,rs,heights,inds,water,land,sky)
+
             png_data[i,water,:] = surface_color
             png_data[i,sky,:] = background_color
 
@@ -206,6 +211,122 @@ def _render(png_data,h_min,rs,ds,h_angles,surface_color,background_color,terrain
                     _update_png_data_slice(j,png_data[i,...],l,img_png_data[k,...])
 
     else: # if no terrain to render, just render sky and sphere surface
+
+        _get_water(rs,inds)
+        np.less(inds,n_z,out=water)
+        png_data[:,water,:] = surface_color
+        np.logical_not(water,out=sky)
+        png_data[:,sky,:] = background_color
+
+        _get_bounds_block(h_angles,h_mins,h_maxs,img_mask)
+        if np.any(img_mask):
+            img_indx = np.argwhere(img_mask).ravel()
+            for I in img_indx:
+                img_png_data,h_px,v_px,d = img_datas[I]
+                
+                rh = ray_heights[d]
+                _get_bounds(h_angles,h_px[0],h_px[-1],out=h_mask)
+                _get_vertical_mask(rh,v_px[0],v_px[-1],inds,ds,d,sky,v_mask)
+                if np.any(v_mask):
+                    i = np.argwhere(h_mask).ravel()
+                    j = np.argwhere(v_mask).ravel()
+                    k = np.searchsorted(h_px,h_angles[i])
+                    l = np.searchsorted(v_px,rh[j])
+
+                    _update_png_data(i,j,png_data,k,l,img_png_data)
+
+
+def _render_gpu(png_data,h_min,rs,ds,h_angles,surface_color,background_color,terrain_args,image_args,disp=False):
+
+    lat_obs,lon_obs,terrain,cfunc,cfunc_args = terrain_args
+    img_datas,ray_heights = image_args
+
+    if terrain.has_data: # render land model 
+        n_v = rs.shape[0]
+        n_h = h_angles.shape[0]
+        n_z = rs.shape[1]
+
+
+
+        water = np.zeros(n_v,dtype=np.bool)
+        land = np.zeros(n_v,dtype=np.bool)
+        sky = np.zeros(n_v,dtype=np.bool)
+        inds = np.zeros(n_v,dtype=np.int32)
+
+        water_dev = cuda.to_device(water)
+        land_dev= cuda.to_device(land)
+        sky_dev= cuda.to_device(sky)
+        inds_dev= cuda.to_device(inds)
+        heights_dev = cuda.device_array_like(ds)
+        ds_dev = cuda.to_device(ds)
+        rs_dev = cuda.to_device(rs)
+
+        stream = cuda.stream()
+
+        v_mask = np.zeros(n_v,dtype=np.bool)
+        h_mask = np.zeros(h_angles.shape[0],dtype=np.bool)
+
+        h_mins = np.array([h_px.min() for _,h_px,_,_ in img_datas])
+        h_maxs = np.array([h_px.max() for _,h_px,_,_ in img_datas])
+        img_mask = np.zeros_like(h_mins,dtype=np.bool)
+
+        nth = 1024
+        nbk = max(n_v//nth,1)
+
+        h_angle_max = h_angles.max()
+
+        for i,h_angle in enumerate(h_angles):
+            if disp:
+                print("{:5.5f} {:5.5f}".format(h_angle,h_angle_max))
+            heights = terrain.get_terrain(lat_obs,lon_obs,h_angle,ds)
+            cuda.to_device(heights,to=heights_dev)
+
+            _ray_crossing_gpu[nbk,nth](h_min,rs_dev,heights_dev,inds_dev,water_dev,land_dev,sky_dev)
+
+            water_dev.copy_to_host(ary=water, stream=stream)
+            inds_dev.copy_to_host(ary=inds, stream=stream)
+            land_dev.copy_to_host(ary=land, stream=stream)
+            sky_dev.copy_to_host(ary=sky, stream=stream)
+
+            png_data[i,water,:] = surface_color
+            png_data[i,sky,:] = background_color
+
+            if np.any(land):
+                land_inds = inds[land]
+                png_data[i,land,:] = cfunc(ds[land_inds],heights[land_inds],*cfunc_args)
+
+            _get_bounds(h_angle,h_mins,h_maxs,out=img_mask)
+            if np.any(img_mask):
+                img_indx = np.argwhere(img_mask).ravel()
+                for I in img_indx:
+                    img_png_data,h_px,v_px,d = img_datas[I]
+
+                    rh = ray_heights[d]
+                    _get_vertical_mask(rh,v_px[0],v_px[-1],inds,ds,d,sky,v_mask)
+
+                    j = np.argwhere(v_mask).ravel()
+                    k = np.searchsorted(h_px,h_angle)
+                    l = np.searchsorted(v_px,rh[j])
+                    _update_png_data_slice(j,png_data[i,...],l,img_png_data[k,...])
+
+    else: # if no terrain to render, just render sky and sphere surface
+
+        n_v = rs.shape[0]
+        n_z = rs.shape[1]
+
+        water = np.zeros(n_v,dtype=np.bool)
+        sky = np.zeros(n_v,dtype=np.bool)
+        inds = np.zeros(n_v,dtype=np.int32)
+
+        v_mask = np.zeros(n_v,dtype=np.bool)
+        h_mask = np.zeros(h_angles.shape[0],dtype=np.bool)
+
+        h_mins = np.array([h_px.min() for _,h_px,_,_ in img_datas])
+        h_maxs = np.array([h_px.max() for _,h_px,_,_ in img_datas])
+        img_mask = np.zeros_like(h_mins,dtype=np.bool)
+
+        nth = 1024
+        nbk = max(n_v//nth,1)
 
         _get_water(rs,inds)
         np.less(inds,n_z,out=water)
@@ -324,7 +445,7 @@ def ray_diagram(ax,calc,h0,d,angles,heights=None,style="sphere_top",
         c = np.cos(np.pi/2-d/R0)
         s = np.sin(np.pi/2-d/R0)
 
-        _ray_crossing(h_min,rs,heights,inds,water,land,sky)
+        _ray_crossing_cpu(h_min,rs,heights,inds,water,land,sky)
         rs += R0
         heights = heights + R0
         for i in range(n_v):
@@ -356,7 +477,7 @@ def ray_diagram(ax,calc,h0,d,angles,heights=None,style="sphere_top",
         c = np.cos(np.pi/2-d/R0+d_max/(2*R0))
         c -= c.min()
         s = np.sin(np.pi/2-d/R0+d_max/(2*R0))
-        _ray_crossing(h_min,rs,heights,inds,water,land,sky)
+        _ray_crossing_cpu(h_min,rs,heights,inds,water,land,sky)
         rs += R0
         heights = heights + R0
         for i in range(n_v):
@@ -385,7 +506,7 @@ def ray_diagram(ax,calc,h0,d,angles,heights=None,style="sphere_top",
         ax.plot(c*heights,s*heights-R0*s.min(),color="green",linewidth=linewidth)
         ax.plot(c*R0,s*R0-R0*s.min(),color="blue",linewidth=linewidth)
     elif style == "flat":
-        _ray_crossing(h_min,rs,heights,inds,water,land,sky)
+        _ray_crossing_cpu(h_min,rs,heights,inds,water,land,sky)
 
         for i in range(n_v):
             if i == i_horz and eye_level:
@@ -584,7 +705,8 @@ class Renderer_35mm(object):
         self._h_angles = np.rad2deg(np.arctan(x_grid/self._focal_length))+f_az
 
 
-    def render_scene(self,scene,image_name,surface_color=None,background_color=None,cfunc=_defualt_cfunc,cfunc_args=(),disp=False,eye_level=False,postprocess=None,h_min=0.01):
+    def render_scene(self,scene,image_name,surface_color=None,background_color=None,cfunc=_defualt_cfunc,cfunc_args=(),
+        disp=False,eye_level=False,postprocess=None,h_min=0.01,gpu=False):
         """Render a scene object for the renderer's given field of view and direction. 
 
         Parameters
@@ -645,8 +767,11 @@ class Renderer_35mm(object):
         terrain_args = (self._lat_obs,self._lon_obs,land_model,cfunc,cfunc_args)
         image_args = (img_datas,ray_heights)
 
-        _render(png_data,h_min,self._rs,self._ds,self._h_angles,surface_color,background_color,terrain_args,image_args,disp)
 
+        if gpu:
+            _render_gpu(png_data,h_min,self._rs,self._ds,self._h_angles,surface_color,background_color,terrain_args,image_args,disp)
+        else:
+            _render_cpu(png_data,h_min,self._rs,self._ds,self._h_angles,surface_color,background_color,terrain_args,image_args,disp)
 
         if eye_level:
             i_horz = np.argwhere(np.abs(self._v_angles)<(self._vfov/800.0)).ravel()
@@ -760,7 +885,8 @@ class Renderer_Composite(object):
         self._lon_obs = float(lon_obs)
         _check_gps(self._lat_obs,self._lon_obs)
 
-    def render_scene(self,scene,image_names,heading_mins,heading_maxs,surface_color=None,background_color=None,cfunc=_defualt_cfunc,cfunc_args=(),disp=False,eye_level=False,postprocess=None,h_min=0.01):
+    def render_scene(self,scene,image_names,heading_mins,heading_maxs,surface_color=None,background_color=None,
+        cfunc=_defualt_cfunc,cfunc_args=(),disp=False,eye_level=False,postprocess=None,h_min=0.01,gpu=False):
         """Renders a composites over a very wide horizontal field.
 
         Parameters
@@ -838,7 +964,10 @@ class Renderer_Composite(object):
             terrain_args = (self._lat_obs,self._lon_obs,land_model,cfunc,cfunc_args)
             image_args = (img_datas,ray_heights)
 
-            _render(png_data,h_min,self._rs,self._ds,h_angles,surface_color,background_color,terrain_args,image_args,disp)
+            if gpu:
+                _render_gpu(png_data,h_min,self._rs,self._ds,h_angles,surface_color,background_color,terrain_args,image_args,disp)
+            else:
+                _render_cpu(png_data,h_min,self._rs,self._ds,h_angles,surface_color,background_color,terrain_args,image_args,disp)
 
             if eye_level:
                 i_horz = np.argwhere(np.abs(self._v_angles)<(self._vfov/800.0)).ravel()
