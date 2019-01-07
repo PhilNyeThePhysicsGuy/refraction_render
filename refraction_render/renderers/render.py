@@ -676,21 +676,18 @@ class Scene(object):
         self._land_model = land_model()
         self._image_dict = {}
 
-    def add_elevation_model(self,lats,lons,elevation):
-        """Add elevation data to the scene.
+    def add_elevation_model(self,*args):
+        """Add terrain data to the interpolated model.
 
         Parameters
         ----------
-        lats : array_like of shape (n,)
-            list of latitudes which define the grid of data.
+        args: tuple
+            tuple which contains elevation data:
+            if len(args) == 3: args = (lats,lons,elevation) which contains the arguments for scipy.interpolate.RegularGridInterpolator.
+            if len(args) == 2: args = (points,elevation) which contains the arguments for scipy.interpolate.LinearNDInterpolator.
 
-        lons : array_like of shape (m,)
-            list of longitudes which define the grid of data.
-
-        elevation : array_like of shape (n,m)
-            list of elevation data at the points defined by the grid of `lats` and `lons`.
         """
-        self._land_model.add_elevation_data(lats,lons,elevation)
+        self._land_model.add_elevation_data(*args)
 
     def add_image(self,image,image_pos,dimensions,direction=None):
         """Add image to scene. 
@@ -821,23 +818,25 @@ class land_model(object):
     def has_data(self):
         return len(self._terrain_list) > 0
 
-    def add_elevation_data(self,lats,lons,elevation):
-        """ 
-        Add terrain data to the interpolated model.
+    def add_elevation_data(self,*args):
+        """Add terrain data to the interpolated model.
 
         Parameters
         ----------
-        lats: ndarray with shape (n,)
-            latitudes used in grid.
-
-        lons: ndarray with shape (m,)
-            longitudes used in grid.
-
-        data: ndarray with shape (n,m)
-            elevation data at each grid defined by lats and lons.
+        args: tuple
+            tuple which contains elevation data:
+            if len(args) == 3: args = (lats,lons,elevation) which contains the arguments for scipy.interpolate.RegularGridInterpolator.
+            if len(args) == 2: args = (points,elevation) which contains the arguments for scipy.interpolate.LinearNDInterpolator.
 
         """
-        self._terrain_list.append(interp.RegularGridInterpolator((lats,lons),elevation,bounds_error=False,fill_value=0.0))
+        if len(args) == 3:
+            lats,lons,elevation = args
+            self._terrain_list.append(interp.RegularGridInterpolator((lats,lons),elevation,bounds_error=False,fill_value=0.0))
+        elif len(args) == 2:
+            points,elevation = args
+            self._terrain_list.append(interp.LinearNDInterpolator(points,elevation,fill_value=0.0))
+        else:
+            raise ValueError("can't interpret arguments.")
 
 
 
