@@ -72,7 +72,7 @@ def _ray_crossing_gpu(h_min,rs,heights,inds,water,land,sky):
     i = cuda.grid(1)
     n_d = rs.shape[1]
 
-    if i < inds.size:
+    if i < rs.shape[0]:
         hit = False
         water[i] = False
         land[i] = False
@@ -146,7 +146,6 @@ def _check_gps(lat,lon):
         raise ValueError("latitude must be between -90 and 90")
     if np.any(lon < -180) or np.any(lon > 180):
         raise ValueError("lonitude must be between -180 and 180")
-
 
 def _defualt_cfunc(d,heights):
     ng = 150
@@ -246,17 +245,15 @@ def _render_gpu(png_data,h_min,rs,ds,h_angles,surface_color,background_color,ter
         n_h = h_angles.shape[0]
         n_z = rs.shape[1]
 
-
-
         water = np.zeros(n_v,dtype=np.bool)
         land = np.zeros(n_v,dtype=np.bool)
         sky = np.zeros(n_v,dtype=np.bool)
         inds = np.zeros(n_v,dtype=np.int32)
 
         water_dev = cuda.to_device(water)
-        land_dev= cuda.to_device(land)
-        sky_dev= cuda.to_device(sky)
-        inds_dev= cuda.to_device(inds)
+        land_dev = cuda.to_device(land)
+        sky_dev = cuda.to_device(sky)
+        inds_dev = cuda.to_device(inds)
         heights_dev = cuda.device_array_like(ds)
         ds_dev = cuda.to_device(ds)
         rs_dev = cuda.to_device(rs)
@@ -271,7 +268,8 @@ def _render_gpu(png_data,h_min,rs,ds,h_angles,surface_color,background_color,ter
         img_mask = np.zeros_like(h_mins,dtype=np.bool)
 
         nth = 1024
-        nbk = max(n_v//nth,1)
+        nbk = max(n_v//nth,1)+1
+        print(n_v,nth,nbk)
 
         h_angle_max = h_angles.max()
 
@@ -279,6 +277,7 @@ def _render_gpu(png_data,h_min,rs,ds,h_angles,surface_color,background_color,ter
             if disp:
                 print("{:5.5f} {:5.5f}".format(h_angle,h_angle_max))
             heights = terrain.get_terrain(lat_obs,lon_obs,h_angle,ds)
+
             cuda.to_device(heights,to=heights_dev)
 
             _ray_crossing_gpu[nbk,nth](h_min,rs_dev,heights_dev,inds_dev,water_dev,land_dev,sky_dev)
@@ -412,11 +411,12 @@ def is_sorted(a):
     return True
 
 def ray_diagram(ax,calc,h0,d,angles,heights=None,style="sphere_top",
-                eye_level=True,linewidth=0.2,vfov=1.0,vert_obs_angle=0.0,R0=6371008,h_min=0.01):
+                eye_level=True,linewidth_rays=0.2,linewidth_earth=0.2,vfov=1.0,vert_obs_angle=0.0,R0=6371008,h_min=0.01):
 
     
     if len(d) == 0 or not is_sorted(d):
         raise ValueError("array 'd' must contain distance values in ascending order.")
+
 
     angles = np.asarray(angles).ravel()
     d_max = d.max()
@@ -431,7 +431,8 @@ def ray_diagram(ax,calc,h0,d,angles,heights=None,style="sphere_top",
     sky = np.zeros(n_v,dtype=np.bool)
     inds = np.zeros(n_v,dtype=np.int32)
 
-    i_horz = np.abs(angles).argmin()
+    if angles.size > 0:
+        i_horz = np.abs(angles).argmin()
 
     if heights is None:
         heights = np.zeros_like(d)
@@ -452,27 +453,27 @@ def ray_diagram(ax,calc,h0,d,angles,heights=None,style="sphere_top",
             if i == i_horz and eye_level:
                 i_max = inds[i]
                 ax.plot(rs[i,:i_max]*c[:i_max],
-                        rs[i,:i_max]*s[:i_max]-R0,color="orange",linewidth=linewidth)
+                        rs[i,:i_max]*s[:i_max]-R0,color="orange",linewidth=linewidth_rays)
                 continue
 
             if water[i]:
                 i_max = inds[i]
                 ax.plot(rs[i,:i_max]*c[:i_max],
-                        rs[i,:i_max]*s[:i_max]-R0,color="blue",linewidth=linewidth)
+                        rs[i,:i_max]*s[:i_max]-R0,color="blue",linewidth=linewidth_rays)
                 continue
 
             if land[i]:
                 i_max = inds[i]
                 ax.plot(rs[i,:i_max]*c[:i_max],
-                        rs[i,:i_max]*s[:i_max]-R0,color="green",linewidth=linewidth)
+                        rs[i,:i_max]*s[:i_max]-R0,color="green",linewidth=linewidth_rays)
                 continue
 
             if sky[i]:
-                ax.plot(rs[i,:]*c,rs[i,:]*s-R0,color="cyan",linewidth=linewidth)
+                ax.plot(rs[i,:]*c,rs[i,:]*s-R0,color="cyan",linewidth=linewidth_rays)
                 continue
 
-        ax.plot(c*heights,s*heights-R0,color="green",linewidth=linewidth)
-        ax.plot(c*R0,s*R0-R0,color="blue",linewidth=linewidth)
+        ax.plot(c*heights,s*heights-R0,color="green",linewidth=linewidth_earth)
+        ax.plot(c*R0,s*R0-R0,color="blue",linewidth=linewidth_earth)
     elif style == "sphere_side":
         c = np.cos(np.pi/2-d/R0+d_max/(2*R0))
         c -= c.min()
@@ -484,52 +485,52 @@ def ray_diagram(ax,calc,h0,d,angles,heights=None,style="sphere_top",
             if i == i_horz and eye_level:
                 i_max = inds[i]
                 ax.plot(rs[i,:i_max]*c[:i_max],
-                        rs[i,:i_max]*s[:i_max]-R0*s.min(),color="orange",linewidth=linewidth)
+                        rs[i,:i_max]*s[:i_max]-R0*s.min(),color="orange",linewidth=linewidth_rays)
                 continue
 
             if water[i]:
                 i_max = inds[i]
                 ax.plot(rs[i,:i_max]*c[:i_max],
-                        rs[i,:i_max]*s[:i_max]-R0*s.min(),color="blue",linewidth=linewidth)
+                        rs[i,:i_max]*s[:i_max]-R0*s.min(),color="blue",linewidth=linewidth_rays)
                 continue
 
             if land[i]:
                 i_max = inds[i]
                 ax.plot(rs[i,:i_max]*c[:i_max],
-                        rs[i,:i_max]*s[:i_max]-R0*s.min(),color="green",linewidth=linewidth)
+                        rs[i,:i_max]*s[:i_max]-R0*s.min(),color="green",linewidth=linewidth_rays)
                 continue
 
             if sky[i]:
-                ax.plot(rs[i,:]*c,rs[i,:]*s-R0*s.min(),color="cyan",linewidth=linewidth)
+                ax.plot(rs[i,:]*c,rs[i,:]*s-R0*s.min(),color="cyan",linewidth=linewidth_rays)
                 continue
 
-        ax.plot(c*heights,s*heights-R0*s.min(),color="green",linewidth=linewidth)
-        ax.plot(c*R0,s*R0-R0*s.min(),color="blue",linewidth=linewidth)
+        ax.plot(c*heights,s*heights-R0*s.min(),color="green",linewidth=linewidth_earth)
+        ax.plot(c*R0,s*R0-R0*s.min(),color="blue",linewidth=linewidth_earth)
     elif style == "flat":
         _ray_crossing_cpu(h_min,rs,heights,inds,water,land,sky)
 
         for i in range(n_v):
             if i == i_horz and eye_level:
                 i_max = inds[i]
-                ax.plot(d[:i_max],rs[i,:i_max],color="orange",linewidth=linewidth)
+                ax.plot(d[:i_max],rs[i,:i_max],color="orange",linewidth=linewidth_rays)
                 continue
 
             if water[i]:
                 i_max = inds[i]
-                ax.plot(d[:i_max],rs[i,:i_max],color="blue",linewidth=linewidth)
+                ax.plot(d[:i_max],rs[i,:i_max],color="blue",linewidth=linewidth_rays)
                 continue
 
             if land[i]:
                 i_max = inds[i]
-                ax.plot(d[:i_max],rs[i,:i_max],color="green",linewidth=linewidth)
+                ax.plot(d[:i_max],rs[i,:i_max],color="green",linewidth=linewidth_rays)
                 continue
 
             if sky[i]:
-                ax.plot(d,rs[i,:],color="cyan",linewidth=linewidth)
+                ax.plot(d,rs[i,:],color="cyan",linewidth=linewidth_rays)
                 continue
 
-        ax.plot(d,heights,color="green",linewidth=linewidth)
-        ax.plot(d,np.zeros_like(d),color="blue",linewidth=linewidth)
+        ax.plot(d,heights,color="green",linewidth=linewidth_earth)
+        ax.plot(d,np.zeros_like(d),color="blue",linewidth=linewidth_earth)
     else:
         raise ValueError
 
