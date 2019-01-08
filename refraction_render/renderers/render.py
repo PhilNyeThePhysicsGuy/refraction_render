@@ -785,6 +785,8 @@ class Renderer_35mm(object):
         h_min: float, optional
             minimum value for ray to count as crossing water. 
 
+        gpu: bool, optional
+            utilize GPU to calculate 3D land model rendering.
 
         """        
         if surface_color is None:
@@ -970,6 +972,9 @@ class Renderer_Composite(object):
 
         h_min: float, optional
             minimum value for ray to count as crossing water. 
+
+        gpu: bool, optional
+            utilize GPU to calculate 3D land model rendering.
 
         """  
         if surface_color is None:

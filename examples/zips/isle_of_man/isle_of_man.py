@@ -2,7 +2,7 @@ from refraction_render.renderers import Scene,Renderer_35mm,Renderer_Composite
 from refraction_render.calcs import CurveCalc,FlatCalc
 from refraction_render.misc import mi_to_m,ft_to_m
 from pyproj import Geod
-import gdal
+from PIL import Image
 import numpy as np
 import os
 import cProfile
@@ -27,8 +27,7 @@ calc_args = dict(T0=8.3,P0=103000,T_prof=T_prof)
 calc = CurveCalc(**calc_args)
 
 # load topographical data
-raster = gdal.Open("n54_w005_1arc_v3.tif")
-data = np.array(raster.ReadAsArray())
+data = np.array(Image.open("n54_w005_1arc_v3.tif"))
 n_lat,n_lon =  data.shape
 
 lats = np.linspace(54,55,n_lat) # get latitudes of raster
