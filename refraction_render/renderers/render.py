@@ -410,9 +410,48 @@ def is_sorted(a):
                return False
     return True
 
-def ray_diagram(ax,calc,h0,d,angles,heights=None,style="sphere_top",
-                eye_level=True,linewidth_rays=0.2,linewidth_earth=0.2,vfov=1.0,vert_obs_angle=0.0,R0=6371008,h_min=0.01):
+def ray_diagram(ax,calc,h_obs,d,angles,heights=None,style="sphere_top",
+                eye_level=True,linewidth_rays=0.2,linewidth_earth=0.2,R0=6371008,h_min=0.01):
 
+    """Side profile view showing the rays trajectories. 
+
+    Parameters
+    ----------
+    ax: matplotlib Axes object
+        this function plots lines on a graph, you can specify which graph to plot to by passing in the axes object for the graph you want to plot to.
+
+
+    calc: calcs object
+        object which can be used to calculate the trajectory of light rays
+
+    h_obs: float
+        height of renderer in meters
+    
+    d: array_like, (N,)
+        list of values to evaluate ray positions at for ray diagram, must be sorted in ascending order.
+
+    angles: array_like, (M,)
+        list of initial angles for the rays, in degrees
+
+    heights: array_like, (N,), optional
+        list of values which represent the elevation profile along ray trajectory
+
+    style: str, optional 
+        style to plot the graph. "flat": plot rays on flat plane, "sphere_top": plot rays as if the earth is filling away from the observer, "sphere_side": plot rays with the 'bulge' in the middle. 
+
+    eye_level: bool, optional
+        color the ray which is closest to eye level (0 degrees initial angle) orange.
+
+    linewidth_rays: float, optional
+        linewidth used for plotting rays in diagram
+
+    linewidth_earth: float, optional
+        linewidth used for plotting surface of the earth, both water and land.
+
+    h_min: float, optional
+        minimum values which should count as water when calculating hit locations.
+
+    """
     
     if len(d) == 0 or not is_sorted(d):
         raise ValueError("array 'd' must contain distance values in ascending order.")
@@ -421,7 +460,7 @@ def ray_diagram(ax,calc,h0,d,angles,heights=None,style="sphere_top",
     angles = np.asarray(angles).ravel()
     d_max = d.max()
 
-    sol = calc.solve_ivp(d.max(),h0,alpha=angles,dense_output=True,atol=1.1e-10,rtol=1.1e-7)
+    sol = calc.solve_ivp(d.max(),h_obs,alpha=angles,dense_output=True,atol=1.1e-10,rtol=1.1e-7)
     n_v = angles.shape[0]
 
     rs = sol.sol(d)[:n_v].copy()
@@ -1021,7 +1060,7 @@ class Scene(object):
             string which contains path to image file. 
 
         image_pos: array_like
-            either has (h0,lat,lon) or (lat,lon) h0 is height above the earth's surface
+            either has (h_obj,lat,lon) or (lat,lon) h_obj is height above the earth's surface
 
         dimensions: tuple
             contains dimensions of the image is in meters. If either one has value `-1` 

@@ -42,7 +42,7 @@
 <h1>refraction_render.calcs.std_atmosphere<a class="headerlink" href="#refraction-render-calcs-std-atmosphere" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="refraction_render.calcs.std_atmosphere">
-<em class="property">class </em><code class="descclassname">refraction_render.calcs.</code><code class="descname">std_atmosphere</code><span class="sig-paren">(</span><em>h0=0.0</em>, <em>T0=15.0</em>, <em>P0=101325.0</em>, <em>g=9.81</em>, <em>dT=None</em>, <em>moist_lapse_rate=False</em>, <em>T_prof=None</em>, <em>dT_prof=None</em>, <em>T_prof_args=()</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/calcs/standard_atmosphere.html#std_atmosphere"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.calcs.std_atmosphere" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">refraction_render.calcs.</code><code class="descname">std_atmosphere</code><span class="sig-paren">(</span><em>h0=0.0</em>, <em>T0=15.0</em>, <em>P0=101325.0</em>, <em>g=9.81</em>, <em>dT=None</em>, <em>wavelength=0.545</em>, <em>moist_lapse_rate=False</em>, <em>T_prof=None</em>, <em>dT_prof=None</em>, <em>T_prof_args=()</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/calcs/standard_atmosphere.html#std_atmosphere"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.calcs.std_atmosphere" title="Permalink to this definition">¶</a></dt>
 <dd><p>Object which calculates the standard atmospheric model.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -86,7 +86,7 @@
 </table>
 <dl class="method">
 <dt id="refraction_render.calcs.std_atmosphere.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>h0=0.0</em>, <em>T0=15.0</em>, <em>P0=101325.0</em>, <em>g=9.81</em>, <em>dT=None</em>, <em>moist_lapse_rate=False</em>, <em>T_prof=None</em>, <em>dT_prof=None</em>, <em>T_prof_args=()</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/calcs/standard_atmosphere.html#std_atmosphere.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.calcs.std_atmosphere.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>h0=0.0</em>, <em>T0=15.0</em>, <em>P0=101325.0</em>, <em>g=9.81</em>, <em>dT=None</em>, <em>wavelength=0.545</em>, <em>moist_lapse_rate=False</em>, <em>T_prof=None</em>, <em>dT_prof=None</em>, <em>T_prof_args=()</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/calcs/standard_atmosphere.html#std_atmosphere.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.calcs.std_atmosphere.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Intializes the <cite>std_atmosphere</cite> object.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -107,6 +107,9 @@
 </dd>
 <dt><strong>dT: float, optional</strong></dt>
 <dd><p class="first last">Temperature lapse rate (in <span class="math notranslate nohighlight">\(C/m\)</span>) defined as minus the slope of the temperature</p>
+</dd>
+<dt><strong>wavelength: float, optional</strong></dt>
+<dd><p class="first last">wavelength of light (in <span class="math notranslate nohighlight">\(\mu m\)</span>) used calculate the index of refraction</p>
 </dd>
 <dt><strong>moist_lapse_rate: bool, optional</strong></dt>
 <dd><p class="first last">Uses the temperature and pressure to calculate the moist lapse rate, use when the humidity is at 100%</p>
@@ -140,7 +143,7 @@
 <tr class="row-even"><td><a class="reference internal" href="#refraction_render.calcs.std_atmosphere.T" title="refraction_render.calcs.std_atmosphere.T"><code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code></a>(h)</td>
 <td>Temperature function for this atmospheric model.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#refraction_render.calcs.std_atmosphere.__init__" title="refraction_render.calcs.std_atmosphere.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>([h0,&nbsp;T0,&nbsp;P0,&nbsp;g,&nbsp;dT,&nbsp;…])</td>
+<tr class="row-odd"><td><a class="reference internal" href="#refraction_render.calcs.std_atmosphere.__init__" title="refraction_render.calcs.std_atmosphere.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>([h0,&nbsp;T0,&nbsp;P0,&nbsp;g,&nbsp;dT,&nbsp;wavelength,&nbsp;…])</td>
 <td>Intializes the <cite>std_atmosphere</cite> object.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="#refraction_render.calcs.std_atmosphere.n" title="refraction_render.calcs.std_atmosphere.n"><code class="xref py py-obj docutils literal notranslate"><span class="pre">n</span></code></a>(h)</td>
@@ -241,7 +244,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Phillip Weinberg.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
     </div>
   </body>
 </html>

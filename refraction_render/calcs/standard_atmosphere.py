@@ -9,7 +9,7 @@ class std_atmosphere(object):
     """Object which calculates the standard atmospheric model. 
 
     """
-    def __init__(self,h0=0.0,T0=15.0,P0=101325.0,g=9.81,dT=None,moist_lapse_rate=False,
+    def __init__(self,h0=0.0,T0=15.0,P0=101325.0,g=9.81,dT=None,wavelength=0.545,moist_lapse_rate=False,
                  T_prof=None,dT_prof=None,T_prof_args=()):
         """Intializes the `std_atmosphere` object.
 
@@ -30,6 +30,9 @@ class std_atmosphere(object):
         dT: float, optional
             Temperature lapse rate (in :math:`C/m`) defined as minus the slope of the temperature
 
+        wavelength: float, optional
+            wavelength of light (in :math:`\\mu m`) used calculate the index of refraction 
+
         moist_lapse_rate: bool, optional
             Uses the temperature and pressure to calculate the moist lapse rate, use when the humidity is at 100%
 
@@ -44,7 +47,6 @@ class std_atmosphere(object):
 
         """
 
-        wavelength=0.545
         T0 = max(T0,0)
         e = 611.21*np.exp((18.678-T0/234.5)*(T0/(557.14+T0)))
         T0 += 273
@@ -87,21 +89,18 @@ class std_atmosphere(object):
 
         rho = lambda h:sol.sol(h)[0]/(R*T(h))
 
+        if wavelength < 0.23  or wavelength > 1.69:
+              warnings.warm("Cauchy Equation used to calculate despersion does not work well beyond the visible spetrum. ")
+          
+        deltan = (0.05792105/(238.0185-wavelength**(-2)) + 0.00167917/(57.362-wavelength**(-2)))/1.225
 
-        deltan = 0.0002879*(1+0.0000567/wavelength**2)
-        n = lambda s,h:(1+rho(h)*deltan)
-        dndr = lambda s,h:drhodr(h)*deltan
-        dnds = lambda s,h:0.0
 
-
-        deltan = 0.0002879*(1+0.0000567/wavelength**2)
         self._n = lambda s,h:(1+rho(h)*deltan)
         self._dndy = lambda s,h:drhody(h)*deltan
         self._dndx = lambda s,h:0.0
         
         self._rho = rho
         self._dT = dT
-        self._n = n
         self._P = lambda h:sol.sol(h)[0]
         self._T = T
         self._dTdh = dTdr

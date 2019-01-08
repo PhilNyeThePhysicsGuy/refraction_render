@@ -44,6 +44,18 @@
 <dt id="refraction_render.renderers.Scene">
 <em class="property">class </em><code class="descclassname">refraction_render.renderers.</code><code class="descname">Scene</code><a class="reference internal" href="../modules/refraction_render/renderers/render.html#Scene"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.renderers.Scene" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simple wrapper which keeps track of data used to render an image.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Attributes:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>land_model</strong></dt>
+<dd></dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
 <p class="rubric">Methods</p>
 <table border="1" class="longtable docutils">
 <colgroup>
@@ -51,8 +63,8 @@
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#refraction_render.renderers.Scene.add_elevation_model" title="refraction_render.renderers.Scene.add_elevation_model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_elevation_model</span></code></a>(lats,&nbsp;lons,&nbsp;elevation)</td>
-<td>Add elevation data to the scene.</td>
+<tr class="row-odd"><td><a class="reference internal" href="#refraction_render.renderers.Scene.add_elevation_model" title="refraction_render.renderers.Scene.add_elevation_model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_elevation_model</span></code></a>(*args)</td>
+<td>Add terrain data to the interpolated model.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="#refraction_render.renderers.Scene.add_image" title="refraction_render.renderers.Scene.add_image"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_image</span></code></a>(image,&nbsp;image_pos,&nbsp;dimensions[,&nbsp;…])</td>
 <td>Add image to scene.</td>
@@ -75,8 +87,8 @@
 <tr class="row-odd"><td><a class="reference internal" href="#refraction_render.renderers.Scene.__init__" title="refraction_render.renderers.Scene.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>()</td>
 <td>This function initialized <cite>Scene</cite> object.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#refraction_render.renderers.Scene.add_elevation_model" title="refraction_render.renderers.Scene.add_elevation_model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_elevation_model</span></code></a>(lats,&nbsp;lons,&nbsp;elevation)</td>
-<td>Add elevation data to the scene.</td>
+<tr class="row-even"><td><a class="reference internal" href="#refraction_render.renderers.Scene.add_elevation_model" title="refraction_render.renderers.Scene.add_elevation_model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_elevation_model</span></code></a>(*args)</td>
+<td>Add terrain data to the interpolated model.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="#refraction_render.renderers.Scene.add_image" title="refraction_render.renderers.Scene.add_image"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_image</span></code></a>(image,&nbsp;image_pos,&nbsp;dimensions[,&nbsp;…])</td>
 <td>Add image to scene.</td>
@@ -85,21 +97,17 @@
 </table>
 <dl class="method">
 <dt id="refraction_render.renderers.Scene.add_elevation_model">
-<code class="descname">add_elevation_model</code><span class="sig-paren">(</span><em>lats</em>, <em>lons</em>, <em>elevation</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/renderers/render.html#Scene.add_elevation_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.renderers.Scene.add_elevation_model" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add elevation data to the scene.</p>
+<code class="descname">add_elevation_model</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/renderers/render.html#Scene.add_elevation_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.renderers.Scene.add_elevation_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add terrain data to the interpolated model.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
-<dt><strong>lats</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array_like of shape (n,)</span></dt>
-<dd><p class="first last">list of latitudes which define the grid of data.</p>
-</dd>
-<dt><strong>lons</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array_like of shape (m,)</span></dt>
-<dd><p class="first last">list of longitudes which define the grid of data.</p>
-</dd>
-<dt><strong>elevation</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array_like of shape (n,m)</span></dt>
-<dd><p class="first last">list of elevation data at the points defined by the grid of <cite>lats</cite> and <cite>lons</cite>.</p>
+<dt><strong>args: tuple</strong></dt>
+<dd><p class="first last">tuple which contains elevation data:
+if len(args) == 3: args = (lats,lons,elevation) which contains the arguments for scipy.interpolate.RegularGridInterpolator.
+if len(args) == 2: args = (points,elevation) which contains the arguments for scipy.interpolate.LinearNDInterpolator.</p>
 </dd>
 </dl>
 </td>
@@ -121,7 +129,7 @@
 <dd><p class="first last">string which contains path to image file.</p>
 </dd>
 <dt><strong>image_pos: array_like</strong></dt>
-<dd><p class="first last">either has (h0,lat,lon) or (lat,lon) h0 is height above the earth’s surface</p>
+<dd><p class="first last">either has (h_obj,lat,lon) or (lat,lon) h_obj is height above the earth’s surface</p>
 </dd>
 <dt><strong>dimensions: tuple</strong></dt>
 <dd><p class="first last">contains dimensions of the image is in meters. If either one has value <cite>-1</cite> 
@@ -182,7 +190,7 @@ then that dimension is determined by the resolution of the picture.</p>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Phillip Weinberg.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
     </div>
   </body>
 </html>

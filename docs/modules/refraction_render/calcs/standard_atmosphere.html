@@ -50,7 +50,7 @@
     <span class="sd">&quot;&quot;&quot;Object which calculates the standard atmospheric model. </span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="std_atmosphere.__init__"><a class="viewcode-back" href="../../../generated/refraction_render.calcs.std_atmosphere.html#refraction_render.calcs.std_atmosphere.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">h0</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span><span class="n">T0</span><span class="o">=</span><span class="mf">15.0</span><span class="p">,</span><span class="n">P0</span><span class="o">=</span><span class="mf">101325.0</span><span class="p">,</span><span class="n">g</span><span class="o">=</span><span class="mf">9.81</span><span class="p">,</span><span class="n">dT</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">moist_lapse_rate</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<div class="viewcode-block" id="std_atmosphere.__init__"><a class="viewcode-back" href="../../../generated/refraction_render.calcs.std_atmosphere.html#refraction_render.calcs.std_atmosphere.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">h0</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span><span class="n">T0</span><span class="o">=</span><span class="mf">15.0</span><span class="p">,</span><span class="n">P0</span><span class="o">=</span><span class="mf">101325.0</span><span class="p">,</span><span class="n">g</span><span class="o">=</span><span class="mf">9.81</span><span class="p">,</span><span class="n">dT</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">wavelength</span><span class="o">=</span><span class="mf">0.545</span><span class="p">,</span><span class="n">moist_lapse_rate</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                  <span class="n">T_prof</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">dT_prof</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">T_prof_args</span><span class="o">=</span><span class="p">()):</span>
         <span class="sd">&quot;&quot;&quot;Intializes the `std_atmosphere` object.</span>
 
@@ -71,6 +71,9 @@
 <span class="sd">        dT: float, optional</span>
 <span class="sd">            Temperature lapse rate (in :math:`C/m`) defined as minus the slope of the temperature</span>
 
+<span class="sd">        wavelength: float, optional</span>
+<span class="sd">            wavelength of light (in :math:`\\mu m`) used calculate the index of refraction </span>
+
 <span class="sd">        moist_lapse_rate: bool, optional</span>
 <span class="sd">            Uses the temperature and pressure to calculate the moist lapse rate, use when the humidity is at 100%</span>
 
@@ -85,7 +88,6 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">wavelength</span><span class="o">=</span><span class="mf">0.545</span>
         <span class="n">T0</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">T0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
         <span class="n">e</span> <span class="o">=</span> <span class="mf">611.21</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">((</span><span class="mf">18.678</span><span class="o">-</span><span class="n">T0</span><span class="o">/</span><span class="mf">234.5</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">T0</span><span class="o">/</span><span class="p">(</span><span class="mf">557.14</span><span class="o">+</span><span class="n">T0</span><span class="p">)))</span>
         <span class="n">T0</span> <span class="o">+=</span> <span class="mi">273</span>
@@ -128,21 +130,18 @@
 
         <span class="n">rho</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">h</span><span class="p">:</span><span class="n">sol</span><span class="o">.</span><span class="n">sol</span><span class="p">(</span><span class="n">h</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="p">(</span><span class="n">R</span><span class="o">*</span><span class="n">T</span><span class="p">(</span><span class="n">h</span><span class="p">))</span>
 
+        <span class="k">if</span> <span class="n">wavelength</span> <span class="o">&lt;</span> <span class="mf">0.23</span>  <span class="ow">or</span> <span class="n">wavelength</span> <span class="o">&gt;</span> <span class="mf">1.69</span><span class="p">:</span>
+              <span class="n">warnings</span><span class="o">.</span><span class="n">warm</span><span class="p">(</span><span class="s2">&quot;Cauchy Equation used to calculate despersion does not work well beyond the visible spetrum. &quot;</span><span class="p">)</span>
+          
+        <span class="n">deltan</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.05792105</span><span class="o">/</span><span class="p">(</span><span class="mf">238.0185</span><span class="o">-</span><span class="n">wavelength</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">))</span> <span class="o">+</span> <span class="mf">0.00167917</span><span class="o">/</span><span class="p">(</span><span class="mf">57.362</span><span class="o">-</span><span class="n">wavelength</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)))</span><span class="o">/</span><span class="mf">1.225</span>
 
-        <span class="n">deltan</span> <span class="o">=</span> <span class="mf">0.0002879</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="mf">0.0000567</span><span class="o">/</span><span class="n">wavelength</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
-        <span class="n">n</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">s</span><span class="p">,</span><span class="n">h</span><span class="p">:(</span><span class="mi">1</span><span class="o">+</span><span class="n">rho</span><span class="p">(</span><span class="n">h</span><span class="p">)</span><span class="o">*</span><span class="n">deltan</span><span class="p">)</span>
-        <span class="n">dndr</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">s</span><span class="p">,</span><span class="n">h</span><span class="p">:</span><span class="n">drhodr</span><span class="p">(</span><span class="n">h</span><span class="p">)</span><span class="o">*</span><span class="n">deltan</span>
-        <span class="n">dnds</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">s</span><span class="p">,</span><span class="n">h</span><span class="p">:</span><span class="mf">0.0</span>
 
-
-        <span class="n">deltan</span> <span class="o">=</span> <span class="mf">0.0002879</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="mf">0.0000567</span><span class="o">/</span><span class="n">wavelength</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_n</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">s</span><span class="p">,</span><span class="n">h</span><span class="p">:(</span><span class="mi">1</span><span class="o">+</span><span class="n">rho</span><span class="p">(</span><span class="n">h</span><span class="p">)</span><span class="o">*</span><span class="n">deltan</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_dndy</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">s</span><span class="p">,</span><span class="n">h</span><span class="p">:</span><span class="n">drhody</span><span class="p">(</span><span class="n">h</span><span class="p">)</span><span class="o">*</span><span class="n">deltan</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_dndx</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">s</span><span class="p">,</span><span class="n">h</span><span class="p">:</span><span class="mf">0.0</span>
         
         <span class="bp">self</span><span class="o">.</span><span class="n">_rho</span> <span class="o">=</span> <span class="n">rho</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_dT</span> <span class="o">=</span> <span class="n">dT</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_n</span> <span class="o">=</span> <span class="n">n</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_P</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">h</span><span class="p">:</span><span class="n">sol</span><span class="o">.</span><span class="n">sol</span><span class="p">(</span><span class="n">h</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_T</span> <span class="o">=</span> <span class="n">T</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_dTdh</span> <span class="o">=</span> <span class="n">dTdr</span></div>
@@ -214,7 +213,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Phillip Weinberg.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
     </div>
   </body>
 </html>

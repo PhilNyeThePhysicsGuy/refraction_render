@@ -64,7 +64,7 @@ slices of the earth.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#refraction_render.renderers.land_model.add_elevation_data" title="refraction_render.renderers.land_model.add_elevation_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_elevation_data</span></code></a>(lats,&nbsp;lons,&nbsp;elevation)</td>
+<tr class="row-odd"><td><a class="reference internal" href="#refraction_render.renderers.land_model.add_elevation_data" title="refraction_render.renderers.land_model.add_elevation_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_elevation_data</span></code></a>(*args)</td>
 <td>Add terrain data to the interpolated model.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="#refraction_render.renderers.land_model.get_terrain" title="refraction_render.renderers.land_model.get_terrain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_terrain</span></code></a>(lat,&nbsp;lon,&nbsp;heading,&nbsp;dist)</td>
@@ -112,7 +112,7 @@ slices of the earth.</p>
 <tr class="row-odd"><td><a class="reference internal" href="#refraction_render.renderers.land_model.__init__" title="refraction_render.renderers.land_model.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>([ellps])</td>
 <td>Simple wrapper which does the bilinear interpolation of terrain data.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#refraction_render.renderers.land_model.add_elevation_data" title="refraction_render.renderers.land_model.add_elevation_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_elevation_data</span></code></a>(lats,&nbsp;lons,&nbsp;elevation)</td>
+<tr class="row-even"><td><a class="reference internal" href="#refraction_render.renderers.land_model.add_elevation_data" title="refraction_render.renderers.land_model.add_elevation_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_elevation_data</span></code></a>(*args)</td>
 <td>Add terrain data to the interpolated model.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="#refraction_render.renderers.land_model.get_terrain" title="refraction_render.renderers.land_model.get_terrain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_terrain</span></code></a>(lat,&nbsp;lon,&nbsp;heading,&nbsp;dist)</td>
@@ -122,21 +122,17 @@ slices of the earth.</p>
 </table>
 <dl class="method">
 <dt id="refraction_render.renderers.land_model.add_elevation_data">
-<code class="descname">add_elevation_data</code><span class="sig-paren">(</span><em>lats</em>, <em>lons</em>, <em>elevation</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/renderers/render.html#land_model.add_elevation_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.renderers.land_model.add_elevation_data" title="Permalink to this definition">¶</a></dt>
+<code class="descname">add_elevation_data</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/renderers/render.html#land_model.add_elevation_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.renderers.land_model.add_elevation_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add terrain data to the interpolated model.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
-<dt><strong>lats: ndarray with shape (n,)</strong></dt>
-<dd><p class="first last">latitudes used in grid.</p>
-</dd>
-<dt><strong>lons: ndarray with shape (m,)</strong></dt>
-<dd><p class="first last">longitudes used in grid.</p>
-</dd>
-<dt><strong>data: ndarray with shape (n,m)</strong></dt>
-<dd><p class="first last">elevation data at each grid defined by lats and lons.</p>
+<dt><strong>args: tuple</strong></dt>
+<dd><p class="first last">tuple which contains elevation data:
+if len(args) == 3: args = (lats,lons,elevation) which contains the arguments for scipy.interpolate.RegularGridInterpolator.
+if len(args) == 2: args = (points,elevation) which contains the arguments for scipy.interpolate.LinearNDInterpolator.</p>
 </dd>
 </dl>
 </td>
@@ -223,7 +219,7 @@ slices of the earth.</p>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Phillip Weinberg.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
     </div>
   </body>
 </html>
