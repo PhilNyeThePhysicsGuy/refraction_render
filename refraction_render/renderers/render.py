@@ -63,7 +63,7 @@ def _get_vertical_mask(rh,h_min,h_max,inds,ds,d,sky,mask):
                 if ds[inds[i]] < d: # if ray hits land or water before image no change required
                     mask[i] = False
                 else: 
-                    mask[i] = True                
+                    mask[i] = True            
 
 
 
@@ -94,17 +94,19 @@ def _ray_crossing_gpu(h_min,rs,heights,inds,water,land,sky):
 
 
 
-@njit(["void(f8,f8[:,::1],f8[:],i4[:],b1[:],b1[:],b1[:])"],parallel=True)
+@njit(["void(f8,f8[:,::1],f8[:],i4[:],b1[:],b1[:],b1[:])"])
 def _ray_crossing_cpu(h_min,rs,heights,inds,water,land,sky):
     n_v = rs.shape[0]
     n_d = rs.shape[1]
 
-    for i in prange(n_v):
+    water[:] = False
+    land[:] = False
+    sky[:] = False
+    inds[:] = -1
+    
+    for i in range(n_v):
         hit = False
-        water[i] = False
-        land[i] = False
-        sky[i] = False
-        inds[i] = -1
+
         for j in range(n_d):
             if rs[i,j] <= heights[j]:
                 hit = True
@@ -184,6 +186,7 @@ def _render_cpu(png_data,h_min,rs,ds,h_angles,surface_color,background_color,ter
         for i,h_angle in enumerate(h_angles):
             if disp:
                 print("{:5.5f} {:5.5f}".format(h_angle,h_angle_max))
+
             heights = terrain.get_terrain(lat_obs,lon_obs,h_angle,ds)
 
             _ray_crossing_cpu(h_min,rs,heights,inds,water,land,sky)

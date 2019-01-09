@@ -92,7 +92,7 @@ class std_atmosphere(object):
         if wavelength < 0.23  or wavelength > 1.69:
               warnings.warm("Cauchy Equation used to calculate despersion does not work well beyond the visible spetrum. ")
           
-        deltan = (0.05792105/(238.0185-wavelength**(-2)) + 0.00167917/(57.362-wavelength**(-2)))/1.225
+        deltan = (0.05792105/(238.0185-wavelength**(-2)) + 0.00167917/(57.362-wavelength**(-2)))
 
 
         self._n = lambda s,h:(1+rho(h)*deltan)
