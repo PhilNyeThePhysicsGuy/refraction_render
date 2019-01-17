@@ -55,10 +55,12 @@
 <tr class="field-odd field"><th class="field-name">Attributes:</th><td class="field-body"><dl class="first last docutils">
 <dt><strong>calc</strong></dt>
 <dd></dd>
-<dt><strong>h_angles</strong></dt>
-<dd></dd>
-<dt><strong>v_angles</strong></dt>
-<dd></dd>
+<dt><a class="reference internal" href="#refraction_render.renderers.Renderer_35mm.h_angles" title="refraction_render.renderers.Renderer_35mm.h_angles"><code class="xref py py-obj docutils literal notranslate"><span class="pre">h_angles</span></code></a></dt>
+<dd><p class="first last">horizontal angular scale of the image frame</p>
+</dd>
+<dt><a class="reference internal" href="#refraction_render.renderers.Renderer_35mm.v_angles" title="refraction_render.renderers.Renderer_35mm.v_angles"><code class="xref py py-obj docutils literal notranslate"><span class="pre">v_angles</span></code></a></dt>
+<dd><p class="first last">vertical angular scale of the image frame</p>
+</dd>
 <dt><a class="reference internal" href="#refraction_render.renderers.Renderer_35mm.vfov" title="refraction_render.renderers.Renderer_35mm.vfov"><code class="xref py py-obj docutils literal notranslate"><span class="pre">vfov</span></code></a></dt>
 <dd><p class="first last">vertial field of view for this particular renderer</p>
 </dd>
@@ -163,9 +165,15 @@ float: heading to point the renderer in.</p>
 </tr>
 </tbody>
 </table>
+<dl class="attribute">
+<dt id="refraction_render.renderers.Renderer_35mm.h_angles">
+<code class="descname">h_angles</code><a class="headerlink" href="#refraction_render.renderers.Renderer_35mm.h_angles" title="Permalink to this definition">¶</a></dt>
+<dd><p>horizontal angular scale of the image frame</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="refraction_render.renderers.Renderer_35mm.render_scene">
-<code class="descname">render_scene</code><span class="sig-paren">(</span><em>scene</em>, <em>image_name</em>, <em>surface_color=None</em>, <em>background_color=None</em>, <em>cfunc=&lt;function _defualt_cfunc&gt;</em>, <em>cfunc_args=()</em>, <em>disp=False</em>, <em>eye_level=False</em>, <em>postprocess=None</em>, <em>h_min=0.01</em>, <em>gpu=False</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/renderers/render.html#Renderer_35mm.render_scene"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.renderers.Renderer_35mm.render_scene" title="Permalink to this definition">¶</a></dt>
+<code class="descname">render_scene</code><span class="sig-paren">(</span><em>scene</em>, <em>image_name</em>, <em>surface_color=None</em>, <em>background_color=None</em>, <em>cfunc=None</em>, <em>cfunc_args=None</em>, <em>disp=False</em>, <em>eye_level=False</em>, <em>postprocess=None</em>, <em>h_min=0.01</em>, <em>gpu=False</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/renderers/render.html#Renderer_35mm.render_scene"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.renderers.Renderer_35mm.render_scene" title="Permalink to this definition">¶</a></dt>
 <dd><p>Render a scene object for the renderer’s given field of view and direction.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -240,6 +248,12 @@ float: heading to point the renderer in.</p>
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="refraction_render.renderers.Renderer_35mm.v_angles">
+<code class="descname">v_angles</code><a class="headerlink" href="#refraction_render.renderers.Renderer_35mm.v_angles" title="Permalink to this definition">¶</a></dt>
+<dd><p>vertical angular scale of the image frame</p>
 </dd></dl>
 
 <dl class="attribute">

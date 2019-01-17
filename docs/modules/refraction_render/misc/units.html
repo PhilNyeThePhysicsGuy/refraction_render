@@ -92,6 +92,57 @@
 <span class="sd">		</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="k">return</span> <span class="n">_np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="mf">1000.0</span><span class="p">,</span><span class="n">d</span><span class="p">,</span><span class="n">out</span><span class="o">=</span><span class="n">out</span><span class="p">)</span></div>
+
+<span class="k">def</span> <span class="nf">m_to_mi</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="n">out</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;Converts meters to miles.</span>
+
+<span class="sd">	Examples</span>
+<span class="sd">	--------</span>
+<span class="sd">	&gt;&gt;&gt; dist_meiles = mi_to_m(dist_meters)</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	d : array_like,scalar</span>
+<span class="sd">		array / value in meters to convert to miles</span>
+<span class="sd">	out : array_like, optional</span>
+<span class="sd">		buffer for output values to go to. </span>
+
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">return</span> <span class="n">_np</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="mf">1609.344</span><span class="p">,</span><span class="n">out</span><span class="o">=</span><span class="n">out</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">m_to_ft</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="n">out</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;Converts meters to feet.</span>
+
+<span class="sd">	Examples</span>
+<span class="sd">	--------</span>
+<span class="sd">	&gt;&gt;&gt; dist_feet = mi_to_m(dist_meters)</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	d : array_like,scalar</span>
+<span class="sd">		array / value in meters to convert to feet</span>
+<span class="sd">	out : array_like, optional</span>
+<span class="sd">		buffer for output values to go to. </span>
+
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">return</span> <span class="n">_np</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="mf">0.3048</span><span class="p">,</span><span class="n">out</span><span class="o">=</span><span class="n">out</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">m_to_km</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="n">out</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;Converts meters to kilometers.</span>
+
+<span class="sd">	Examples</span>
+<span class="sd">	--------</span>
+<span class="sd">	&gt;&gt;&gt; dist_kilometers = mi_to_m(dist_meters)</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	d : array_like,scalar</span>
+<span class="sd">		array / value in meters to convert to kilometers</span>
+<span class="sd">	out : array_like, optional</span>
+<span class="sd">		buffer for output values to go to. </span>
+<span class="sd">		</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">return</span> <span class="n">_np</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="mf">1000.0</span><span class="p">,</span><span class="n">out</span><span class="o">=</span><span class="n">out</span><span class="p">)</span>
 </pre></div>
 
           </div>

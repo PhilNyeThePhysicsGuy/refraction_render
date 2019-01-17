@@ -66,8 +66,7 @@ def _get_vertical_mask(rh,h_min,h_max,inds,ds,d,sky,mask):
                     mask[i] = True            
 
 
-
-@cuda.jit
+@cuda.jit("void(f8,f8[:,::1],f8[:],i4[:],b1[:],b1[:],b1[:])")
 def _ray_crossing_gpu(h_min,rs,heights,inds,water,land,sky):
     i = cuda.grid(1)
     n_d = rs.shape[1]
@@ -91,7 +90,6 @@ def _ray_crossing_gpu(h_min,rs,heights,inds,water,land,sky):
                 break
 
         sky[i] = not hit
-
 
 
 @njit(["void(f8,f8[:,::1],f8[:],i4[:],b1[:],b1[:],b1[:])"])
@@ -149,10 +147,15 @@ def _check_gps(lat,lon):
     if np.any(lon < -180) or np.any(lon > 180):
         raise ValueError("lonitude must be between -180 and 180")
 
-def _defualt_cfunc(d,heights):
-    ng = 150
-    # nr = ng*(1-heights/(heights.max()+1))
-    return np.stack(np.broadcast_arrays(0,ng,0),axis=-1)
+def _defualt_cfunc(d,heights,background_color):
+	alpha = np.asarray(np.exp(-d/200000.0)) # exponential attenuation of light due to atmospheric scattering
+	out = np.zeros(alpha.shape+(3,),dtype=np.uint8)
+
+	out[:,0] = 50*alpha + background_color[0]*(1-alpha)
+	out[:,1] = 150*alpha + background_color[1]*(1-alpha)
+	out[:,2] = background_color[2]*(1-alpha)
+
+	return out
 
 
 def _render_cpu(png_data,h_min,rs,ds,h_angles,surface_color,background_color,terrain_args,image_args,disp=False):
@@ -174,9 +177,6 @@ def _render_cpu(png_data,h_min,rs,ds,h_angles,surface_color,background_color,ter
     h_mins = np.array([h_px.min() for _,h_px,_,_ in img_datas])
     h_maxs = np.array([h_px.max() for _,h_px,_,_ in img_datas])
     img_mask = np.zeros_like(h_mins,dtype=np.bool)
-
-    nth = 1024
-    nbk = max(n_v//nth,1)
 
     if terrain.has_data: # render land model 
 
@@ -404,7 +404,6 @@ def _prep_scene(scene,h_angles,lat_obs,lon_obs,geod,sol):
     img_datas.sort(key=lambda x:-x[-1])
 
     return img_datas,ray_heights
-
 
 @njit
 def is_sorted(a):
@@ -700,12 +699,14 @@ class Renderer_35mm(object):
 
     @property
     def v_angles(self):
+    	"""vertical angular scale of the image frame"""
         v_angles = self._v_angles[...]
         v_angles.setflags(write=False)
         return v_angles
 
     @property
     def h_angles(self):
+    	"""horizontal angular scale of the image frame"""
         h_angles = self._h_angles[...]
         h_angles.setflags(write=False)
         return h_angles
@@ -748,7 +749,7 @@ class Renderer_35mm(object):
         self._h_angles = np.rad2deg(np.arctan(x_grid/self._focal_length))+f_az
 
 
-    def render_scene(self,scene,image_name,surface_color=None,background_color=None,cfunc=_defualt_cfunc,cfunc_args=(),
+    def render_scene(self,scene,image_name,surface_color=None,background_color=None,cfunc=None,cfunc_args=None,
         disp=False,eye_level=False,postprocess=None,h_min=0.01,gpu=False):
         """Render a scene object for the renderer's given field of view and direction. 
 
@@ -801,6 +802,15 @@ class Renderer_35mm(object):
             background_color = np.array([135,206,250],dtype=np.uint8)
         else:
             background_color = np.fromiter(background_color,dtype=np.uint8)
+
+        if cfunc is None and cfunc_args is None:
+            cfunc = _defualt_cfunc
+            cfunc_args = (background_color,)
+        elif cfunc is None and cfunc_args is not None:
+        	raise Exception("cfunc_args given without cfunc.")
+
+        if cfunc_args is None:
+            cfunc_args = ()
 
         img_datas,ray_heights = _prep_scene(scene,self._h_angles,self._lat_obs,self._lon_obs,self._geod,self._sol)
 
@@ -915,6 +925,13 @@ class Renderer_Composite(object):
         """vertial field of view for this particular renderer"""
         return self._vfov
 
+    @property
+    def v_angles(self):
+    	"""vertical angular scale of the image frame"""
+        v_angles = self._v_angles[...]
+        v_angles.setflags(write=False)
+        return v_angles
+
     def set_location(self,lat_obs,lon_obs):
         """This function can be used to change the position of the renderer.
 
@@ -931,7 +948,7 @@ class Renderer_Composite(object):
         _check_gps(self._lat_obs,self._lon_obs)
 
     def render_scene(self,scene,image_names,heading_mins,heading_maxs,surface_color=None,background_color=None,
-        cfunc=_defualt_cfunc,cfunc_args=(),disp=False,eye_level=False,postprocess=None,h_min=0.01,gpu=False):
+        cfunc=None,cfunc_args=None,disp=False,eye_level=False,postprocess=None,h_min=0.01,gpu=False):
         """Renders a composites over a very wide horizontal field.
 
         Parameters
@@ -989,6 +1006,15 @@ class Renderer_Composite(object):
             background_color = np.array([135,206,250])
         else:
             background_color = np.fromiter(background_color,dtype=np.uint8)
+
+        if cfunc is None and cfunc_args is None:
+            cfunc = _defualt_cfunc
+            cfunc_args = (background_color,)
+        elif cfunc is None and cfunc_args is not None:
+        	raise Exception("cfunc_args given without cfunc.")
+
+        if cfunc_args is None:
+            cfunc_args = ()
 
         n_v = self._rs.shape[0]
         
@@ -1186,6 +1212,7 @@ class land_model(object):
 
     @property
     def has_data(self):
+    	"""flag if True the terrain object has land else it has no land."""
         return len(self._terrain_list) > 0
 
     def add_elevation_data(self,*args):
