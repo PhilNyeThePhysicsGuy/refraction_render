@@ -148,14 +148,14 @@ def _check_gps(lat,lon):
         raise ValueError("lonitude must be between -180 and 180")
 
 def _defualt_cfunc(d,heights,background_color):
-	alpha = np.asarray(np.exp(-d/200000.0)) # exponential attenuation of light due to atmospheric scattering
-	out = np.zeros(alpha.shape+(3,),dtype=np.uint8)
+    alpha = np.asarray(np.exp(-d/200000.0)) # exponential attenuation of light due to atmospheric scattering
+    out = np.zeros(alpha.shape+(3,),dtype=np.uint8)
 
-	out[:,0] = 50*alpha + background_color[0]*(1-alpha)
-	out[:,1] = 150*alpha + background_color[1]*(1-alpha)
-	out[:,2] = background_color[2]*(1-alpha)
+    out[:,0] = 50*alpha + background_color[0]*(1-alpha)
+    out[:,1] = 150*alpha + background_color[1]*(1-alpha)
+    out[:,2] = background_color[2]*(1-alpha)
 
-	return out
+    return out
 
 
 def _render_cpu(png_data,h_min,rs,ds,h_angles,surface_color,background_color,terrain_args,image_args,disp=False):
@@ -699,14 +699,14 @@ class Renderer_35mm(object):
 
     @property
     def v_angles(self):
-    	"""vertical angular scale of the image frame"""
+        """vertical angular scale of the image frame"""
         v_angles = self._v_angles[...]
         v_angles.setflags(write=False)
         return v_angles
 
     @property
     def h_angles(self):
-    	"""horizontal angular scale of the image frame"""
+        """horizontal angular scale of the image frame"""
         h_angles = self._h_angles[...]
         h_angles.setflags(write=False)
         return h_angles
@@ -807,7 +807,7 @@ class Renderer_35mm(object):
             cfunc = _defualt_cfunc
             cfunc_args = (background_color,)
         elif cfunc is None and cfunc_args is not None:
-        	raise Exception("cfunc_args given without cfunc.")
+            raise Exception("cfunc_args given without cfunc.")
 
         if cfunc_args is None:
             cfunc_args = ()
@@ -927,7 +927,7 @@ class Renderer_Composite(object):
 
     @property
     def v_angles(self):
-    	"""vertical angular scale of the image frame"""
+        """vertical angular scale of the image frame"""
         v_angles = self._v_angles[...]
         v_angles.setflags(write=False)
         return v_angles
@@ -1011,7 +1011,7 @@ class Renderer_Composite(object):
             cfunc = _defualt_cfunc
             cfunc_args = (background_color,)
         elif cfunc is None and cfunc_args is not None:
-        	raise Exception("cfunc_args given without cfunc.")
+            raise Exception("cfunc_args given without cfunc.")
 
         if cfunc_args is None:
             cfunc_args = ()
@@ -1212,7 +1212,7 @@ class land_model(object):
 
     @property
     def has_data(self):
-    	"""flag if True the terrain object has land else it has no land."""
+        """flag if True the terrain object has land else it has no land."""
         return len(self._terrain_list) > 0
 
     def add_elevation_data(self,*args):
