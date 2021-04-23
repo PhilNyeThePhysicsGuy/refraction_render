@@ -1,5 +1,6 @@
 from scipy.integrate import solve_bvp,solve_ivp
 from scipy.misc import derivative
+from scipy.interpolate import interp1d
 import numpy as np
 
 
@@ -134,3 +135,91 @@ class std_atmosphere(object):
     def k(self,h):
         """ Curvature of light rays at given height."""
         return 5.03*self._P(h)*(0.0343+self._dTdh(h))/self._T(h)**2
+
+
+
+
+class vert_atmosphere(object):
+    """Object which calculates the standard atmospheric model. 
+
+    """
+    def __init__(self,T_prof,dist_vals,h0=0.0,P0=101325.0,g=9.81,wavelength=0.545,moist_lapse_rate=False,
+                 dT_prof=None,T_prof_args=()):
+        """Intializes the `std_atmosphere` object.
+
+        Parameters
+        ----------
+
+        T_prof: callable
+            user defined function for the temperature as a function of height. in Deg. C
+
+        h0: float, optional
+            height (in :math:`m`) to determine initial conditions on atmospheric model
+
+        P0: float, optional
+            Pressure (in :math:`Pa`) at `h0`
+
+        g: float, optional
+            gravitational acceleration (in :math:`m/s^2`)
+
+        wavelength: float, optional
+            wavelength of light (in :math:`\\mu m`) used calculate the index of refraction 
+
+        moist_lapse_rate: bool, optional
+            Uses the temperature and pressure to calculate the moist lapse rate, use when the humidity is at 100%
+
+        dT_prof: callable, optional
+            derivative of `T_prof`, see description.
+
+        T_prof_args: array_like, optional
+            optional arguments to pass into `T_prof` and `dT_prof`.
+
+        """
+
+        T = lambda h:T_prof(h,*T_prof_args)+273
+
+        if dT_prof is not None:
+            dTdr = lambda h:dT_prof(h,*T_prof_args)
+
+        if T_prof is not None:
+            dTdr = lambda h:derivative(T_prof,h,args=T_prof_args,dx=1.1e-7)
+
+        dPdh = lambda h,P:-g*P/(self.R*T(h))
+        dist_vals = np.asarray(dist_vals)
+        shape = dist_vals.shape
+        P0 = np.full(shape,P0)
+        sol = solve_ivp(dPdh,(h0,-10000),P0)
+        
+        P = sol.y[-1]
+        
+        sol = solve_ivp(dPdh,(-10000,10000),P,dense_output=True)
+
+        if wavelength < 0.23  or wavelength > 1.69:
+              warnings.warm("Cauchy Equation used to calculate despersion does not work well beyond the visible spetrum. ")
+          
+        self._deltan = (0.05792105/(238.0185-wavelength**(-2)) + 0.00167917/(57.362-wavelength**(-2)))
+
+        self._dist_vals = dist_vals
+        self._sol = sol
+        self._T = T
+        self._dTdh = dTdr
+
+    @property
+    def R(self):
+        return 287.058
+    
+    def __call__(self,s,h):
+        p = self._sol.sol(h)
+        t = self._T(h)
+        dtdh = self._dTdh(h)
+        dpdh = -g * p / (self.R * t)
+
+        rho = p / (self.R * t)
+
+        drhodh = (dpdh*t + dtdh*p)/(self.R * t**2)
+
+        n = (1 + np.interp(s,self._dist_vals,rho) * deltan)
+        dndh = np.interp(s,self._dist_vals,drhodh) * deltan
+        i = np.searchsorted(self._dist_vals,s)
+
+
