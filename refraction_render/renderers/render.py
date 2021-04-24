@@ -195,8 +195,26 @@ def _render_cpu(png_data,h_min,rs,ds,h_angles,surface_color,background_color,ter
             png_data[i,sky,:] = background_color
 
             if np.any(land):
+                iland, = np.where(land)
                 land_inds = inds[land]
-                png_data[i,land,:] = cfunc(ds[land_inds],heights[land_inds],*cfunc_args)
+                land_inds_m = land_inds-1
+                land_inds_m[land_inds_m<0] = 0
+
+                _heights = heights[land_inds]
+                dx = ds[land_inds] - ds[land_inds_m]
+                dy = (rs[iland,land_inds] - rs[iland,land_inds_m])
+                dh = (_heights - heights[land_inds_m])
+
+                t_ray = np.stack((dx,dy),axis=-1)
+                t_land = np.stack((dx,dh),axis=-1)
+                t_ray = (a_ray.T/np.linalg.norm(t_ray,axis=1))
+                t_land = (t_land.T/np.linalg.norm(t_land,axis=1))
+                n_ray = t_ray - 2*np.sum(t_ray*t_land,axis=0)*t_land
+
+                try:
+                    png_data[i,land,:] = cfunc(ds[land_inds],_heights,n_ray,*cfunc_args)
+                except TypeError:
+                    png_data[i,land,:] = cfunc(ds[land_inds],_heights,*cfunc_args)
 
             _get_bounds(h_angle,h_mins,h_maxs,out=img_mask)
             if np.any(img_mask):
@@ -294,8 +312,26 @@ def _render_gpu(png_data,h_min,rs,ds,h_angles,surface_color,background_color,ter
             png_data[i,sky,:] = background_color
 
             if np.any(land):
+                iland, = np.where(land)
                 land_inds = inds[land]
-                png_data[i,land,:] = cfunc(ds[land_inds],heights[land_inds],*cfunc_args)
+                land_inds_m = land_inds-1
+                land_inds_m[land_inds_m<0] = 0
+
+                _heights = heights[land_inds]
+                dx = ds[land_inds] - ds[land_inds_m]
+                dy = (rs[iland,land_inds] - rs[iland,land_inds_m])
+                dh = (_heights - heights[land_inds_m])
+
+                t_ray = np.stack((dx,dy),axis=-1)
+                t_land = np.stack((dx,dh),axis=-1)
+                t_ray = (a_ray.T/np.linalg.norm(t_ray,axis=1))
+                t_land = (t_land.T/np.linalg.norm(t_land,axis=1))
+                n_ray = t_ray - 2*np.sum(t_ray*t_land,axis=0)*t_land
+
+                try:
+                    png_data[i,land,:] = cfunc(ds[land_inds],_heights,n_ray,*cfunc_args)
+                except TypeError:
+                    png_data[i,land,:] = cfunc(ds[land_inds],_heights,*cfunc_args)
 
             _get_bounds(h_angle,h_mins,h_maxs,out=img_mask)
             if np.any(img_mask):
@@ -1205,6 +1241,7 @@ class land_model(object):
         heights = np.zeros_like(lon)
 
         coors = np.stack((lat,lon),axis=-1)
+
         for terrain in self._terrain_list:
             heights += terrain(coors)
 
@@ -1228,7 +1265,7 @@ class land_model(object):
         """
         if len(args) == 3:
             lats,lons,elevation = args
-            self._terrain_list.append(interp.RegularGridInterpolator((lats,lons),elevation,bounds_error=False,fill_value=0.0))
+            self._terrain_list.append(interp.RegularGridInterpolator((lats,lons),elevation,bounds_error=False,fill_value=0.0,method="linear"))
         elif len(args) == 2:
             points,elevation = args
             self._terrain_list.append(interp.LinearNDInterpolator(points,elevation,fill_value=0.0))
