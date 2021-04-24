@@ -207,7 +207,7 @@ def _render_cpu(png_data,h_min,rs,ds,h_angles,surface_color,background_color,ter
 
                 t_ray = np.stack((dx,dy),axis=-1)
                 t_land = np.stack((dx,dh),axis=-1)
-                t_ray = (a_ray.T/np.linalg.norm(t_ray,axis=1))
+                t_ray = (t_ray.T/np.linalg.norm(t_ray,axis=1))
                 t_land = (t_land.T/np.linalg.norm(t_land,axis=1))
                 n_ray = t_ray - 2*np.sum(t_ray*t_land,axis=0)*t_land
 
@@ -324,7 +324,7 @@ def _render_gpu(png_data,h_min,rs,ds,h_angles,surface_color,background_color,ter
 
                 t_ray = np.stack((dx,dy),axis=-1)
                 t_land = np.stack((dx,dh),axis=-1)
-                t_ray = (a_ray.T/np.linalg.norm(t_ray,axis=1))
+                t_ray = (t_ray.T/np.linalg.norm(t_ray,axis=1))
                 t_land = (t_land.T/np.linalg.norm(t_land,axis=1))
                 n_ray = t_ray - 2*np.sum(t_ray*t_land,axis=0)*t_land
 
