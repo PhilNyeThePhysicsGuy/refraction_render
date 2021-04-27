@@ -24,8 +24,8 @@ class Calc(object):
             initial derivatives of the rays.
         alpha:  array_like (n,), optional
             initial angle of the rays.
-        **kwargs: optional
-            extra arguments which get passed into Fermat equatino solver.
+        \*\*kwargs: optional
+            extra arguments which get passed into Fermat equation solver.
 
         """
         if alpha is not None and dh is None:
@@ -43,12 +43,12 @@ class Calc(object):
 class CurveCalc(Calc):
     """Calculator used for calculating rays on a spherical earth in an atmosphere."""
     def __init__(self,R0=6370997.0,**std_atmosphere_args):
-        """Iintialize 'CurveCalc' object.
+        """Iintialize `CurveCalc` object.
 
         R0: float, optional
             Radius of the sphere for this calculation.
-        **std_atmosphere_args: optional
-            arguments to 'std_atmosphere' object. 
+        \*\*std_atmosphere_args: optional
+            arguments to `std_atmosphere` object. 
         """
         self._R0 = R0
         self._atm = std_atmosphere(**std_atmosphere_args)
@@ -68,10 +68,10 @@ class CurveCalc(Calc):
 class FlatCalc(Calc):
     """Calculator used for calculating rays on a flat earth in an atmosphere."""
     def __init__(self,**std_atmosphere_args):
-        """Initialize 'FlatCalc' object.
+        """Initialize `FlatCalc` object.
 
-        **std_atmosphere_args: optional
-            arguments to 'std_atmosphere' object. 
+        \*\*std_atmosphere_args: optional
+            arguments to `std_atmosphere` object. 
         """
         self._atm = std_atmosphere(**std_atmosphere_args)
         Calc.__init__(self,UniformFermatEquationsEuclid(self._atm._n,self._atm._dndy))
@@ -85,7 +85,7 @@ class FlatCalc(Calc):
 class CurveNoRefraction(Calc):
     """Calculator used for calculating rays on a sphere earth in no atmosphere."""
     def __init__(self,R0=6370997.0):
-        """Initialize 'CurveNoRefraction' object.
+        """Initialize `CurveNoRefraction` object.
 
         R0: float, optional
             Radius of the sphere for this calculation.
@@ -102,7 +102,7 @@ class CurveNoRefraction(Calc):
 class FlatNoRefraction(Calc):
     """Calculator used for calculating rays on a flat earth in no atmosphere."""
     def __init__(self):
-        """Initialize 'FlatNoRefraction' object."""
+        """Initialize `FlatNoRefraction` object."""
         Calc.__init__(self,UniformFermatEquationsEuclid(lambda s,y:1.0,lambda s,y:0.0))
 
 

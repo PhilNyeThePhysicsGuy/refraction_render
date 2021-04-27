@@ -54,7 +54,7 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;FermatEquations_obj must be an instance of FermatEquations&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">FermatEquations_obj</span> <span class="o">=</span> <span class="n">FermatEquations_obj</span></div>
 
-    <span class="k">def</span> <span class="nf">solve_ivp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">d</span><span class="p">,</span><span class="n">h</span><span class="p">,</span><span class="n">dh</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="Calc.solve_ivp"><a class="viewcode-back" href="../../../generated/refraction_render.calcs.Calc.html#refraction_render.calcs.Calc.solve_ivp">[docs]</a>    <span class="k">def</span> <span class="nf">solve_ivp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">d</span><span class="p">,</span><span class="n">h</span><span class="p">,</span><span class="n">dh</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Solve initial value problem for light rays.</span>
 
 <span class="sd">        d: float</span>
@@ -65,8 +65,8 @@
 <span class="sd">            initial derivatives of the rays.</span>
 <span class="sd">        alpha:  array_like (n,), optional</span>
 <span class="sd">            initial angle of the rays.</span>
-<span class="sd">        **kwargs: optional</span>
-<span class="sd">            extra arguments which get passed into Fermat equatino solver.</span>
+<span class="sd">        \*\*kwargs: optional</span>
+<span class="sd">            extra arguments which get passed into Fermat equation solver.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">alpha</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">dh</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -78,18 +78,18 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;in order to complete initial values you need &#39;alpha&#39; or &#39;dh&#39;.&quot;</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">FermatEquations_obj</span><span class="o">.</span><span class="n">solve_ivp</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">d</span><span class="p">,</span><span class="n">h</span><span class="p">,</span><span class="n">dh</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">FermatEquations_obj</span><span class="o">.</span><span class="n">solve_ivp</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">d</span><span class="p">,</span><span class="n">h</span><span class="p">,</span><span class="n">dh</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="CurveCalc"><a class="viewcode-back" href="../../../generated/refraction_render.calcs.CurveCalc.html#refraction_render.calcs.CurveCalc">[docs]</a><span class="k">class</span> <span class="nc">CurveCalc</span><span class="p">(</span><span class="n">Calc</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Calculator used for calculating rays on a spherical earth in an atmosphere.&quot;&quot;&quot;</span>
 <div class="viewcode-block" id="CurveCalc.__init__"><a class="viewcode-back" href="../../../generated/refraction_render.calcs.CurveCalc.html#refraction_render.calcs.CurveCalc.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">R0</span><span class="o">=</span><span class="mf">6370997.0</span><span class="p">,</span><span class="o">**</span><span class="n">std_atmosphere_args</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Iintialize &#39;CurveCalc&#39; object.</span>
+        <span class="sd">&quot;&quot;&quot;Iintialize `CurveCalc` object.</span>
 
 <span class="sd">        R0: float, optional</span>
 <span class="sd">            Radius of the sphere for this calculation.</span>
-<span class="sd">        **std_atmosphere_args: optional</span>
-<span class="sd">            arguments to &#39;std_atmosphere&#39; object. </span>
+<span class="sd">        \*\*std_atmosphere_args: optional</span>
+<span class="sd">            arguments to `std_atmosphere` object. </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_R0</span> <span class="o">=</span> <span class="n">R0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_atm</span> <span class="o">=</span> <span class="n">std_atmosphere</span><span class="p">(</span><span class="o">**</span><span class="n">std_atmosphere_args</span><span class="p">)</span>
@@ -109,10 +109,10 @@
 <div class="viewcode-block" id="FlatCalc"><a class="viewcode-back" href="../../../generated/refraction_render.calcs.FlatCalc.html#refraction_render.calcs.FlatCalc">[docs]</a><span class="k">class</span> <span class="nc">FlatCalc</span><span class="p">(</span><span class="n">Calc</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Calculator used for calculating rays on a flat earth in an atmosphere.&quot;&quot;&quot;</span>
 <div class="viewcode-block" id="FlatCalc.__init__"><a class="viewcode-back" href="../../../generated/refraction_render.calcs.FlatCalc.html#refraction_render.calcs.FlatCalc.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">**</span><span class="n">std_atmosphere_args</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Initialize &#39;FlatCalc&#39; object.</span>
+        <span class="sd">&quot;&quot;&quot;Initialize `FlatCalc` object.</span>
 
-<span class="sd">        **std_atmosphere_args: optional</span>
-<span class="sd">            arguments to &#39;std_atmosphere&#39; object. </span>
+<span class="sd">        \*\*std_atmosphere_args: optional</span>
+<span class="sd">            arguments to `std_atmosphere` object. </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_atm</span> <span class="o">=</span> <span class="n">std_atmosphere</span><span class="p">(</span><span class="o">**</span><span class="n">std_atmosphere_args</span><span class="p">)</span>
         <span class="n">Calc</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">UniformFermatEquationsEuclid</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_atm</span><span class="o">.</span><span class="n">_n</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_atm</span><span class="o">.</span><span class="n">_dndy</span><span class="p">))</span></div>
@@ -126,7 +126,7 @@
 <div class="viewcode-block" id="CurveNoRefraction"><a class="viewcode-back" href="../../../generated/refraction_render.calcs.CurveNoRefraction.html#refraction_render.calcs.CurveNoRefraction">[docs]</a><span class="k">class</span> <span class="nc">CurveNoRefraction</span><span class="p">(</span><span class="n">Calc</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Calculator used for calculating rays on a sphere earth in no atmosphere.&quot;&quot;&quot;</span>
 <div class="viewcode-block" id="CurveNoRefraction.__init__"><a class="viewcode-back" href="../../../generated/refraction_render.calcs.CurveNoRefraction.html#refraction_render.calcs.CurveNoRefraction.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">R0</span><span class="o">=</span><span class="mf">6370997.0</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Initialize &#39;CurveNoRefraction&#39; object.</span>
+        <span class="sd">&quot;&quot;&quot;Initialize `CurveNoRefraction` object.</span>
 
 <span class="sd">        R0: float, optional</span>
 <span class="sd">            Radius of the sphere for this calculation.</span>
@@ -143,7 +143,7 @@
 <div class="viewcode-block" id="FlatNoRefraction"><a class="viewcode-back" href="../../../generated/refraction_render.calcs.FlatNoRefraction.html#refraction_render.calcs.FlatNoRefraction">[docs]</a><span class="k">class</span> <span class="nc">FlatNoRefraction</span><span class="p">(</span><span class="n">Calc</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Calculator used for calculating rays on a flat earth in no atmosphere.&quot;&quot;&quot;</span>
 <div class="viewcode-block" id="FlatNoRefraction.__init__"><a class="viewcode-back" href="../../../generated/refraction_render.calcs.FlatNoRefraction.html#refraction_render.calcs.FlatNoRefraction.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Initialize &#39;FlatNoRefraction&#39; object.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Initialize `FlatNoRefraction` object.&quot;&quot;&quot;</span>
         <span class="n">Calc</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">UniformFermatEquationsEuclid</span><span class="p">(</span><span class="k">lambda</span> <span class="n">s</span><span class="p">,</span><span class="n">y</span><span class="p">:</span><span class="mf">1.0</span><span class="p">,</span><span class="k">lambda</span> <span class="n">s</span><span class="p">,</span><span class="n">y</span><span class="p">:</span><span class="mf">0.0</span><span class="p">))</span></div></div>
 
 

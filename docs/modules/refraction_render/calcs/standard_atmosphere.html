@@ -152,29 +152,29 @@
         <span class="sd">&quot;&quot;&quot; Temperature Lapse rate for this atmospheric model. &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dT</span>
 
-    <span class="k">def</span> <span class="nf">T</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">h</span><span class="p">):</span>
+<div class="viewcode-block" id="std_atmosphere.T"><a class="viewcode-back" href="../../../generated/refraction_render.calcs.std_atmosphere.html#refraction_render.calcs.std_atmosphere.T">[docs]</a>    <span class="k">def</span> <span class="nf">T</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">h</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Temperature function for this atmospheric model. &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_T</span><span class="p">(</span><span class="n">h</span><span class="p">)</span><span class="o">-</span><span class="mi">273</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_T</span><span class="p">(</span><span class="n">h</span><span class="p">)</span><span class="o">-</span><span class="mi">273</span></div>
 
-    <span class="k">def</span> <span class="nf">P</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">h</span><span class="p">):</span>
+<div class="viewcode-block" id="std_atmosphere.P"><a class="viewcode-back" href="../../../generated/refraction_render.calcs.std_atmosphere.html#refraction_render.calcs.std_atmosphere.P">[docs]</a>    <span class="k">def</span> <span class="nf">P</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">h</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Pressure function for this atmospheric model. &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_P</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_P</span><span class="p">(</span><span class="n">h</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">n</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">h</span><span class="p">):</span>
+<div class="viewcode-block" id="std_atmosphere.n"><a class="viewcode-back" href="../../../generated/refraction_render.calcs.std_atmosphere.html#refraction_render.calcs.std_atmosphere.n">[docs]</a>    <span class="k">def</span> <span class="nf">n</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">h</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Index of refraction function for this atmospheric model. &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">h</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">h</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">rho</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">h</span><span class="p">):</span>
+<div class="viewcode-block" id="std_atmosphere.rho"><a class="viewcode-back" href="../../../generated/refraction_render.calcs.std_atmosphere.html#refraction_render.calcs.std_atmosphere.rho">[docs]</a>    <span class="k">def</span> <span class="nf">rho</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">h</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; density function for this atmospheric model. &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rho</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rho</span><span class="p">(</span><span class="n">h</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">dTdh</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">h</span><span class="p">):</span>
+<div class="viewcode-block" id="std_atmosphere.dTdh"><a class="viewcode-back" href="../../../generated/refraction_render.calcs.std_atmosphere.html#refraction_render.calcs.std_atmosphere.dTdh">[docs]</a>    <span class="k">def</span> <span class="nf">dTdh</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">h</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; density function for this atmospheric model. &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dTdh</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dTdh</span><span class="p">(</span><span class="n">h</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">k</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">h</span><span class="p">):</span>
+<div class="viewcode-block" id="std_atmosphere.k"><a class="viewcode-back" href="../../../generated/refraction_render.calcs.std_atmosphere.html#refraction_render.calcs.std_atmosphere.k">[docs]</a>    <span class="k">def</span> <span class="nf">k</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">h</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Curvature of light rays at given height.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="mf">5.03</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_P</span><span class="p">(</span><span class="n">h</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mf">0.0343</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">_dTdh</span><span class="p">(</span><span class="n">h</span><span class="p">))</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">_T</span><span class="p">(</span><span class="n">h</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span></div>
+        <span class="k">return</span> <span class="mf">5.03</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_P</span><span class="p">(</span><span class="n">h</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mf">0.0343</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">_dTdh</span><span class="p">(</span><span class="n">h</span><span class="p">))</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">_T</span><span class="p">(</span><span class="n">h</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span></div></div>
 </pre></div>
 
             <div class="clearer"></div>

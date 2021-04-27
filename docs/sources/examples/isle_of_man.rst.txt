@@ -1,3 +1,5 @@
+:orphan:
+
 .. _isle_of_man-label:
 
 Isle of Man modeling

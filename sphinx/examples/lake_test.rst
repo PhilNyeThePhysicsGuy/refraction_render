@@ -1,3 +1,5 @@
+:orphan:
+
 .. _lake_test-label:
 
 Laser Tests Over Cool Lake

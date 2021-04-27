@@ -1,3 +1,5 @@
+:orphan:
+
 .. _soundly_pylons-label:
 
 Lake Pontchartrain Pylons

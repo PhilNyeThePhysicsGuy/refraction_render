@@ -52,24 +52,10 @@
 <dl class="py class">
 <dt id="refraction_render.calcs.UniformFermatEquationsCurve">
 <em class="property">class </em><code class="sig-prename descclassname">refraction_render.calcs.</code><code class="sig-name descname">UniformFermatEquationsCurve</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">R0</span></em>, <em class="sig-param"><span class="n">n</span></em>, <em class="sig-param"><span class="n">dndy</span></em>, <em class="sig-param"><span class="n">args</span><span class="o">=</span><span class="default_value">()</span></em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/calcs/euler_equations.html#UniformFermatEquationsCurve"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.calcs.UniformFermatEquationsCurve" title="Permalink to this definition">¶</a></dt>
-<dd><p>Solver for light ray in a 2D Polar geometry with <span class="math notranslate nohighlight">\(n=n(y)\)</span>.</p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">refraction_render.calcs.euler_equations.FermatEquations</span></code></p>
+<p>Solver for light ray in a 2D Polar geometry with <span class="math notranslate nohighlight">\(n=n(y)\)</span>.</p>
 <p>This object takes in three user defined functions:  <span class="math notranslate nohighlight">\(n(y), \frac{\partial n(y)}{\partial y}\)</span>
 and uses these functions to solve Fermat’s equations for the path of a light ray.</p>
-<p class="rubric">Methods</p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code>(s, yin)</p></td>
-<td><p>Call self as a function.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">solve_ivp</span></code>(a, b, y0, dy0, **kwargs)</p></td>
-<td><p>Solve initial value problem for light rays.</p></td>
-</tr>
-</tbody>
-</table>
 <dl class="py method">
 <dt id="refraction_render.calcs.UniformFermatEquationsCurve.__init__">
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">R0</span></em>, <em class="sig-param"><span class="n">n</span></em>, <em class="sig-param"><span class="n">dndy</span></em>, <em class="sig-param"><span class="n">args</span><span class="o">=</span><span class="default_value">()</span></em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/calcs/euler_equations.html#UniformFermatEquationsCurve.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.calcs.UniformFermatEquationsCurve.__init__" title="Permalink to this definition">¶</a></dt>
@@ -98,11 +84,72 @@ and uses these functions to solve Fermat’s equations for the path of a light r
 <tr class="row-odd"><td><p><a class="reference internal" href="#refraction_render.calcs.UniformFermatEquationsCurve.__init__" title="refraction_render.calcs.UniformFermatEquationsCurve.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(R0, n, dndy[, args])</p></td>
 <td><p>Intializes the <cite>FermatEquationsCurve</cite> object.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">solve_ivp</span></code>(a, b, y0, dy0, **kwargs)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#refraction_render.calcs.UniformFermatEquationsCurve.solve_ivp" title="refraction_render.calcs.UniformFermatEquationsCurve.solve_ivp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">solve_ivp</span></code></a>(a, b, y0, dy0, **kwargs)</p></td>
 <td><p>Solve initial value problem for light rays.</p></td>
 </tr>
 </tbody>
 </table>
+<dl class="py method">
+<dt id="refraction_render.calcs.UniformFermatEquationsCurve.solve_ivp">
+<code class="sig-name descname">solve_ivp</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">b</span></em>, <em class="sig-param"><span class="n">y0</span></em>, <em class="sig-param"><span class="n">dy0</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#refraction_render.calcs.UniformFermatEquationsCurve.solve_ivp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Solve initial value problem for light rays.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>a</strong><span class="classifier">scalar</span></dt><dd><p>initial position for the solution of the ray’s path.</p>
+</dd>
+<dt><strong>b</strong><span class="classifier">scalar</span></dt><dd><p>final position for the solution of the ray’s path.</p>
+</dd>
+<dt><strong>y0</strong><span class="classifier">array_like of shape (n,)</span></dt><dd><p>initial position of the ray’s.</p>
+</dd>
+<dt><strong>dy0</strong><span class="classifier">array_like of shape (n,)</span></dt><dd><p>initial derivative (with respect to the independent variable) of the ray’s trajectory.</p>
+</dd>
+<dt><strong>kwargs</strong><span class="classifier">optional</span></dt><dd><p>additional arguments to pass into solver,
+see scipy.integrate.solve_ivp for more details.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt>Bunch object with the following fields defined:</dt><dd></dd>
+<dt><strong>t</strong><span class="classifier">ndarray, shape (n_points,)</span></dt><dd><p>Time points.</p>
+</dd>
+<dt><strong>y</strong><span class="classifier">ndarray, shape (n, n_points)</span></dt><dd><p>Values of the solution at <cite>t</cite>.</p>
+</dd>
+<dt><strong>sol</strong><span class="classifier"><cite>OdeSolution</cite> or None</span></dt><dd><p>Found solution as <cite>OdeSolution</cite> instance; None if <cite>dense_output</cite> was
+set to False.</p>
+</dd>
+<dt><strong>t_events</strong><span class="classifier">list of ndarray or None</span></dt><dd><p>Contains for each event type a list of arrays at which an event of
+that type event was detected. None if <cite>events</cite> was None.</p>
+</dd>
+<dt><strong>nfev</strong><span class="classifier">int</span></dt><dd><p>Number of evaluations of the right-hand side.</p>
+</dd>
+<dt><strong>njev</strong><span class="classifier">int</span></dt><dd><p>Number of evaluations of the Jacobian.</p>
+</dd>
+<dt><strong>nlu</strong><span class="classifier">int</span></dt><dd><p>Number of LU decompositions.</p>
+</dd>
+<dt><strong>status</strong><span class="classifier">int</span></dt><dd><dl class="simple">
+<dt>Reason for algorithm termination:</dt><dd><ul class="simple">
+<li><p>-1: Integration step failed.</p></li>
+<li><p>0: The solver successfully reached the end of <cite>tspan</cite>.</p></li>
+<li><p>1: A termination event occurred.</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+<dt><strong>message</strong><span class="classifier">string</span></dt><dd><p>Human-readable description of the termination reason.</p>
+</dd>
+<dt><strong>success</strong><span class="classifier">bool</span></dt><dd><p>True if the solver reached the interval end or a termination event
+occurred (<code class="docutils literal notranslate"><span class="pre">status</span> <span class="pre">&gt;=</span> <span class="pre">0</span></code>).</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The solver can solve the path of an arbitrary number of light rays in one function call
+however the format of the solutions has the y(x) positions stacked on top of the derivatives.</p>
+</dd></dl>
+
 </dd></dl>
 
 </section>

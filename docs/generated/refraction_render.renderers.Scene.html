@@ -52,29 +52,8 @@
 <dl class="py class">
 <dt id="refraction_render.renderers.Scene">
 <em class="property">class </em><code class="sig-prename descclassname">refraction_render.renderers.</code><code class="sig-name descname">Scene</code><a class="reference internal" href="../modules/refraction_render/renderers/render.html#Scene"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.renderers.Scene" title="Permalink to this definition">¶</a></dt>
-<dd><p>Simple wrapper which keeps track of data used to render an image.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Attributes</dt>
-<dd class="field-odd"><dl class="simple">
-<dt><strong>land_model</strong></dt><dd></dd>
-</dl>
-</dd>
-</dl>
-<p class="rubric">Methods</p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_elevation_model</span></code>(*args)</p></td>
-<td><p>Add terrain data to the interpolated model.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_image</span></code>(image, image_pos, dimensions[, …])</p></td>
-<td><p>Add image to scene.</p></td>
-</tr>
-</tbody>
-</table>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Simple wrapper which keeps track of data used to render an image.</p>
 <dl class="py method">
 <dt id="refraction_render.renderers.Scene.__init__">
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/renderers/render.html#Scene.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.renderers.Scene.__init__" title="Permalink to this definition">¶</a></dt>
@@ -91,10 +70,10 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#refraction_render.renderers.Scene.__init__" title="refraction_render.renderers.Scene.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>()</p></td>
 <td><p>This function initialized <cite>Scene</cite> object.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_elevation_model</span></code>(*args)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#refraction_render.renderers.Scene.add_elevation_model" title="refraction_render.renderers.Scene.add_elevation_model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_elevation_model</span></code></a>(*args)</p></td>
 <td><p>Add terrain data to the interpolated model.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_image</span></code>(image, image_pos, dimensions[, …])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#refraction_render.renderers.Scene.add_image" title="refraction_render.renderers.Scene.add_image"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_image</span></code></a>(image, image_pos, dimensions[, …])</p></td>
 <td><p>Add image to scene.</p></td>
 </tr>
 </tbody>
@@ -106,11 +85,53 @@
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">land_model</span></code></p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#refraction_render.renderers.Scene.land_model" title="refraction_render.renderers.Scene.land_model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">land_model</span></code></a></p></td>
+<td><p>Object used to generate elevation along great circle.</p></td>
 </tr>
 </tbody>
 </table>
+<dl class="py method">
+<dt id="refraction_render.renderers.Scene.add_elevation_model">
+<code class="sig-name descname">add_elevation_model</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/renderers/render.html#Scene.add_elevation_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.renderers.Scene.add_elevation_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add terrain data to the interpolated model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>args: tuple</strong></dt><dd><p>tuple which contains elevation data:
+if len(args) == 3: args = (lats,lons,elevation) which contains the arguments for scipy.interpolate.RegularGridInterpolator.
+if len(args) == 2: args = (points,elevation) which contains the arguments for scipy.interpolate.LinearNDInterpolator.
+if len(args) == 1: args = object that is instance of <cite>land_model</cite>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="refraction_render.renderers.Scene.add_image">
+<code class="sig-name descname">add_image</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">image</span></em>, <em class="sig-param"><span class="n">image_pos</span></em>, <em class="sig-param"><span class="n">dimensions</span></em>, <em class="sig-param"><span class="n">direction</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/renderers/render.html#Scene.add_image"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.renderers.Scene.add_image" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add image to scene.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>image: str</strong></dt><dd><p>string which contains path to image file.</p>
+</dd>
+<dt><strong>image_pos: array_like</strong></dt><dd><p>either has (h_obj,lat,lon) or (lat,lon) h_obj is height above the earth’s surface</p>
+</dd>
+<dt><strong>dimensions: tuple</strong></dt><dd><p>contains dimensions of the image is in meters. If either one has value <cite>-1</cite>
+then that dimension is determined by the resolution of the picture.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="refraction_render.renderers.Scene.land_model">
+<em class="property">property </em><code class="sig-name descname">land_model</code><a class="headerlink" href="#refraction_render.renderers.Scene.land_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Object used to generate elevation along great circle.</p>
+</dd></dl>
+
 </dd></dl>
 
 </section>

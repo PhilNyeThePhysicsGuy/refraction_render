@@ -52,31 +52,12 @@
 <dl class="py class">
 <dt id="refraction_render.calcs.CurveNoRefraction">
 <em class="property">class </em><code class="sig-prename descclassname">refraction_render.calcs.</code><code class="sig-name descname">CurveNoRefraction</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">R0</span><span class="o">=</span><span class="default_value">6370997.0</span></em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/calcs/calculators.html#CurveNoRefraction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.calcs.CurveNoRefraction" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculator used for calculating rays on a sphere earth in no atmosphere.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Attributes</dt>
-<dd class="field-odd"><dl class="simple">
-<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">R0</span></code></dt><dd><p>Radius of the sphere in this calculator.</p>
-</dd>
-</dl>
-</dd>
-</dl>
-<p class="rubric">Methods</p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">solve_ivp</span></code>(d, h[, dh, alpha])</p></td>
-<td><p>Solve initial value problem for light rays.</p></td>
-</tr>
-</tbody>
-</table>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">refraction_render.calcs.calculators.Calc</span></code></p>
+<p>Calculator used for calculating rays on a sphere earth in no atmosphere.</p>
 <dl class="py method">
 <dt id="refraction_render.calcs.CurveNoRefraction.__init__">
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">R0</span><span class="o">=</span><span class="default_value">6370997.0</span></em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/calcs/calculators.html#CurveNoRefraction.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.calcs.CurveNoRefraction.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Initialize ‘CurveNoRefraction’ object.</p>
+<dd><p>Initialize <cite>CurveNoRefraction</cite> object.</p>
 <dl class="simple">
 <dt>R0: float, optional</dt><dd><p>Radius of the sphere for this calculation.</p>
 </dd>
@@ -91,9 +72,9 @@
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#refraction_render.calcs.CurveNoRefraction.__init__" title="refraction_render.calcs.CurveNoRefraction.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>([R0])</p></td>
-<td><p>Initialize ‘CurveNoRefraction’ object.</p></td>
+<td><p>Initialize <cite>CurveNoRefraction</cite> object.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">solve_ivp</span></code>(d, h[, dh, alpha])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#refraction_render.calcs.CurveNoRefraction.solve_ivp" title="refraction_render.calcs.CurveNoRefraction.solve_ivp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">solve_ivp</span></code></a>(d, h[, dh, alpha])</p></td>
 <td><p>Solve initial value problem for light rays.</p></td>
 </tr>
 </tbody>
@@ -105,11 +86,35 @@
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">R0</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#refraction_render.calcs.CurveNoRefraction.R0" title="refraction_render.calcs.CurveNoRefraction.R0"><code class="xref py py-obj docutils literal notranslate"><span class="pre">R0</span></code></a></p></td>
 <td><p>Radius of the sphere in this calculator.</p></td>
 </tr>
 </tbody>
 </table>
+<dl class="py method">
+<dt id="refraction_render.calcs.CurveNoRefraction.R0">
+<em class="property">property </em><code class="sig-name descname">R0</code><a class="headerlink" href="#refraction_render.calcs.CurveNoRefraction.R0" title="Permalink to this definition">¶</a></dt>
+<dd><p>Radius of the sphere in this calculator.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="refraction_render.calcs.CurveNoRefraction.solve_ivp">
+<code class="sig-name descname">solve_ivp</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">d</span></em>, <em class="sig-param"><span class="n">h</span></em>, <em class="sig-param"><span class="n">dh</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">alpha</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#refraction_render.calcs.CurveNoRefraction.solve_ivp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Solve initial value problem for light rays.</p>
+<dl class="simple">
+<dt>d: float</dt><dd><p>maximum distance to solve the light rays.</p>
+</dd>
+<dt>h: array_like (n,)</dt><dd><p>initial height of rays.</p>
+</dd>
+<dt>dh: array_like (n,), optional</dt><dd><p>initial derivatives of the rays.</p>
+</dd>
+<dt>alpha:  array_like (n,), optional</dt><dd><p>initial angle of the rays.</p>
+</dd>
+<dt>**kwargs: optional</dt><dd><p>extra arguments which get passed into Fermat equation solver.</p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 </section>

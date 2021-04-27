@@ -1,4 +1,4 @@
-refraction\_render.renderers.ray\_diagram
+﻿refraction\_render.renderers.ray\_diagram
 =========================================
 
 .. currentmodule:: refraction_render.renderers

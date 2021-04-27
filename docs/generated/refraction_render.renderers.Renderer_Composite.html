@@ -52,32 +52,8 @@
 <dl class="py class">
 <dt id="refraction_render.renderers.Renderer_Composite">
 <em class="property">class </em><code class="sig-prename descclassname">refraction_render.renderers.</code><code class="sig-name descname">Renderer_Composite</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">calc</span></em>, <em class="sig-param"><span class="n">h_obs</span></em>, <em class="sig-param"><span class="n">lat_obs</span></em>, <em class="sig-param"><span class="n">lon_obs</span></em>, <em class="sig-param"><span class="n">max_distance</span></em>, <em class="sig-param"><span class="n">distance_res</span><span class="o">=</span><span class="default_value">10</span></em>, <em class="sig-param"><span class="n">vert_obs_angle</span><span class="o">=</span><span class="default_value">0.0</span></em>, <em class="sig-param"><span class="n">vert_res</span><span class="o">=</span><span class="default_value">1000</span></em>, <em class="sig-param"><span class="n">focal_length</span><span class="o">=</span><span class="default_value">2000</span></em>, <em class="sig-param"><span class="n">atol</span><span class="o">=</span><span class="default_value">1.1e-07</span></em>, <em class="sig-param"><span class="n">rtol</span><span class="o">=</span><span class="default_value">1.1e-07</span></em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/renderers/render.html#Renderer_Composite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.renderers.Renderer_Composite" title="Permalink to this definition">¶</a></dt>
-<dd><p>Object used to set a camera angle and position to render a scene for a user specified horizontal field of view.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Attributes</dt>
-<dd class="field-odd"><dl class="simple">
-<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">v_angles</span></code></dt><dd><p>vertical angular scale of the image frame</p>
-</dd>
-<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">vfov</span></code></dt><dd><p>vertial field of view for this particular renderer</p>
-</dd>
-</dl>
-</dd>
-</dl>
-<p class="rubric">Methods</p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">render_scene</span></code>(scene, image_names, …[, …])</p></td>
-<td><p>Renders a composites over a very wide horizontal field.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_location</span></code>(lat_obs, lon_obs)</p></td>
-<td><p>This function can be used to change the position of the renderer.</p></td>
-</tr>
-</tbody>
-</table>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Object used to set a camera angle and position to render a scene for a user specified horizontal field of view.</p>
 <dl class="py method">
 <dt id="refraction_render.renderers.Renderer_Composite.__init__">
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">calc</span></em>, <em class="sig-param"><span class="n">h_obs</span></em>, <em class="sig-param"><span class="n">lat_obs</span></em>, <em class="sig-param"><span class="n">lon_obs</span></em>, <em class="sig-param"><span class="n">max_distance</span></em>, <em class="sig-param"><span class="n">distance_res</span><span class="o">=</span><span class="default_value">10</span></em>, <em class="sig-param"><span class="n">vert_obs_angle</span><span class="o">=</span><span class="default_value">0.0</span></em>, <em class="sig-param"><span class="n">vert_res</span><span class="o">=</span><span class="default_value">1000</span></em>, <em class="sig-param"><span class="n">focal_length</span><span class="o">=</span><span class="default_value">2000</span></em>, <em class="sig-param"><span class="n">atol</span><span class="o">=</span><span class="default_value">1.1e-07</span></em>, <em class="sig-param"><span class="n">rtol</span><span class="o">=</span><span class="default_value">1.1e-07</span></em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/renderers/render.html#Renderer_Composite.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.renderers.Renderer_Composite.__init__" title="Permalink to this definition">¶</a></dt>
@@ -125,10 +101,10 @@
 </dl>
 </p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">render_scene</span></code>(scene, image_names, …[, …])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#refraction_render.renderers.Renderer_Composite.render_scene" title="refraction_render.renderers.Renderer_Composite.render_scene"><code class="xref py py-obj docutils literal notranslate"><span class="pre">render_scene</span></code></a>(scene, image_names, …[, …])</p></td>
 <td><p>Renders a composites over a very wide horizontal field.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_location</span></code>(lat_obs, lon_obs)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#refraction_render.renderers.Renderer_Composite.set_location" title="refraction_render.renderers.Renderer_Composite.set_location"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_location</span></code></a>(lat_obs, lon_obs)</p></td>
 <td><p>This function can be used to change the position of the renderer.</p></td>
 </tr>
 </tbody>
@@ -140,14 +116,84 @@
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">v_angles</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#refraction_render.renderers.Renderer_Composite.v_angles" title="refraction_render.renderers.Renderer_Composite.v_angles"><code class="xref py py-obj docutils literal notranslate"><span class="pre">v_angles</span></code></a></p></td>
 <td><p>vertical angular scale of the image frame</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">vfov</span></code></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#refraction_render.renderers.Renderer_Composite.vfov" title="refraction_render.renderers.Renderer_Composite.vfov"><code class="xref py py-obj docutils literal notranslate"><span class="pre">vfov</span></code></a></p></td>
 <td><p>vertial field of view for this particular renderer</p></td>
 </tr>
 </tbody>
 </table>
+<dl class="py method">
+<dt id="refraction_render.renderers.Renderer_Composite.render_scene">
+<code class="sig-name descname">render_scene</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">scene</span></em>, <em class="sig-param"><span class="n">image_names</span></em>, <em class="sig-param"><span class="n">heading_mins</span></em>, <em class="sig-param"><span class="n">heading_maxs</span></em>, <em class="sig-param"><span class="n">surface_color</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">background_color</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">cfunc</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">cfunc_args</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">disp</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">eye_level</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">postprocess</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">h_min</span><span class="o">=</span><span class="default_value">0.01</span></em>, <em class="sig-param"><span class="n">gpu</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/renderers/render.html#Renderer_Composite.render_scene"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.renderers.Renderer_Composite.render_scene" title="Permalink to this definition">¶</a></dt>
+<dd><p>Renders a composites over a very wide horizontal field.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>scene: Scene object</strong></dt><dd><p>object which contains data which the renderer can extract and render</p>
+</dd>
+<dt><strong>image_names: array_like (n,) or ‘str’</strong></dt><dd><p>name(s) for the image(s) being rendered.</p>
+</dd>
+<dt><strong>heading_mins: array_like (n,) or float</strong></dt><dd><p>minimum starting point(s) for composite.</p>
+</dd>
+<dt><strong>heading_maxs: array_like (n,) or float</strong></dt><dd><p>maximum starting point(s) for composite, pair with ‘heading_mins’.</p>
+</dd>
+<dt><strong>background_color: array_like, optional</strong></dt><dd><p>3 element array containing an color via RGB color code (numbered 0 to 255)
+default value: <cite>[135,206,250]</cite></p>
+</dd>
+<dt><strong>surface_color: array_like, optional</strong></dt><dd><p>3 element array containing an color via RGB color code (numbered 0 to 255)
+default value: <cite>[0,80,120]</cite></p>
+</dd>
+<dt><strong>cfunc: callable, optional</strong></dt><dd><p>Callable function which is used to color the elevation data. The function takes
+in two arrays, the first is distances from the observer    the second is the elevation
+above the surface of the earth.</p>
+</dd>
+<dt><strong>cfunc_args: array_like, optional</strong></dt><dd><p>extra arguments to pass into <cite>cfunc</cite></p>
+</dd>
+<dt><strong>disp: bool, optional</strong></dt><dd><p>when rendering topographical data this will print out the heading slice which has been rendered.</p>
+</dd>
+<dt><strong>eye_level: bool, optional</strong></dt><dd><p>when rendering the image, an orange line is placed at eye level in the image.</p>
+</dd>
+<dt><strong>post_process: callable, optional</strong></dt><dd><p>function which processes the final image before saving it.</p>
+</dd>
+<dt><strong>h_min: float, optional</strong></dt><dd><p>minimum value for ray to count as crossing water.</p>
+</dd>
+<dt><strong>gpu: bool, optional</strong></dt><dd><p>utilize GPU to calculate 3D land model rendering.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="refraction_render.renderers.Renderer_Composite.set_location">
+<code class="sig-name descname">set_location</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">lat_obs</span></em>, <em class="sig-param"><span class="n">lon_obs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/renderers/render.html#Renderer_Composite.set_location"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.renderers.Renderer_Composite.set_location" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function can be used to change the position of the renderer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>lat_obs: float</strong></dt><dd><p>new latitude of observer</p>
+</dd>
+<dt><strong>lon_obs: float</strong></dt><dd><p>new longitude of observer</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="refraction_render.renderers.Renderer_Composite.v_angles">
+<em class="property">property </em><code class="sig-name descname">v_angles</code><a class="headerlink" href="#refraction_render.renderers.Renderer_Composite.v_angles" title="Permalink to this definition">¶</a></dt>
+<dd><p>vertical angular scale of the image frame</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="refraction_render.renderers.Renderer_Composite.vfov">
+<em class="property">property </em><code class="sig-name descname">vfov</code><a class="headerlink" href="#refraction_render.renderers.Renderer_Composite.vfov" title="Permalink to this definition">¶</a></dt>
+<dd><p>vertial field of view for this particular renderer</p>
+</dd></dl>
+
 </dd></dl>
 
 </section>

@@ -736,25 +736,26 @@ class Renderer_35mm(object):
 
     @property
     def vfov(self):
-        """vertial field of view for this particular renderer"""
+        """Vertial field of view for this particular renderer"""
         return self._vfov
 
     @property
     def v_angles(self):
-        """vertical angular scale of the image frame"""
+        """Vertical angular scale of the image frame."""
         v_angles = self._v_angles[...]
         v_angles.setflags(write=False)
         return v_angles
 
     @property
     def h_angles(self):
-        """horizontal angular scale of the image frame"""
+        """Horizontal angular scale of the image frame."""
         h_angles = self._h_angles[...]
         h_angles.setflags(write=False)
         return h_angles
 
     @property
     def calc(self):
+        """Calc object used to calculate verticle rays."""
         return self._calc
 
     def set_location(self,lat_obs,lon_obs,direction):
@@ -1112,6 +1113,7 @@ class Scene(object):
 
     @property
     def land_model(self):
+        """Object used to generate elevation along great circle."""
         return self._land_model
 
     def add_elevation_model(self,*args):
@@ -1123,10 +1125,11 @@ class Scene(object):
             tuple which contains elevation data:
             if len(args) == 3: args = (lats,lons,elevation) which contains the arguments for scipy.interpolate.RegularGridInterpolator.
             if len(args) == 2: args = (points,elevation) which contains the arguments for scipy.interpolate.LinearNDInterpolator.
+            if len(args) == 1: args = object that is instance of `land_model`.
 
         """
         if len(args)==1 and isinstance(args[0],land_model):
-            self._land_model = args[0]
+            self._land_model += args[0]
         else:
             self._land_model.add_elevation_data(*args)
 
@@ -1282,5 +1285,19 @@ class land_model(object):
             raise ValueError("can't interpret arguments.")
 
 
+    def __iadd__(self,other):
+        if isinstance(other,land_model):
+            self._terrain_list += other._terrain_list
+            return self
+        else:
+            return NotImplemented
 
+
+    def __add__(self,other):
+        if isinstance(other,land_model):
+            new = land_model()
+            new += other
+            return new
+        else:
+            return NotImplemented
 

@@ -52,42 +52,8 @@
 <dl class="py class">
 <dt id="refraction_render.calcs.std_atmosphere">
 <em class="property">class </em><code class="sig-prename descclassname">refraction_render.calcs.</code><code class="sig-name descname">std_atmosphere</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">h0</span><span class="o">=</span><span class="default_value">0.0</span></em>, <em class="sig-param"><span class="n">T0</span><span class="o">=</span><span class="default_value">15.0</span></em>, <em class="sig-param"><span class="n">P0</span><span class="o">=</span><span class="default_value">101325.0</span></em>, <em class="sig-param"><span class="n">g</span><span class="o">=</span><span class="default_value">9.81</span></em>, <em class="sig-param"><span class="n">dT</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">wavelength</span><span class="o">=</span><span class="default_value">0.545</span></em>, <em class="sig-param"><span class="n">moist_lapse_rate</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">T_prof</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">dT_prof</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">T_prof_args</span><span class="o">=</span><span class="default_value">()</span></em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/calcs/standard_atmosphere.html#std_atmosphere"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.calcs.std_atmosphere" title="Permalink to this definition">¶</a></dt>
-<dd><p>Object which calculates the standard atmospheric model.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Attributes</dt>
-<dd class="field-odd"><dl class="simple">
-<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">dT</span></code></dt><dd><p>Temperature Lapse rate for this atmospheric model.</p>
-</dd>
-</dl>
-</dd>
-</dl>
-<p class="rubric">Methods</p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">P</span></code>(h)</p></td>
-<td><p>Pressure function for this atmospheric model.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code>(h)</p></td>
-<td><p>Temperature function for this atmospheric model.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">dTdh</span></code>(h)</p></td>
-<td><p>density function for this atmospheric model.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">k</span></code>(h)</p></td>
-<td><p>Curvature of light rays at given height.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">n</span></code>(h)</p></td>
-<td><p>Index of refraction function for this atmospheric model.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">rho</span></code>(h)</p></td>
-<td><p>density function for this atmospheric model.</p></td>
-</tr>
-</tbody>
-</table>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Object which calculates the standard atmospheric model.</p>
 <dl class="py method">
 <dt id="refraction_render.calcs.std_atmosphere.__init__">
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">h0</span><span class="o">=</span><span class="default_value">0.0</span></em>, <em class="sig-param"><span class="n">T0</span><span class="o">=</span><span class="default_value">15.0</span></em>, <em class="sig-param"><span class="n">P0</span><span class="o">=</span><span class="default_value">101325.0</span></em>, <em class="sig-param"><span class="n">g</span><span class="o">=</span><span class="default_value">9.81</span></em>, <em class="sig-param"><span class="n">dT</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">wavelength</span><span class="o">=</span><span class="default_value">0.545</span></em>, <em class="sig-param"><span class="n">moist_lapse_rate</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">T_prof</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">dT_prof</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">T_prof_args</span><span class="o">=</span><span class="default_value">()</span></em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/calcs/standard_atmosphere.html#std_atmosphere.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.calcs.std_atmosphere.__init__" title="Permalink to this definition">¶</a></dt>
@@ -127,25 +93,25 @@
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">P</span></code>(h)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#refraction_render.calcs.std_atmosphere.P" title="refraction_render.calcs.std_atmosphere.P"><code class="xref py py-obj docutils literal notranslate"><span class="pre">P</span></code></a>(h)</p></td>
 <td><p>Pressure function for this atmospheric model.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code>(h)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#refraction_render.calcs.std_atmosphere.T" title="refraction_render.calcs.std_atmosphere.T"><code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code></a>(h)</p></td>
 <td><p>Temperature function for this atmospheric model.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#refraction_render.calcs.std_atmosphere.__init__" title="refraction_render.calcs.std_atmosphere.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>([h0, T0, P0, g, dT, wavelength, …])</p></td>
 <td><p>Intializes the <cite>std_atmosphere</cite> object.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">dTdh</span></code>(h)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#refraction_render.calcs.std_atmosphere.dTdh" title="refraction_render.calcs.std_atmosphere.dTdh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dTdh</span></code></a>(h)</p></td>
 <td><p>density function for this atmospheric model.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">k</span></code>(h)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#refraction_render.calcs.std_atmosphere.k" title="refraction_render.calcs.std_atmosphere.k"><code class="xref py py-obj docutils literal notranslate"><span class="pre">k</span></code></a>(h)</p></td>
 <td><p>Curvature of light rays at given height.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">n</span></code>(h)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#refraction_render.calcs.std_atmosphere.n" title="refraction_render.calcs.std_atmosphere.n"><code class="xref py py-obj docutils literal notranslate"><span class="pre">n</span></code></a>(h)</p></td>
 <td><p>Index of refraction function for this atmospheric model.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">rho</span></code>(h)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#refraction_render.calcs.std_atmosphere.rho" title="refraction_render.calcs.std_atmosphere.rho"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rho</span></code></a>(h)</p></td>
 <td><p>density function for this atmospheric model.</p></td>
 </tr>
 </tbody>
@@ -157,11 +123,53 @@
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">dT</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#refraction_render.calcs.std_atmosphere.dT" title="refraction_render.calcs.std_atmosphere.dT"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dT</span></code></a></p></td>
 <td><p>Temperature Lapse rate for this atmospheric model.</p></td>
 </tr>
 </tbody>
 </table>
+<dl class="py method">
+<dt id="refraction_render.calcs.std_atmosphere.P">
+<code class="sig-name descname">P</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">h</span></em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/calcs/standard_atmosphere.html#std_atmosphere.P"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.calcs.std_atmosphere.P" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pressure function for this atmospheric model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="refraction_render.calcs.std_atmosphere.T">
+<code class="sig-name descname">T</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">h</span></em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/calcs/standard_atmosphere.html#std_atmosphere.T"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.calcs.std_atmosphere.T" title="Permalink to this definition">¶</a></dt>
+<dd><p>Temperature function for this atmospheric model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="refraction_render.calcs.std_atmosphere.dT">
+<em class="property">property </em><code class="sig-name descname">dT</code><a class="headerlink" href="#refraction_render.calcs.std_atmosphere.dT" title="Permalink to this definition">¶</a></dt>
+<dd><p>Temperature Lapse rate for this atmospheric model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="refraction_render.calcs.std_atmosphere.dTdh">
+<code class="sig-name descname">dTdh</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">h</span></em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/calcs/standard_atmosphere.html#std_atmosphere.dTdh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.calcs.std_atmosphere.dTdh" title="Permalink to this definition">¶</a></dt>
+<dd><p>density function for this atmospheric model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="refraction_render.calcs.std_atmosphere.k">
+<code class="sig-name descname">k</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">h</span></em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/calcs/standard_atmosphere.html#std_atmosphere.k"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.calcs.std_atmosphere.k" title="Permalink to this definition">¶</a></dt>
+<dd><p>Curvature of light rays at given height.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="refraction_render.calcs.std_atmosphere.n">
+<code class="sig-name descname">n</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">h</span></em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/calcs/standard_atmosphere.html#std_atmosphere.n"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.calcs.std_atmosphere.n" title="Permalink to this definition">¶</a></dt>
+<dd><p>Index of refraction function for this atmospheric model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="refraction_render.calcs.std_atmosphere.rho">
+<code class="sig-name descname">rho</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">h</span></em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/calcs/standard_atmosphere.html#std_atmosphere.rho"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.calcs.std_atmosphere.rho" title="Permalink to this definition">¶</a></dt>
+<dd><p>density function for this atmospheric model.</p>
+</dd></dl>
+
 </dd></dl>
 
 </section>
