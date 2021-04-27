@@ -1,0 +1,147 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+    <title>refraction_render.renderers.ray_diagram &#8212; refraction_render 1.0.0 documentation</title>
+    <link rel="stylesheet" href="../static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../static/classic.css" type="text/css" />
+    
+    <script id="documentation_options" data-url_root="../" src="../static/documentation_options.js"></script>
+    <script src="../static/jquery.js"></script>
+    <script src="../static/underscore.js"></script>
+    <script src="../static/doctools.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="refraction_render.renderers.Renderer_35mm" href="refraction_render.renderers.Renderer_35mm.html" />
+    <link rel="prev" title="Renderers module (refraction_render.renderers)" href="../renderers.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="refraction_render.renderers.Renderer_35mm.html" title="refraction_render.renderers.Renderer_35mm"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../renderers.html" title="Renderers module (refraction_render.renderers)"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">refraction_render 1.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../renderers.html" accesskey="U">Renderers module (<code class="xref py py-mod docutils literal notranslate"><span class="pre">refraction_render.renderers</span></code>)</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">refraction_render.renderers.ray_diagram</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="refraction-render-renderers-ray-diagram">
+<h1>refraction_render.renderers.ray_diagram<a class="headerlink" href="#refraction-render-renderers-ray-diagram" title="Permalink to this headline">¶</a></h1>
+<dl class="py function">
+<dt id="refraction_render.renderers.ray_diagram">
+<code class="sig-prename descclassname">refraction_render.renderers.</code><code class="sig-name descname">ray_diagram</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ax</span></em>, <em class="sig-param"><span class="n">calc</span></em>, <em class="sig-param"><span class="n">h_obs</span></em>, <em class="sig-param"><span class="n">d</span></em>, <em class="sig-param"><span class="n">angles</span></em>, <em class="sig-param"><span class="n">heights</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">style</span><span class="o">=</span><span class="default_value">'sphere_top'</span></em>, <em class="sig-param"><span class="n">eye_level</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">linewidth_rays</span><span class="o">=</span><span class="default_value">0.2</span></em>, <em class="sig-param"><span class="n">linewidth_earth</span><span class="o">=</span><span class="default_value">0.2</span></em>, <em class="sig-param"><span class="n">R0</span><span class="o">=</span><span class="default_value">6371008</span></em>, <em class="sig-param"><span class="n">h_min</span><span class="o">=</span><span class="default_value">0.01</span></em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/renderers/render.html#ray_diagram"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.renderers.ray_diagram" title="Permalink to this definition">¶</a></dt>
+<dd><p>Side profile view showing the rays trajectories.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>ax: matplotlib Axes object</strong></dt><dd><p>this function plots lines on a graph, you can specify which graph to plot to by passing in the axes object for the graph you want to plot to.</p>
+</dd>
+<dt><strong>calc: calcs object</strong></dt><dd><p>object which can be used to calculate the trajectory of light rays</p>
+</dd>
+<dt><strong>h_obs: float</strong></dt><dd><p>height of renderer in meters</p>
+</dd>
+<dt><strong>d: array_like, (N,)</strong></dt><dd><p>list of values to evaluate ray positions at for ray diagram, must be sorted in ascending order.</p>
+</dd>
+<dt><strong>angles: array_like, (M,)</strong></dt><dd><p>list of initial angles for the rays, in degrees</p>
+</dd>
+<dt><strong>heights: array_like, (N,), optional</strong></dt><dd><p>list of values which represent the elevation profile along ray trajectory</p>
+</dd>
+<dt><strong>style: str, optional</strong></dt><dd><p>style to plot the graph. “flat”: plot rays on flat plane, “sphere_top”: plot rays as if the earth is filling away from the observer, “sphere_side”: plot rays with the ‘bulge’ in the middle.</p>
+</dd>
+<dt><strong>eye_level: bool, optional</strong></dt><dd><p>color the ray which is closest to eye level (0 degrees initial angle) orange.</p>
+</dd>
+<dt><strong>linewidth_rays: float, optional</strong></dt><dd><p>linewidth used for plotting rays in diagram</p>
+</dd>
+<dt><strong>linewidth_earth: float, optional</strong></dt><dd><p>linewidth used for plotting surface of the earth, both water and land.</p>
+</dd>
+<dt><strong>h_min: float, optional</strong></dt><dd><p>minimum values which should count as water when calculating hit locations.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../renderers.html"
+                        title="previous chapter">Renderers module (<code class="xref py py-mod docutils literal notranslate"><span class="pre">refraction_render.renderers</span></code>)</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="refraction_render.renderers.Renderer_35mm.html"
+                        title="next chapter">refraction_render.renderers.Renderer_35mm</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../sources/generated/refraction_render.renderers.ray_diagram.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="refraction_render.renderers.Renderer_35mm.html" title="refraction_render.renderers.Renderer_35mm"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../renderers.html" title="Renderers module (refraction_render.renderers)"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">refraction_render 1.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../renderers.html" >Renderers module (<code class="xref py py-mod docutils literal notranslate"><span class="pre">refraction_render.renderers</span></code>)</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">refraction_render.renderers.ray_diagram</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Phillip Weinberg.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.4.3.
+    </div>
+  </body>
+</html>

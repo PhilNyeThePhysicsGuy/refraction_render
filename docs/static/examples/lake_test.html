@@ -1,0 +1,261 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+    <title>Laser Tests Over Cool Lake &#8212; refraction_render 1.0.0 documentation</title>
+    <link rel="stylesheet" href="../static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../static/classic.css" type="text/css" />
+    
+    <script id="documentation_options" data-url_root="../" src="../static/documentation_options.js"></script>
+    <script src="../static/jquery.js"></script>
+    <script src="../static/underscore.js"></script>
+    <script src="../static/doctools.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">refraction_render 1.0.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Laser Tests Over Cool Lake</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="laser-tests-over-cool-lake">
+<span id="lake-test-label"></span><h1>Laser Tests Over Cool Lake<a class="headerlink" href="#laser-tests-over-cool-lake" title="Permalink to this headline">¶</a></h1>
+<p>back to <a class="reference internal" href="../Examples.html#examples"><span class="std std-ref">Examples</span></a></p>
+<p>In this example we use the refraction calculators to calculate the trajectory of a laser beam over the surface of the earth. In this case we simulate an atmosphere which has cool air near the surface of the earth which creates the effect of bending the laser light down towards the surface of the earth.</p>
+<p><a class="reference download internal" download="" href="../downloads/99e432fc3fb6a20d7d0f8e33b56e9c4c/lake_test.zip"><code class="xref download docutils literal notranslate"><span class="pre">download</span> <span class="pre">files</span></code></a></p>
+<div class="highlight-python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span>
+<span class="normal">76</span>
+<span class="normal">77</span>
+<span class="normal">78</span>
+<span class="normal">79</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">refraction_render.calcs</span> <span class="kn">import</span> <span class="n">CurveCalc</span><span class="p">,</span><span class="n">CurveNoRefraction</span>
+<span class="kn">from</span> <span class="nn">refraction_render.misc</span> <span class="kn">import</span> <span class="n">mi_to_m</span><span class="p">,</span><span class="n">ft_to_m</span>
+<span class="kn">from</span> <span class="nn">scipy.special</span> <span class="kn">import</span> <span class="n">erf</span>
+<span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="kn">import</span> <span class="n">bisect</span>
+
+<span class="c1"># guassian spaced angles to replicate the intensity </span>
+<span class="c1"># of a laser as it exits the device. </span>
+<span class="k">def</span> <span class="nf">C</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">s</span><span class="p">):</span>
+	<span class="k">return</span> <span class="mf">0.5</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">erf</span><span class="p">(</span><span class="n">x</span><span class="o">/</span><span class="p">(</span><span class="n">s</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2.0</span><span class="p">))))</span>
+
+
+<span class="n">P</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">501</span><span class="p">)[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">beam_width</span> <span class="o">=</span> <span class="mf">0.02</span> <span class="c1">#degrees</span>
+<span class="n">angles</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">P</span><span class="p">:</span>
+	<span class="n">a</span> <span class="o">=</span> <span class="n">bisect</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span><span class="n">C</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">beam_width</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">-</span><span class="n">p</span><span class="p">,</span><span class="o">-</span><span class="mi">80</span><span class="p">,</span><span class="mi">80</span><span class="p">)</span>
+	<span class="n">angles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+
+
+
+
+<span class="k">def</span> <span class="nf">smooth_f</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+	<span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">((</span><span class="n">x</span><span class="o">+</span><span class="n">a</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">logaddexp</span><span class="p">(</span><span class="n">x</span><span class="o">/</span><span class="n">a</span><span class="p">,</span><span class="o">-</span><span class="n">x</span><span class="o">/</span><span class="n">a</span><span class="p">))</span><span class="o">/</span><span class="mf">2.0</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">T_prof</span><span class="p">(</span><span class="n">h</span><span class="p">):</span>
+	<span class="n">e</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan_to_num</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">smooth_f</span><span class="p">(</span><span class="n">h</span><span class="o">/</span><span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span><span class="p">))</span>
+	<span class="k">return</span> <span class="o">-</span><span class="mf">0.5</span><span class="o">*</span><span class="n">e</span>
+
+
+<span class="n">calc</span>    <span class="o">=</span> <span class="n">CurveCalc</span><span class="p">(</span><span class="n">T_prof</span><span class="o">=</span><span class="n">T_prof</span><span class="p">)</span>
+<span class="n">a_mid</span> <span class="o">=</span> <span class="mf">0.015</span>
+
+<span class="n">d_max</span> <span class="o">=</span> <span class="n">mi_to_m</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">d_max</span><span class="p">,</span><span class="mi">101</span><span class="p">)</span>
+<span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">d</span><span class="o">/</span><span class="n">calc</span><span class="o">.</span><span class="n">R0</span><span class="p">)</span>
+<span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">d</span><span class="o">/</span><span class="n">calc</span><span class="o">.</span><span class="n">R0</span><span class="p">)</span>
+<span class="n">y_min</span> <span class="o">=</span> <span class="n">calc</span><span class="o">.</span><span class="n">R0</span><span class="o">*</span><span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="n">angles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">angles</span><span class="p">)</span> <span class="o">-</span> <span class="n">a_mid</span>
+<span class="n">n_v</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">angles</span><span class="p">)</span>
+
+<span class="c1">#plotting temperature profile</span>
+<span class="n">h</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">50</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">calc</span><span class="o">.</span><span class="n">atm_model</span><span class="o">.</span><span class="n">T</span><span class="p">(</span><span class="n">h</span><span class="p">),</span><span class="n">h</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Temperature (Celsius)&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Height (meters)&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">&quot;T_prof.png&quot;</span><span class="p">,</span><span class="n">bbox_inches</span><span class="o">=</span><span class="s2">&quot;tight&quot;</span><span class="p">,</span><span class="n">dpi</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">calc</span><span class="o">.</span><span class="n">atm_model</span><span class="o">.</span><span class="n">rho</span><span class="p">(</span><span class="n">h</span><span class="p">),</span><span class="n">h</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Density (kg/m$^3$)&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Height (meters)&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">&quot;rho_prof.png&quot;</span><span class="p">,</span><span class="n">bbox_inches</span><span class="o">=</span><span class="s2">&quot;tight&quot;</span><span class="p">,</span><span class="n">dpi</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+
+
+<span class="n">sol</span> <span class="o">=</span> <span class="n">calc</span><span class="o">.</span><span class="n">solve_ivp</span><span class="p">(</span><span class="n">d_max</span><span class="p">,</span><span class="n">ft_to_m</span><span class="p">(</span><span class="mi">7</span><span class="p">),</span><span class="n">alpha</span><span class="o">=</span><span class="n">angles</span><span class="p">,</span>
+	<span class="n">dense_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">atol</span><span class="o">=</span><span class="mf">1.1e-7</span><span class="p">,</span><span class="n">rtol</span><span class="o">=</span><span class="mf">1.1e-7</span><span class="p">)</span>
+
+<span class="n">r</span> <span class="o">=</span> <span class="n">sol</span><span class="o">.</span><span class="n">sol</span><span class="p">(</span><span class="n">d</span><span class="p">)[:</span><span class="n">n_v</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+<span class="k">for</span> <span class="n">rr</span> <span class="ow">in</span> <span class="n">r</span><span class="p">[:]:</span>
+	<span class="n">mask</span> <span class="o">=</span> <span class="n">rr</span> <span class="o">&lt;</span> <span class="mi">0</span>
+
+	<span class="n">i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">mask</span><span class="p">):</span>
+		<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">c</span><span class="p">[:</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">calc</span><span class="o">.</span><span class="n">R0</span><span class="o">+</span><span class="n">rr</span><span class="p">[:</span><span class="n">i</span><span class="p">]),</span><span class="n">s</span><span class="p">[:</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">calc</span><span class="o">.</span><span class="n">R0</span><span class="o">+</span><span class="n">rr</span><span class="p">[:</span><span class="n">i</span><span class="p">])</span><span class="o">-</span><span class="n">y_min</span><span class="p">,</span>
+			<span class="n">color</span><span class="o">=</span><span class="s2">&quot;cyan&quot;</span><span class="p">,</span><span class="n">marker</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="n">linewidth</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">c</span><span class="o">*</span><span class="p">(</span><span class="n">calc</span><span class="o">.</span><span class="n">R0</span><span class="o">+</span><span class="n">rr</span><span class="p">),</span><span class="n">s</span><span class="o">*</span><span class="p">(</span><span class="n">calc</span><span class="o">.</span><span class="n">R0</span><span class="o">+</span><span class="n">rr</span><span class="p">)</span><span class="o">-</span><span class="n">y_min</span><span class="p">,</span>
+			<span class="n">color</span><span class="o">=</span><span class="s2">&quot;cyan&quot;</span><span class="p">,</span><span class="n">marker</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="n">linewidth</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">calc</span><span class="o">.</span><span class="n">R0</span><span class="o">*</span><span class="n">c</span><span class="p">,</span><span class="n">calc</span><span class="o">.</span><span class="n">R0</span><span class="o">*</span><span class="p">(</span><span class="n">s</span><span class="o">-</span><span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axes</span><span class="p">()</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="mi">300</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Height (meters)&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Distance (meters)&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">&quot;lake_test.png&quot;</span><span class="p">,</span><span class="n">bbox_inches</span><span class="o">=</span><span class="s2">&quot;tight&quot;</span><span class="p">,</span><span class="n">dpi</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+</pre></div>
+</td></tr></table></div>
+<p>Instead of using the renderer built into the package we use Matplotlib to plot the actual trajectories of the rays. The model for the atmosphere uses this Temperature profile:</p>
+<a class="reference internal image-reference" href="../images/T_prof_lake_test.png"><img alt="../images/T_prof_lake_test.png" class="align-center" src="../images/T_prof_lake_test.png" style="width: 563.0px; height: 432.20000000000005px;" /></a>
+<p>That can be used to calculate the air density as a function of height</p>
+<a class="reference internal image-reference" href="../images/rho_prof_lake_test.png"><img alt="../images/rho_prof_lake_test.png" class="align-center" src="../images/rho_prof_lake_test.png" style="width: 563.0px; height: 435.0px;" /></a>
+<p>which we can then convert into an index of refraction using the refractivity. We show the results of a simulation of various light rays (individual lines in the image below) coming out of a source (the laser) at 7 ft above the water level shining light over 10.3 miles to the observers on the other side. The ray angles are spaced out to represent a guasian distribution of a width of 0.02 degrees which is supposed to simulate the intensity of the beam itself, therefore from the image below the closer together the lines appear the more indense the beam is. The beam is angled down to get the maximum intensity reaching the other side of the lake.</p>
+<a class="reference internal image-reference" href="../images/lake_test.png"><img alt="../images/lake_test.png" class="align-center" src="../images/lake_test.png" style="width: 574.4px; height: 274.1px;" /></a>
+<p>The conclusion from this simulation is that when there is a layer of cool air above the surface of the earth the Laser light is bent downwards which means it can be seen at all heights on the opposite side of the lake with the intensity of the light depending on the height. These results have giving some people the impression that the earth is flat however this conclusion is lacking the sophisticated analysis presented here.</p>
+<p>back to <a class="reference internal" href="../Examples.html#examples"><span class="std std-ref">Examples</span></a></p>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../sources/examples/lake_test.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">refraction_render 1.0.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Laser Tests Over Cool Lake</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Phillip Weinberg.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.4.3.
+    </div>
+  </body>
+</html>

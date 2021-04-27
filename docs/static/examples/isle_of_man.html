@@ -1,0 +1,264 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+    <title>Isle of Man modeling &#8212; refraction_render 1.0.0 documentation</title>
+    <link rel="stylesheet" href="../static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../static/classic.css" type="text/css" />
+    
+    <script id="documentation_options" data-url_root="../" src="../static/documentation_options.js"></script>
+    <script src="../static/jquery.js"></script>
+    <script src="../static/underscore.js"></script>
+    <script src="../static/doctools.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">refraction_render 1.0.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Isle of Man modeling</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="isle-of-man-modeling">
+<span id="isle-of-man-label"></span><h1>Isle of Man modeling<a class="headerlink" href="#isle-of-man-modeling" title="Permalink to this headline">¶</a></h1>
+<p>back to <a class="reference internal" href="../Examples.html#examples"><span class="std std-ref">Examples</span></a></p>
+<p>A Youtuber by the name of Sleeping Warrior has taken it apon himself to prove that the earth is flat. In doing so he has made many observations of distance objects over water, all of which have demonstrated the curvature of the earth. Here we will discuss a particular observation which was done from a beach at a small town called St. Bees in the UK. This area has a lot of hills and cliffs close to the Irish sea in which there is an island called the Isle of Man. This island has some very distinct features which and a varying land profile which we will explore in this example.</p>
+<p>We have downloaded some elevation data from the SRTM mission which covers the entire Isle of Man and we will show how to use this to create a render of that topographical data with refraction:</p>
+<p><a class="reference download internal" download="" href="../downloads/4fde304cdcbb63bb386ffb476d166907/isle_of_man.zip"><code class="xref download docutils literal notranslate"><span class="pre">download</span> <span class="pre">files</span></code></a></p>
+<div class="highlight-python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span>
+<span class="normal">76</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">refraction_render.renderers</span> <span class="kn">import</span> <span class="n">Scene</span><span class="p">,</span><span class="n">Renderer_35mm</span><span class="p">,</span><span class="n">Renderer_Composite</span>
+<span class="kn">from</span> <span class="nn">refraction_render.calcs</span> <span class="kn">import</span> <span class="n">CurveCalc</span><span class="p">,</span><span class="n">FlatCalc</span>
+<span class="kn">from</span> <span class="nn">refraction_render.misc</span> <span class="kn">import</span> <span class="n">mi_to_m</span><span class="p">,</span><span class="n">ft_to_m</span>
+<span class="kn">from</span> <span class="nn">pyproj</span> <span class="kn">import</span> <span class="n">Geod</span>
+<span class="kn">from</span> <span class="nn">PIL</span> <span class="kn">import</span> <span class="n">Image</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">cProfile</span>
+
+
+<span class="k">def</span> <span class="nf">cfunc</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="n">h</span><span class="p">,</span><span class="n">n_ref</span><span class="p">,</span><span class="n">h_max</span><span class="p">,</span><span class="n">d_min</span><span class="p">):</span>
+    <span class="c1"># this is a function which should give the color of the pixels on the</span>
+    <span class="c1"># rendered topographical data. h_max is the maximum value of the elevation</span>
+    <span class="c1"># which for the isle of man is 621 meters, d_min is roughly the minimum distance</span>
+    <span class="c1"># of land away from the observer, which is roughly 50 km. </span>
+    <span class="n">ng</span> <span class="o">=</span> <span class="mi">100</span><span class="o">+</span><span class="p">(</span><span class="mi">255</span><span class="o">-</span><span class="mi">100</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">d</span><span class="o">/</span><span class="n">d_min</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mi">4</span><span class="p">)</span>
+    <span class="n">nr</span> <span class="o">=</span> <span class="n">ng</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">h</span><span class="o">/</span><span class="n">h_max</span><span class="p">)</span>
+
+    <span class="c1"># this line of code is used to generate the shading of the elevation.</span>
+    <span class="c1"># n_ref are a set of unit vector pointing in the direction of the reflected </span>
+    <span class="c1"># ray bounding off of the surface if the lighting is above the object the closer </span>
+    <span class="c1"># the reflected ray is to pointing completly vertical the more illuminated it </span>
+    <span class="c1"># should appear. In this way we can scale the whole rgb color by a dimming factor</span>
+    <span class="c1"># that takes into account this angle. Note we do not take the dimming to 0, </span>
+    <span class="c1"># otherwise the shading would be black.</span>
+    <span class="n">dimming</span> <span class="o">=</span> <span class="mi">1</span><span class="o">-</span><span class="mf">0.5</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">n_ref</span><span class="p">[</span><span class="mi">1</span><span class="p">,:])</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">broadcast_arrays</span><span class="p">(</span><span class="n">dimming</span><span class="o">*</span><span class="n">nr</span><span class="p">,</span><span class="n">dimming</span><span class="o">*</span><span class="n">ng</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span><span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">T_prof</span><span class="p">(</span><span class="n">h</span><span class="p">):</span>
+    <span class="n">e1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">h</span><span class="o">/</span><span class="mf">1.5</span><span class="p">)</span>
+    <span class="n">e2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">h</span><span class="o">/</span><span class="mf">0.1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="mi">2</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">e1</span><span class="p">))</span><span class="o">*</span><span class="mf">0.1</span><span class="o">+</span><span class="p">(</span><span class="mi">2</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">e2</span><span class="p">))</span><span class="o">*</span><span class="mf">0.15</span>
+
+<span class="c1"># create calculator</span>
+<span class="n">calc_args</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">T0</span><span class="o">=</span><span class="mf">8.3</span><span class="p">,</span><span class="n">P0</span><span class="o">=</span><span class="mi">103000</span><span class="p">,</span><span class="n">T_prof</span><span class="o">=</span><span class="n">T_prof</span><span class="p">)</span>
+<span class="n">calc</span> <span class="o">=</span> <span class="n">CurveCalc</span><span class="p">(</span><span class="o">**</span><span class="n">calc_args</span><span class="p">)</span>
+
+<span class="c1"># load topographical data</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;n54_w005_1arc_v3.tif&quot;</span><span class="p">))</span>
+<span class="n">n_lat</span><span class="p">,</span><span class="n">n_lon</span> <span class="o">=</span>  <span class="n">data</span><span class="o">.</span><span class="n">shape</span>
+
+<span class="n">lats</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">54</span><span class="p">,</span><span class="mi">55</span><span class="p">,</span><span class="n">n_lat</span><span class="p">)</span> <span class="c1"># get latitudes of raster</span>
+<span class="n">lons</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span><span class="n">n_lon</span><span class="p">)</span> <span class="c1"># get longitudes of raster</span>
+<span class="c1"># data must be flipped row whys so that latitude grid is strictly increasing</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">,:]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> 
+
+<span class="n">d_max</span> <span class="o">=</span> <span class="n">mi_to_m</span><span class="p">(</span><span class="mi">40</span><span class="p">)</span>
+<span class="n">h_obs</span><span class="p">,</span><span class="n">lat_obs</span><span class="p">,</span> <span class="n">lon_obs</span> <span class="o">=</span> <span class="mi">35</span><span class="p">,</span> <span class="mf">54.487375</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.599760</span>
+<span class="n">h_lighthouse</span><span class="p">,</span><span class="n">lat_lighthouse</span><span class="p">,</span> <span class="n">lon_lighthouse</span> <span class="o">=</span> <span class="mf">43.7</span><span class="p">,</span> <span class="mf">54.295668</span><span class="p">,</span> <span class="o">-</span><span class="mf">4.309418</span>
+
+<span class="n">s</span> <span class="o">=</span> <span class="n">Scene</span><span class="p">()</span>
+<span class="n">image_path</span> <span class="o">=</span> <span class="s2">&quot;MG_lighthouse_model.png&quot;</span>
+<span class="n">s</span><span class="o">.</span><span class="n">add_image</span><span class="p">(</span><span class="n">image_path</span><span class="p">,(</span><span class="n">h_lighthouse</span><span class="p">,</span><span class="n">lat_lighthouse</span><span class="p">,</span><span class="n">lon_lighthouse</span><span class="p">),</span><span class="n">dimensions</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">23</span><span class="p">))</span>
+<span class="n">s</span><span class="o">.</span><span class="n">add_elevation_model</span><span class="p">(</span><span class="n">lats</span><span class="p">,</span><span class="n">lons</span><span class="p">,</span><span class="n">data</span><span class="p">)</span>
+
+
+<span class="n">renderer</span> <span class="o">=</span> <span class="n">Renderer_35mm</span><span class="p">(</span><span class="n">calc</span><span class="p">,</span><span class="n">h_obs</span><span class="p">,</span><span class="n">lat_obs</span><span class="p">,</span><span class="n">lon_obs</span><span class="p">,(</span><span class="n">lat_lighthouse</span><span class="p">,</span><span class="n">lon_lighthouse</span><span class="p">),</span>
+	<span class="n">d_max</span><span class="p">,</span><span class="n">vert_res</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span><span class="n">focal_length</span><span class="o">=</span><span class="mi">2000</span><span class="p">)</span>
+
+<span class="n">renderer</span><span class="o">.</span><span class="n">render_scene</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="s1">&#39;lighthouse_render.png&#39;</span><span class="p">,</span><span class="n">cfunc</span><span class="o">=</span><span class="n">cfunc</span><span class="p">,</span><span class="n">cfunc_args</span><span class="o">=</span><span class="p">(</span><span class="mi">621</span><span class="p">,</span><span class="mi">50000</span><span class="p">),</span><span class="n">disp</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">renderer</span> <span class="o">=</span> <span class="n">Renderer_Composite</span><span class="p">(</span><span class="n">calc</span><span class="p">,</span><span class="n">h_obs</span><span class="p">,</span><span class="n">lat_obs</span><span class="p">,</span><span class="n">lon_obs</span><span class="p">,</span><span class="n">d_max</span><span class="p">,</span><span class="n">vert_res</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span><span class="n">focal_length</span><span class="o">=</span><span class="mi">2000</span><span class="p">)</span>
+
+<span class="n">heading_min</span> <span class="o">=</span> <span class="mi">235</span>
+<span class="n">heading_max</span> <span class="o">=</span> <span class="mi">259</span>
+<span class="n">renderer</span><span class="o">.</span><span class="n">render_scene</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="s2">&quot;Isle_of_Man_composite.png&quot;</span><span class="p">,</span><span class="n">heading_min</span><span class="p">,</span><span class="n">heading_max</span><span class="p">,</span>
+	<span class="n">cfunc</span><span class="o">=</span><span class="n">cfunc</span><span class="p">,</span><span class="n">cfunc_args</span><span class="o">=</span><span class="p">(</span><span class="mi">621</span><span class="p">,</span><span class="mi">50000</span><span class="p">),</span><span class="n">disp</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+
+
+
+
+
+
+
+</pre></div>
+</td></tr></table></div>
+</section>
+<section id="results">
+<h1>Results<a class="headerlink" href="#results" title="Permalink to this headline">¶</a></h1>
+<p>Here is a a composite which was composed out of a video panning across the Isle of Man:</p>
+<a class="reference internal image-reference" href="../images/isle_of_man_composite.jpg"><img alt="../images/isle_of_man_composite.jpg" class="align-center" src="../images/isle_of_man_composite.jpg" style="width: 781.0px; height: 28.900000000000002px;" /></a>
+<p>Compare this to the rendered version of the composite, here we have tried to guess the correct temperature profile for the inferior mirage.</p>
+<a class="reference internal image-reference" href="../images/Isle_of_Man_composite.png"><img alt="../images/Isle_of_Man_composite.png" class="align-center" src="../images/Isle_of_Man_composite.png" style="width: 870.95px; height: 25.0px;" /></a>
+<p>Another interesting thing to look at on the Island is Maughold lighthouse which stimluated much debate as some have argued that it should not be able to be seen from the location where Sleeping Warrior took his video. However we have modeled the lighthouse in its correct position and it turns out that because of the refraction, the light house is actually being very slightly loomed up. Yet another brilliant observation by Mr. Sleeping Warrior proving the Earth is a globe!</p>
+<a class="reference internal image-reference" href="../images/lighthouse_render.png"><img alt="../images/lighthouse_render.png" class="align-center" src="../images/lighthouse_render.png" style="width: 600.0px; height: 400.0px;" /></a>
+<p>back to <a class="reference internal" href="../Examples.html#examples"><span class="std std-ref">Examples</span></a></p>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Isle of Man modeling</a></li>
+<li><a class="reference internal" href="#results">Results</a></li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../sources/examples/isle_of_man.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">refraction_render 1.0.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Isle of Man modeling</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Phillip Weinberg.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.4.3.
+    </div>
+  </body>
+</html>

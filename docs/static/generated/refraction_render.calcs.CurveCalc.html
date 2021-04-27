@@ -1,0 +1,192 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+    <title>refraction_render.calcs.CurveCalc &#8212; refraction_render 1.0.0 documentation</title>
+    <link rel="stylesheet" href="../static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../static/classic.css" type="text/css" />
+    
+    <script id="documentation_options" data-url_root="../" src="../static/documentation_options.js"></script>
+    <script src="../static/jquery.js"></script>
+    <script src="../static/underscore.js"></script>
+    <script src="../static/doctools.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="refraction_render.calcs.CurveNoRefraction" href="refraction_render.calcs.CurveNoRefraction.html" />
+    <link rel="prev" title="refraction_render.calcs.Calc" href="refraction_render.calcs.Calc.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="refraction_render.calcs.CurveNoRefraction.html" title="refraction_render.calcs.CurveNoRefraction"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="refraction_render.calcs.Calc.html" title="refraction_render.calcs.Calc"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">refraction_render 1.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../calcs.html" accesskey="U">Calcs module (<code class="xref py py-mod docutils literal notranslate"><span class="pre">refraction_render.calcs</span></code>)</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">refraction_render.calcs.CurveCalc</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="refraction-render-calcs-curvecalc">
+<h1>refraction_render.calcs.CurveCalc<a class="headerlink" href="#refraction-render-calcs-curvecalc" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="refraction_render.calcs.CurveCalc">
+<em class="property">class </em><code class="sig-prename descclassname">refraction_render.calcs.</code><code class="sig-name descname">CurveCalc</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">R0</span><span class="o">=</span><span class="default_value">6370997.0</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">std_atmosphere_args</span></em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/calcs/calculators.html#CurveCalc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.calcs.CurveCalc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">refraction_render.calcs.calculators.Calc</span></code></p>
+<p>Calculator used for calculating rays on a spherical earth in an atmosphere.</p>
+<dl class="py method">
+<dt id="refraction_render.calcs.CurveCalc.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">R0</span><span class="o">=</span><span class="default_value">6370997.0</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">std_atmosphere_args</span></em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/calcs/calculators.html#CurveCalc.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.calcs.CurveCalc.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Iintialize <cite>CurveCalc</cite> object.</p>
+<dl class="simple">
+<dt>R0: float, optional</dt><dd><p>Radius of the sphere for this calculation.</p>
+</dd>
+<dt>**std_atmosphere_args: optional</dt><dd><p>arguments to <cite>std_atmosphere</cite> object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#refraction_render.calcs.CurveCalc.__init__" title="refraction_render.calcs.CurveCalc.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>([R0])</p></td>
+<td><p>Iintialize <cite>CurveCalc</cite> object.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#refraction_render.calcs.CurveCalc.solve_ivp" title="refraction_render.calcs.CurveCalc.solve_ivp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">solve_ivp</span></code></a>(d, h[, dh, alpha])</p></td>
+<td><p>Solve initial value problem for light rays.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#refraction_render.calcs.CurveCalc.R0" title="refraction_render.calcs.CurveCalc.R0"><code class="xref py py-obj docutils literal notranslate"><span class="pre">R0</span></code></a></p></td>
+<td><p>Radius of the sphere in this calculator.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#refraction_render.calcs.CurveCalc.atm_model" title="refraction_render.calcs.CurveCalc.atm_model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">atm_model</span></code></a></p></td>
+<td><p>Atmospheric model used for this calculator.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt id="refraction_render.calcs.CurveCalc.R0">
+<em class="property">property </em><code class="sig-name descname">R0</code><a class="headerlink" href="#refraction_render.calcs.CurveCalc.R0" title="Permalink to this definition">¶</a></dt>
+<dd><p>Radius of the sphere in this calculator.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="refraction_render.calcs.CurveCalc.atm_model">
+<em class="property">property </em><code class="sig-name descname">atm_model</code><a class="headerlink" href="#refraction_render.calcs.CurveCalc.atm_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Atmospheric model used for this calculator.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="refraction_render.calcs.CurveCalc.solve_ivp">
+<code class="sig-name descname">solve_ivp</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">d</span></em>, <em class="sig-param"><span class="n">h</span></em>, <em class="sig-param"><span class="n">dh</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">alpha</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#refraction_render.calcs.CurveCalc.solve_ivp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Solve initial value problem for light rays.</p>
+<dl class="simple">
+<dt>d: float</dt><dd><p>maximum distance to solve the light rays.</p>
+</dd>
+<dt>h: array_like (n,)</dt><dd><p>initial height of rays.</p>
+</dd>
+<dt>dh: array_like (n,), optional</dt><dd><p>initial derivatives of the rays.</p>
+</dd>
+<dt>alpha:  array_like (n,), optional</dt><dd><p>initial angle of the rays.</p>
+</dd>
+<dt>**kwargs: optional</dt><dd><p>extra arguments which get passed into Fermat equation solver.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="refraction_render.calcs.Calc.html"
+                        title="previous chapter">refraction_render.calcs.Calc</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="refraction_render.calcs.CurveNoRefraction.html"
+                        title="next chapter">refraction_render.calcs.CurveNoRefraction</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../sources/generated/refraction_render.calcs.CurveCalc.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="refraction_render.calcs.CurveNoRefraction.html" title="refraction_render.calcs.CurveNoRefraction"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="refraction_render.calcs.Calc.html" title="refraction_render.calcs.Calc"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">refraction_render 1.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../calcs.html" >Calcs module (<code class="xref py py-mod docutils literal notranslate"><span class="pre">refraction_render.calcs</span></code>)</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">refraction_render.calcs.CurveCalc</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Phillip Weinberg.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.4.3.
+    </div>
+  </body>
+</html>

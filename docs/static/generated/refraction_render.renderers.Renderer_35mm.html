@@ -1,0 +1,282 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+    <title>refraction_render.renderers.Renderer_35mm &#8212; refraction_render 1.0.0 documentation</title>
+    <link rel="stylesheet" href="../static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../static/classic.css" type="text/css" />
+    
+    <script id="documentation_options" data-url_root="../" src="../static/documentation_options.js"></script>
+    <script src="../static/jquery.js"></script>
+    <script src="../static/underscore.js"></script>
+    <script src="../static/doctools.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="refraction_render.renderers.Renderer_Composite" href="refraction_render.renderers.Renderer_Composite.html" />
+    <link rel="prev" title="refraction_render.renderers.ray_diagram" href="refraction_render.renderers.ray_diagram.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="refraction_render.renderers.Renderer_Composite.html" title="refraction_render.renderers.Renderer_Composite"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="refraction_render.renderers.ray_diagram.html" title="refraction_render.renderers.ray_diagram"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">refraction_render 1.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../renderers.html" accesskey="U">Renderers module (<code class="xref py py-mod docutils literal notranslate"><span class="pre">refraction_render.renderers</span></code>)</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">refraction_render.renderers.Renderer_35mm</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="refraction-render-renderers-renderer-35mm">
+<h1>refraction_render.renderers.Renderer_35mm<a class="headerlink" href="#refraction-render-renderers-renderer-35mm" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="refraction_render.renderers.Renderer_35mm">
+<em class="property">class </em><code class="sig-prename descclassname">refraction_render.renderers.</code><code class="sig-name descname">Renderer_35mm</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">calc</span></em>, <em class="sig-param"><span class="n">h_obs</span></em>, <em class="sig-param"><span class="n">lat_obs</span></em>, <em class="sig-param"><span class="n">lon_obs</span></em>, <em class="sig-param"><span class="n">direction</span></em>, <em class="sig-param"><span class="n">max_distance</span></em>, <em class="sig-param"><span class="n">distance_res</span><span class="o">=</span><span class="default_value">10</span></em>, <em class="sig-param"><span class="n">vert_obs_angle</span><span class="o">=</span><span class="default_value">0.0</span></em>, <em class="sig-param"><span class="n">vert_res</span><span class="o">=</span><span class="default_value">1000</span></em>, <em class="sig-param"><span class="n">focal_length</span><span class="o">=</span><span class="default_value">2000</span></em>, <em class="sig-param"><span class="n">atol</span><span class="o">=</span><span class="default_value">1.1e-07</span></em>, <em class="sig-param"><span class="n">rtol</span><span class="o">=</span><span class="default_value">1.1e-07</span></em>, <em class="sig-param"><span class="n">aspect_ratio</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/renderers/render.html#Renderer_35mm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.renderers.Renderer_35mm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Object used to set a camera angle and position to render a scene.</p>
+<dl class="py method">
+<dt id="refraction_render.renderers.Renderer_35mm.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">calc</span></em>, <em class="sig-param"><span class="n">h_obs</span></em>, <em class="sig-param"><span class="n">lat_obs</span></em>, <em class="sig-param"><span class="n">lon_obs</span></em>, <em class="sig-param"><span class="n">direction</span></em>, <em class="sig-param"><span class="n">max_distance</span></em>, <em class="sig-param"><span class="n">distance_res</span><span class="o">=</span><span class="default_value">10</span></em>, <em class="sig-param"><span class="n">vert_obs_angle</span><span class="o">=</span><span class="default_value">0.0</span></em>, <em class="sig-param"><span class="n">vert_res</span><span class="o">=</span><span class="default_value">1000</span></em>, <em class="sig-param"><span class="n">focal_length</span><span class="o">=</span><span class="default_value">2000</span></em>, <em class="sig-param"><span class="n">atol</span><span class="o">=</span><span class="default_value">1.1e-07</span></em>, <em class="sig-param"><span class="n">rtol</span><span class="o">=</span><span class="default_value">1.1e-07</span></em>, <em class="sig-param"><span class="n">aspect_ratio</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/renderers/render.html#Renderer_35mm.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.renderers.Renderer_35mm.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>calc: calcs object</strong></dt><dd><p>object which can be used to calculate the trajectory of light rays</p>
+</dd>
+<dt><strong>h_obs: float</strong></dt><dd><p>height of renderer in meters</p>
+</dd>
+<dt><strong>lat_obs: float</strong></dt><dd><p>latitude of renderer in degrees between -90 and 90</p>
+</dd>
+<dt><strong>lon_obs: float</strong></dt><dd><p>longitude of renderer in degrees between -180 adn 180</p>
+</dd>
+<dt><strong>direction: tuple or float</strong></dt><dd><p>tuple: tuple containing a latitude and longitude point to point renderer towards.
+float: heading to point the renderer in.</p>
+</dd>
+<dt><strong>max_distance: float</strong></dt><dd><p>maximum distance away from the renderer to calculate the light ray path</p>
+</dd>
+<dt><strong>distance_res: float</strong></dt><dd><p>distance between points where the light ray path is checked for intersection point.</p>
+</dd>
+<dt><strong>vert_obs_angle: float</strong></dt><dd><p>vertical tilt of the renderer.</p>
+</dd>
+<dt><strong>vert_res: int</strong></dt><dd><p>resolution of pixels on the verticle</p>
+</dd>
+<dt><strong>focal_length: float</strong></dt><dd><p>focal length in milimeters to calculate the field of view of the camera. This, along with the vertial resolution, sets the resolution on the horizontal.</p>
+</dd>
+<dt><strong>atol: float</strong></dt><dd><p>absolute tolerance of ode solver</p>
+</dd>
+<dt><strong>rtol: float</strong></dt><dd><p>relative tolerance of the ode solver</p>
+</dd>
+<dt><strong>aspect_ratio: tuple</strong></dt><dd><p>aspect ratio for image</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#refraction_render.renderers.Renderer_35mm.__init__" title="refraction_render.renderers.Renderer_35mm.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(calc, h_obs, lat_obs, lon_obs, …)</p></td>
+<td><p><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#refraction_render.renderers.Renderer_35mm.render_scene" title="refraction_render.renderers.Renderer_35mm.render_scene"><code class="xref py py-obj docutils literal notranslate"><span class="pre">render_scene</span></code></a>(scene, image_name[, …])</p></td>
+<td><p>Render a scene object for the renderer’s given field of view and direction.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#refraction_render.renderers.Renderer_35mm.set_location" title="refraction_render.renderers.Renderer_35mm.set_location"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_location</span></code></a>(lat_obs, lon_obs, direction)</p></td>
+<td><p>This function can be used to change the location and heading of the renderer.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#refraction_render.renderers.Renderer_35mm.calc" title="refraction_render.renderers.Renderer_35mm.calc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calc</span></code></a></p></td>
+<td><p>Calc object used to calculate verticle rays.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#refraction_render.renderers.Renderer_35mm.h_angles" title="refraction_render.renderers.Renderer_35mm.h_angles"><code class="xref py py-obj docutils literal notranslate"><span class="pre">h_angles</span></code></a></p></td>
+<td><p>Horizontal angular scale of the image frame.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#refraction_render.renderers.Renderer_35mm.v_angles" title="refraction_render.renderers.Renderer_35mm.v_angles"><code class="xref py py-obj docutils literal notranslate"><span class="pre">v_angles</span></code></a></p></td>
+<td><p>Vertical angular scale of the image frame.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#refraction_render.renderers.Renderer_35mm.vfov" title="refraction_render.renderers.Renderer_35mm.vfov"><code class="xref py py-obj docutils literal notranslate"><span class="pre">vfov</span></code></a></p></td>
+<td><p>Vertial field of view for this particular renderer</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt id="refraction_render.renderers.Renderer_35mm.calc">
+<em class="property">property </em><code class="sig-name descname">calc</code><a class="headerlink" href="#refraction_render.renderers.Renderer_35mm.calc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calc object used to calculate verticle rays.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="refraction_render.renderers.Renderer_35mm.h_angles">
+<em class="property">property </em><code class="sig-name descname">h_angles</code><a class="headerlink" href="#refraction_render.renderers.Renderer_35mm.h_angles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Horizontal angular scale of the image frame.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="refraction_render.renderers.Renderer_35mm.render_scene">
+<code class="sig-name descname">render_scene</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">scene</span></em>, <em class="sig-param"><span class="n">image_name</span></em>, <em class="sig-param"><span class="n">surface_color</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">background_color</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">cfunc</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">cfunc_args</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">disp</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">eye_level</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">postprocess</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">h_min</span><span class="o">=</span><span class="default_value">0.01</span></em>, <em class="sig-param"><span class="n">gpu</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/renderers/render.html#Renderer_35mm.render_scene"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.renderers.Renderer_35mm.render_scene" title="Permalink to this definition">¶</a></dt>
+<dd><p>Render a scene object for the renderer’s given field of view and direction.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>scene: Scene object</strong></dt><dd><p>object which contains data which the renderer can extract and render</p>
+</dd>
+<dt><strong>image_name: str</strong></dt><dd><p>name for the image</p>
+</dd>
+<dt><strong>background_color: array_like, optional</strong></dt><dd><p>3 element array containing an color via RGB color code (numbered 0 to 255)
+default value: <cite>[135,206,250]</cite></p>
+</dd>
+<dt><strong>surface_color: array_like, optional</strong></dt><dd><p>3 element array containing an color via RGB color code (numbered 0 to 255)
+default value: <cite>[0,80,120]</cite></p>
+</dd>
+<dt><strong>cfunc: callable, optional</strong></dt><dd><p>Callable function which is used to color the elevation data. The function takes
+in two arrays, the first is distances from the observer    the second is the elevation
+above the surface of the earth.</p>
+</dd>
+<dt><strong>cfunc_args: array_like, optional</strong></dt><dd><p>extra arguments to pass into <cite>cfunc</cite></p>
+</dd>
+<dt><strong>disp: bool, optional</strong></dt><dd><p>when rendering topographical data this will print out the heading slice which has been rendered.</p>
+</dd>
+<dt><strong>eye_level: bool, optional</strong></dt><dd><p>when rendering the image, an orange line is placed at eye level in the image.</p>
+</dd>
+<dt><strong>post_process: callable, optional</strong></dt><dd><p>function which processes the final image before saving it.</p>
+</dd>
+<dt><strong>h_min: float, optional</strong></dt><dd><p>minimum value for ray to count as crossing water.</p>
+</dd>
+<dt><strong>gpu: bool, optional</strong></dt><dd><p>utilize GPU to calculate 3D land model rendering.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="refraction_render.renderers.Renderer_35mm.set_location">
+<code class="sig-name descname">set_location</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">lat_obs</span></em>, <em class="sig-param"><span class="n">lon_obs</span></em>, <em class="sig-param"><span class="n">direction</span></em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/renderers/render.html#Renderer_35mm.set_location"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.renderers.Renderer_35mm.set_location" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function can be used to change the location and heading of the renderer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>lat_obs: float</strong></dt><dd><p>new latitude of observer</p>
+</dd>
+<dt><strong>lon_obs: float</strong></dt><dd><p>new longitude of observer</p>
+</dd>
+<dt><strong>direction: tuple or float</strong></dt><dd><p>tuple: tuple containing a latitude and longitude point to point renderer towards.
+float: heading to point the renderer in.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="refraction_render.renderers.Renderer_35mm.v_angles">
+<em class="property">property </em><code class="sig-name descname">v_angles</code><a class="headerlink" href="#refraction_render.renderers.Renderer_35mm.v_angles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Vertical angular scale of the image frame.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="refraction_render.renderers.Renderer_35mm.vfov">
+<em class="property">property </em><code class="sig-name descname">vfov</code><a class="headerlink" href="#refraction_render.renderers.Renderer_35mm.vfov" title="Permalink to this definition">¶</a></dt>
+<dd><p>Vertial field of view for this particular renderer</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="refraction_render.renderers.ray_diagram.html"
+                        title="previous chapter">refraction_render.renderers.ray_diagram</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="refraction_render.renderers.Renderer_Composite.html"
+                        title="next chapter">refraction_render.renderers.Renderer_Composite</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../sources/generated/refraction_render.renderers.Renderer_35mm.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="refraction_render.renderers.Renderer_Composite.html" title="refraction_render.renderers.Renderer_Composite"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="refraction_render.renderers.ray_diagram.html" title="refraction_render.renderers.ray_diagram"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">refraction_render 1.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../renderers.html" >Renderers module (<code class="xref py py-mod docutils literal notranslate"><span class="pre">refraction_render.renderers</span></code>)</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">refraction_render.renderers.Renderer_35mm</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Phillip Weinberg.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.4.3.
+    </div>
+  </body>
+</html>
