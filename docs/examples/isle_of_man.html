@@ -109,7 +109,17 @@
 <span class="normal">63</span>
 <span class="normal">64</span>
 <span class="normal">65</span>
-<span class="normal">66</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">refraction_render.renderers</span> <span class="kn">import</span> <span class="n">Scene</span><span class="p">,</span><span class="n">Renderer_35mm</span><span class="p">,</span><span class="n">Renderer_Composite</span>
+<span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span>
+<span class="normal">76</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">refraction_render.renderers</span> <span class="kn">import</span> <span class="n">Scene</span><span class="p">,</span><span class="n">Renderer_35mm</span><span class="p">,</span><span class="n">Renderer_Composite</span>
 <span class="kn">from</span> <span class="nn">refraction_render.calcs</span> <span class="kn">import</span> <span class="n">CurveCalc</span><span class="p">,</span><span class="n">FlatCalc</span>
 <span class="kn">from</span> <span class="nn">refraction_render.misc</span> <span class="kn">import</span> <span class="n">mi_to_m</span><span class="p">,</span><span class="n">ft_to_m</span>
 <span class="kn">from</span> <span class="nn">pyproj</span> <span class="kn">import</span> <span class="n">Geod</span>
@@ -119,14 +129,24 @@
 <span class="kn">import</span> <span class="nn">cProfile</span>
 
 
-<span class="k">def</span> <span class="nf">cfunc</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="n">h</span><span class="p">,</span><span class="n">h_max</span><span class="p">,</span><span class="n">d_min</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">cfunc</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="n">h</span><span class="p">,</span><span class="n">n_ref</span><span class="p">,</span><span class="n">h_max</span><span class="p">,</span><span class="n">d_min</span><span class="p">):</span>
     <span class="c1"># this is a function which should give the color of the pixels on the</span>
     <span class="c1"># rendered topographical data. h_max is the maximum value of the elevation</span>
     <span class="c1"># which for the isle of man is 621 meters, d_min is roughly the minimum distance</span>
     <span class="c1"># of land away from the observer, which is roughly 50 km. </span>
     <span class="n">ng</span> <span class="o">=</span> <span class="mi">100</span><span class="o">+</span><span class="p">(</span><span class="mi">255</span><span class="o">-</span><span class="mi">100</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">d</span><span class="o">/</span><span class="n">d_min</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mi">4</span><span class="p">)</span>
     <span class="n">nr</span> <span class="o">=</span> <span class="n">ng</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">h</span><span class="o">/</span><span class="n">h_max</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">broadcast_arrays</span><span class="p">(</span><span class="n">nr</span><span class="p">,</span><span class="n">ng</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span><span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># this line of code is used to generate the shading of the elevation.</span>
+    <span class="c1"># n_ref are a set of unit vector pointing in the direction of the reflected </span>
+    <span class="c1"># ray bounding off of the surface if the lighting is above the object the closer </span>
+    <span class="c1"># the reflected ray is to pointing completly vertical the more illuminated it </span>
+    <span class="c1"># should appear. In this way we can scale the whole rgb color by a dimming factor</span>
+    <span class="c1"># that takes into account this angle. Note we do not take the dimming to 0, </span>
+    <span class="c1"># otherwise the shading would be black.</span>
+    <span class="n">dimming</span> <span class="o">=</span> <span class="mi">1</span><span class="o">-</span><span class="mf">0.5</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">n_ref</span><span class="p">[</span><span class="mi">1</span><span class="p">,:])</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">broadcast_arrays</span><span class="p">(</span><span class="n">dimming</span><span class="o">*</span><span class="n">nr</span><span class="p">,</span><span class="n">dimming</span><span class="o">*</span><span class="n">ng</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span><span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">T_prof</span><span class="p">(</span><span class="n">h</span><span class="p">):</span>
     <span class="n">e1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">h</span><span class="o">/</span><span class="mf">1.5</span><span class="p">)</span>
