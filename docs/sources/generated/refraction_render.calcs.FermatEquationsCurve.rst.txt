@@ -1,5 +1,5 @@
-refraction\_render\.calcs\.FermatEquationsCurve
-===============================================
+﻿refraction\_render.calcs.FermatEquationsCurve
+=============================================
 
 .. currentmodule:: refraction_render.calcs
 

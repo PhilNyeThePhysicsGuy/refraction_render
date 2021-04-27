@@ -1,20 +1,19 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>refraction_render.calcs.euler_equations &#8212; refraction_render 1.0.0 documentation</title>
-    <link rel="stylesheet" href="../../../static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../static/classic.css" type="text/css" />
     
-    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../../static/jquery.js"></script>
-    <script type="text/javascript" src="../../../static/underscore.js"></script>
-    <script type="text/javascript" src="../../../static/doctools.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../../../" src="../../../static/documentation_options.js"></script>
+    <script src="../../../static/jquery.js"></script>
+    <script src="../../../static/underscore.js"></script>
+    <script src="../../../static/doctools.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -29,7 +28,8 @@
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="nav-item nav-item-0"><a href="../../../index.html">refraction_render 1.0.0 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">refraction_render.calcs.euler_equations</a></li> 
       </ul>
     </div>  
 
@@ -39,7 +39,7 @@
           <div class="body" role="main">
             
   <h1>Source code for refraction_render.calcs.euler_equations</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">scipy.integrate</span> <span class="k">import</span> <span class="n">solve_bvp</span><span class="p">,</span><span class="n">solve_ivp</span>
+<span></span><span class="kn">from</span> <span class="nn">scipy.integrate</span> <span class="kn">import</span> <span class="n">solve_bvp</span><span class="p">,</span><span class="n">solve_ivp</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <span class="n">__all__</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;FermatEquationsEuclid&quot;</span><span class="p">,</span><span class="s2">&quot;UniformFermatEquationsEuclid&quot;</span><span class="p">,</span>
@@ -47,7 +47,7 @@
 
 
 <span class="k">class</span> <span class="nc">FermatEquations</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">pass</span>
 
     <span class="k">def</span> <span class="nf">solve_ivp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">y0</span><span class="p">,</span><span class="n">dy0</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -118,7 +118,7 @@
 
 
 <span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="FermatEquationsEuclid.__init__"><a class="viewcode-back" href="../../../generated/refraction_render.calcs.FermatEquationsEuclid.html#refraction_render.calcs.FermatEquationsEuclid.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">dndx</span><span class="p">,</span><span class="n">dndy</span><span class="p">,</span><span class="n">args</span><span class="o">=</span><span class="p">()):</span>
+<div class="viewcode-block" id="FermatEquationsEuclid.__init__"><a class="viewcode-back" href="../../../generated/refraction_render.calcs.FermatEquationsEuclid.html#refraction_render.calcs.FermatEquationsEuclid.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">dndx</span><span class="p">,</span><span class="n">dndy</span><span class="p">,</span><span class="n">args</span><span class="o">=</span><span class="p">()):</span>
         <span class="sd">&quot;&quot;&quot;Intializes the `FermatEquationsEuclid` object.</span>
 
 <span class="sd">        Parameters</span>
@@ -138,7 +138,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_dndy</span> <span class="o">=</span> <span class="n">dndy</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_args</span> <span class="o">=</span> <span class="n">args</span></div>
 
-    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">yin</span><span class="p">):</span> <span class="c1"># object(args,...)</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">yin</span><span class="p">):</span> <span class="c1"># object(args,...)</span>
         <span class="n">shape0</span> <span class="o">=</span> <span class="n">yin</span><span class="o">.</span><span class="n">shape</span>
         <span class="n">yin</span> <span class="o">=</span> <span class="n">yin</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
         <span class="k">try</span><span class="p">:</span>
@@ -167,7 +167,7 @@
 
 
 <span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="FermatEquationsCurve.__init__"><a class="viewcode-back" href="../../../generated/refraction_render.calcs.FermatEquationsCurve.html#refraction_render.calcs.FermatEquationsCurve.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">R0</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">dnds</span><span class="p">,</span><span class="n">dndy</span><span class="p">,</span><span class="n">args</span><span class="o">=</span><span class="p">()):</span>
+<div class="viewcode-block" id="FermatEquationsCurve.__init__"><a class="viewcode-back" href="../../../generated/refraction_render.calcs.FermatEquationsCurve.html#refraction_render.calcs.FermatEquationsCurve.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">R0</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">dnds</span><span class="p">,</span><span class="n">dndy</span><span class="p">,</span><span class="n">args</span><span class="o">=</span><span class="p">()):</span>
         <span class="sd">&quot;&quot;&quot;Intializes the `FermatEquationsCurve` object.</span>
 
 <span class="sd">        Parameters</span>
@@ -189,7 +189,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_R0</span> <span class="o">=</span> <span class="n">R0</span> </div>
 
 
-    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">s</span><span class="p">,</span><span class="n">yin</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">s</span><span class="p">,</span><span class="n">yin</span><span class="p">):</span>
         <span class="n">shape0</span> <span class="o">=</span> <span class="n">yin</span><span class="o">.</span><span class="n">shape</span>
         <span class="n">yin</span> <span class="o">=</span> <span class="n">yin</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
         <span class="k">try</span><span class="p">:</span>
@@ -218,7 +218,7 @@
 <span class="sd">    and uses these functions to solve Fermat&#39;s equations for the path of a light ray. </span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="UniformFermatEquationsEuclid.__init__"><a class="viewcode-back" href="../../../generated/refraction_render.calcs.UniformFermatEquationsEuclid.html#refraction_render.calcs.UniformFermatEquationsEuclid.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">dndy</span><span class="p">,</span><span class="n">args</span><span class="o">=</span><span class="p">()):</span>
+<div class="viewcode-block" id="UniformFermatEquationsEuclid.__init__"><a class="viewcode-back" href="../../../generated/refraction_render.calcs.UniformFermatEquationsEuclid.html#refraction_render.calcs.UniformFermatEquationsEuclid.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">dndy</span><span class="p">,</span><span class="n">args</span><span class="o">=</span><span class="p">()):</span>
         <span class="sd">&quot;&quot;&quot;Intializes the `FermatEquationsEuclid` object.</span>
 
 <span class="sd">        Parameters</span>
@@ -235,7 +235,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_dndy</span> <span class="o">=</span> <span class="n">dndy</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_args</span> <span class="o">=</span> <span class="n">args</span></div>
 
-    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">s</span><span class="p">,</span><span class="n">yin</span><span class="p">):</span> <span class="c1"># object(args,...)</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">s</span><span class="p">,</span><span class="n">yin</span><span class="p">):</span> <span class="c1"># object(args,...)</span>
         <span class="n">shape0</span> <span class="o">=</span> <span class="n">yin</span><span class="o">.</span><span class="n">shape</span>
         <span class="n">yin</span> <span class="o">=</span> <span class="n">yin</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
         <span class="k">try</span><span class="p">:</span>
@@ -262,7 +262,7 @@
 
 
 <span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="UniformFermatEquationsCurve.__init__"><a class="viewcode-back" href="../../../generated/refraction_render.calcs.UniformFermatEquationsCurve.html#refraction_render.calcs.UniformFermatEquationsCurve.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">R0</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">dndy</span><span class="p">,</span><span class="n">args</span><span class="o">=</span><span class="p">()):</span>
+<div class="viewcode-block" id="UniformFermatEquationsCurve.__init__"><a class="viewcode-back" href="../../../generated/refraction_render.calcs.UniformFermatEquationsCurve.html#refraction_render.calcs.UniformFermatEquationsCurve.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">R0</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">dndy</span><span class="p">,</span><span class="n">args</span><span class="o">=</span><span class="p">()):</span>
         <span class="sd">&quot;&quot;&quot;Intializes the `FermatEquationsCurve` object.</span>
 
 <span class="sd">        Parameters</span>
@@ -281,7 +281,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_R0</span> <span class="o">=</span> <span class="n">R0</span>   </div>
 
 
-    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">s</span><span class="p">,</span><span class="n">yin</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">s</span><span class="p">,</span><span class="n">yin</span><span class="p">):</span>
         <span class="n">shape0</span> <span class="o">=</span> <span class="n">yin</span><span class="o">.</span><span class="n">shape</span>
         <span class="n">yin</span> <span class="o">=</span> <span class="n">yin</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
         <span class="k">try</span><span class="p">:</span>
@@ -302,23 +302,22 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_yout</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">shape0</span><span class="p">)</span></div>
 </pre></div>
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -333,12 +332,13 @@
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="nav-item nav-item-0"><a href="../../../index.html">refraction_render 1.0.0 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">refraction_render.calcs.euler_equations</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Phillip Weinberg.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.4.3.
     </div>
   </body>
 </html>

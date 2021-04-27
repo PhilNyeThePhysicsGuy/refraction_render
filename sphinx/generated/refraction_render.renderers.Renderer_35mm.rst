@@ -1,5 +1,5 @@
-refraction\_render\.renderers\.Renderer\_35mm
-=============================================
+﻿refraction\_render.renderers.Renderer\_35mm
+===========================================
 
 .. currentmodule:: refraction_render.renderers
 
@@ -20,5 +20,14 @@ refraction\_render\.renderers\.Renderer\_35mm
    
 
    
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Renderer_35mm.calc
+      ~Renderer_35mm.h_angles
+      ~Renderer_35mm.v_angles
+      ~Renderer_35mm.vfov
    
    

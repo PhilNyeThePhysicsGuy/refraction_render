@@ -1,5 +1,5 @@
-refraction\_render\.misc\.mi\_to\_m
-===================================
+﻿refraction\_render.misc.mi\_to\_m
+=================================
 
 .. currentmodule:: refraction_render.misc
 

@@ -1,5 +1,5 @@
-refraction\_render\.calcs\.Calc
-===============================
+﻿refraction\_render.calcs.Calc
+=============================
 
 .. currentmodule:: refraction_render.calcs
 

@@ -1,5 +1,5 @@
-refraction\_render\.calcs\.std\_atmosphere
-==========================================
+﻿refraction\_render.calcs.std\_atmosphere
+========================================
 
 .. currentmodule:: refraction_render.calcs
 
@@ -16,11 +16,19 @@ refraction\_render\.calcs\.std\_atmosphere
       ~std_atmosphere.P
       ~std_atmosphere.T
       ~std_atmosphere.__init__
+      ~std_atmosphere.dTdh
+      ~std_atmosphere.k
       ~std_atmosphere.n
       ~std_atmosphere.rho
    
    
 
    
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~std_atmosphere.dT
    
    

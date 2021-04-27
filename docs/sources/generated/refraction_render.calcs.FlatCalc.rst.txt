@@ -1,5 +1,5 @@
-refraction\_render\.calcs\.FlatCalc
-===================================
+﻿refraction\_render.calcs.FlatCalc
+=================================
 
 .. currentmodule:: refraction_render.calcs
 
@@ -19,5 +19,11 @@ refraction\_render\.calcs\.FlatCalc
    
 
    
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~FlatCalc.atm_model
    
    

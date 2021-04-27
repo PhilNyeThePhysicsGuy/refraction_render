@@ -1,5 +1,5 @@
-refraction\_render\.calcs\.CurveCalc
-====================================
+﻿refraction\_render.calcs.CurveCalc
+==================================
 
 .. currentmodule:: refraction_render.calcs
 
@@ -19,5 +19,12 @@ refraction\_render\.calcs\.CurveCalc
    
 
    
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~CurveCalc.R0
+      ~CurveCalc.atm_model
    
    

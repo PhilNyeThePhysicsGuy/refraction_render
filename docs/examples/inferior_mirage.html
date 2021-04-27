@@ -1,20 +1,20 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
     <title>Simulation of an Inferior Mirage &#8212; refraction_render 1.0.0 documentation</title>
-    <link rel="stylesheet" href="../static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../static/classic.css" type="text/css" />
     
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../static/documentation_options.js"></script>
-    <script type="text/javascript" src="../static/jquery.js"></script>
-    <script type="text/javascript" src="../static/underscore.js"></script>
-    <script type="text/javascript" src="../static/doctools.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../" src="../static/documentation_options.js"></script>
+    <script src="../static/jquery.js"></script>
+    <script src="../static/underscore.js"></script>
+    <script src="../static/doctools.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" /> 
@@ -28,7 +28,8 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">refraction_render 1.0.0 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">refraction_render 1.0.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Simulation of an Inferior Mirage</a></li> 
       </ul>
     </div>  
 
@@ -37,63 +38,63 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="simulation-of-an-inferior-mirage">
+  <section id="simulation-of-an-inferior-mirage">
 <span id="inferior-mirage-label"></span><h1>Simulation of an Inferior Mirage<a class="headerlink" href="#simulation-of-an-inferior-mirage" title="Permalink to this headline">¶</a></h1>
 <p>back to <a class="reference internal" href="../Examples.html#examples"><span class="std std-ref">Examples</span></a></p>
 <p>In this example we show how to render an inferior mirage.</p>
-<p><a class="reference download internal" download="" href="../downloads/4386ee223cd13d87b00de479d2fc9714/inferior_mirage.zip"><code class="xref download docutils literal notranslate"><span class="pre">download</span> <span class="pre">files</span></code></a></p>
-<div class="highlight-python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
- 2
- 3
- 4
- 5
- 6
- 7
- 8
- 9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25
-26
-27
-28
-29
-30
-31
-32
-33
-34
-35
-36
-37
-38
-39
-40
-41
-42
-43
-44
-45
-46
-47
-48</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">refraction_render.renderers</span> <span class="kn">import</span> <span class="n">Scene</span><span class="p">,</span><span class="n">Renderer_35mm</span>
+<p><a class="reference download internal" download="" href="../downloads/aa258d5b7c8b2f682dd120f139628d5d/inferior_mirage.zip"><code class="xref download docutils literal notranslate"><span class="pre">download</span> <span class="pre">files</span></code></a></p>
+<div class="highlight-python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">refraction_render.renderers</span> <span class="kn">import</span> <span class="n">Scene</span><span class="p">,</span><span class="n">Renderer_35mm</span>
 <span class="kn">from</span> <span class="nn">refraction_render.calcs</span> <span class="kn">import</span> <span class="n">CurveCalc</span><span class="p">,</span><span class="n">FlatCalc</span>
 <span class="kn">from</span> <span class="nn">refraction_render.misc</span> <span class="kn">import</span> <span class="n">km_to_m</span>
 <span class="kn">from</span> <span class="nn">pyproj</span> <span class="kn">import</span> <span class="n">Geod</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">os</span>
 
 
@@ -142,12 +143,13 @@
 <p>Here is a result of rendering:</p>
 <a class="reference internal image-reference" href="../images/boat_inferior_mirage.png"><img alt="../images/boat_inferior_mirage.png" class="align-center" src="../images/boat_inferior_mirage.png" style="width: 450.0px; height: 300.0px;" /></a>
 <p>Compare this to an image taken by a Youtuber named Ranty Flat Earth:</p>
-<a class="reference internal image-reference" href="../images/inferior_mirage.jpg"><img alt="../images/inferior_mirage.jpg" class="align-center" src="../images/inferior_mirage.jpg" style="width: 546.4px; height: 307.2px;" /></a>
+<a class="reference internal image-reference" href="../images/inferior_mirage.jpg"><img alt="../images/inferior_mirage.jpg" class="align-center" src="../images/inferior_mirage.jpg" style="width: 546.4px; height: 307.20000000000005px;" /></a>
 <p>Thanks Ranty for showing the earth is NOT flat!</p>
 <p>back to <a class="reference internal" href="../Examples.html#examples"><span class="std std-ref">Examples</span></a></p>
-</div>
+</section>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -161,17 +163,15 @@
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -185,12 +185,13 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">refraction_render 1.0.0 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">refraction_render 1.0.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Simulation of an Inferior Mirage</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Phillip Weinberg.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.4.3.
     </div>
   </body>
 </html>

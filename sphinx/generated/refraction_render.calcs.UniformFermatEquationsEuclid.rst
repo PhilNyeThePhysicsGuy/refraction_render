@@ -1,5 +1,5 @@
-refraction\_render\.calcs\.UniformFermatEquationsEuclid
-=======================================================
+﻿refraction\_render.calcs.UniformFermatEquationsEuclid
+=====================================================
 
 .. currentmodule:: refraction_render.calcs
 

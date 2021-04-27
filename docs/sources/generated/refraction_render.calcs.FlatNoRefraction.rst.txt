@@ -1,5 +1,5 @@
-refraction\_render\.calcs\.FlatNoRefraction
-===========================================
+﻿refraction\_render.calcs.FlatNoRefraction
+=========================================
 
 .. currentmodule:: refraction_render.calcs
 

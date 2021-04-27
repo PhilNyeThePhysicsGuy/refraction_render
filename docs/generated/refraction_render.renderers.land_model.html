@@ -1,23 +1,25 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
     <title>refraction_render.renderers.land_model &#8212; refraction_render 1.0.0 documentation</title>
-    <link rel="stylesheet" href="../static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../static/classic.css" type="text/css" />
     
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../static/documentation_options.js"></script>
-    <script type="text/javascript" src="../static/jquery.js"></script>
-    <script type="text/javascript" src="../static/underscore.js"></script>
-    <script type="text/javascript" src="../static/doctools.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../" src="../static/documentation_options.js"></script>
+    <script src="../static/jquery.js"></script>
+    <script src="../static/underscore.js"></script>
+    <script src="../static/doctools.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" /> 
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Misc module (refraction_render.misc)" href="../misc.html" />
+    <link rel="prev" title="refraction_render.renderers.Scene" href="refraction_render.renderers.Scene.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
@@ -28,8 +30,15 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
+        <li class="right" >
+          <a href="../misc.html" title="Misc module (refraction_render.misc)"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="refraction_render.renderers.Scene.html" title="refraction_render.renderers.Scene"
+             accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">refraction_render 1.0.0 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="../renderers.html" accesskey="U">Renderers module (<code class="docutils literal notranslate"><span class="pre">refraction_render.renderers</span></code>)</a> &#187;</li> 
+          <li class="nav-item nav-item-1"><a href="../renderers.html" accesskey="U">Renderers module (<code class="xref py py-mod docutils literal notranslate"><span class="pre">refraction_render.renderers</span></code>)</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">refraction_render.renderers.land_model</a></li> 
       </ul>
     </div>  
 
@@ -38,156 +47,100 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="refraction-render-renderers-land-model">
+  <section id="refraction-render-renderers-land-model">
 <h1>refraction_render.renderers.land_model<a class="headerlink" href="#refraction-render-renderers-land-model" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
+<dl class="py class">
 <dt id="refraction_render.renderers.land_model">
-<em class="property">class </em><code class="descclassname">refraction_render.renderers.</code><code class="descname">land_model</code><span class="sig-paren">(</span><em>ellps='sphere'</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/renderers/render.html#land_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.renderers.land_model" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">refraction_render.renderers.</code><code class="sig-name descname">land_model</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ellps</span><span class="o">=</span><span class="default_value">'sphere'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/renderers/render.html#land_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.renderers.land_model" title="Permalink to this definition">¶</a></dt>
 <dd><p>This class is used to grab slices of the tarrain alon great circle
 slices of the earth.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Attributes:</th><td class="field-body"><dl class="first last docutils">
-<dt><a class="reference internal" href="#refraction_render.renderers.land_model.has_data" title="refraction_render.renderers.land_model.has_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data</span></code></a></dt>
-<dd><p class="first last">flag if True the terrain object has land else it has no land.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data</span></code></dt><dd><p>flag if True the terrain object has land else it has no land.</p>
 </dd>
 </dl>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <p class="rubric">Methods</p>
-<table border="1" class="longtable docutils">
+<table class="longtable docutils align-default">
 <colgroup>
-<col width="10%" />
-<col width="90%" />
+<col style="width: 10%" />
+<col style="width: 90%" />
 </colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#refraction_render.renderers.land_model.add_elevation_data" title="refraction_render.renderers.land_model.add_elevation_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_elevation_data</span></code></a>(*args)</td>
-<td>Add terrain data to the interpolated model.</td>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code>(lat, lon)</p></td>
+<td><p>Call self as a function.</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#refraction_render.renderers.land_model.get_terrain" title="refraction_render.renderers.land_model.get_terrain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_terrain</span></code></a>(lat,&nbsp;lon,&nbsp;heading,&nbsp;dist)</td>
-<td>Sample terrain along geodesic defined by an intial latitude and longitude point along a heading at different distances.</td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_elevation_data</span></code>(*args)</p></td>
+<td><p>Add terrain data to the interpolated model.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_terrain</span></code>(lat, lon, heading, dist)</p></td>
+<td><p>Sample terrain along geodesic defined by an intial latitude and longitude point along a heading at different distances.</p></td>
 </tr>
 </tbody>
 </table>
-<table border="1" class="docutils">
-<colgroup>
-<col width="55%" />
-<col width="45%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><strong>__call__</strong></td>
-<td>&#160;</td>
-</tr>
-</tbody>
-</table>
-<dl class="method">
+<dl class="py method">
 <dt id="refraction_render.renderers.land_model.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>ellps='sphere'</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/renderers/render.html#land_model.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.renderers.land_model.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ellps</span><span class="o">=</span><span class="default_value">'sphere'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/renderers/render.html#land_model.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.renderers.land_model.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simple wrapper which does the bilinear interpolation of terrain data.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
-<dt><strong>ellps: str, optional</strong></dt>
-<dd><p class="first last">String representing which pyproj datum to use for the data being interpolated.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>ellps: str, optional</strong></dt><dd><p>String representing which pyproj datum to use for the data being interpolated.</p>
 </dd>
 </dl>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 <p class="rubric">Methods</p>
-<table border="1" class="longtable docutils">
+<table class="longtable docutils align-default">
 <colgroup>
-<col width="10%" />
-<col width="90%" />
+<col style="width: 10%" />
+<col style="width: 90%" />
 </colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#refraction_render.renderers.land_model.__init__" title="refraction_render.renderers.land_model.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>([ellps])</td>
-<td>Simple wrapper which does the bilinear interpolation of terrain data.</td>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#refraction_render.renderers.land_model.__init__" title="refraction_render.renderers.land_model.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>([ellps])</p></td>
+<td><p>Simple wrapper which does the bilinear interpolation of terrain data.</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#refraction_render.renderers.land_model.add_elevation_data" title="refraction_render.renderers.land_model.add_elevation_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_elevation_data</span></code></a>(*args)</td>
-<td>Add terrain data to the interpolated model.</td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_elevation_data</span></code>(*args)</p></td>
+<td><p>Add terrain data to the interpolated model.</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#refraction_render.renderers.land_model.get_terrain" title="refraction_render.renderers.land_model.get_terrain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_terrain</span></code></a>(lat,&nbsp;lon,&nbsp;heading,&nbsp;dist)</td>
-<td>Sample terrain along geodesic defined by an intial latitude and longitude point along a heading at different distances.</td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_terrain</span></code>(lat, lon, heading, dist)</p></td>
+<td><p>Sample terrain along geodesic defined by an intial latitude and longitude point along a heading at different distances.</p></td>
 </tr>
 </tbody>
 </table>
-<dl class="method">
-<dt id="refraction_render.renderers.land_model.add_elevation_data">
-<code class="descname">add_elevation_data</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/renderers/render.html#land_model.add_elevation_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.renderers.land_model.add_elevation_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add terrain data to the interpolated model.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
-<dt><strong>args: tuple</strong></dt>
-<dd><p class="first last">tuple which contains elevation data:
-if len(args) == 3: args = (lats,lons,elevation) which contains the arguments for scipy.interpolate.RegularGridInterpolator.
-if len(args) == 2: args = (points,elevation) which contains the arguments for scipy.interpolate.LinearNDInterpolator.</p>
-</dd>
-</dl>
-</td>
+<p class="rubric">Attributes</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data</span></code></p></td>
+<td><p>flag if True the terrain object has land else it has no land.</p></td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
 
-<dl class="method">
-<dt id="refraction_render.renderers.land_model.get_terrain">
-<code class="descname">get_terrain</code><span class="sig-paren">(</span><em>lat</em>, <em>lon</em>, <em>heading</em>, <em>dist</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/renderers/render.html#land_model.get_terrain"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.renderers.land_model.get_terrain" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sample terrain along geodesic defined by an intial latitude and longitude point along a heading at different distances.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
-<dt><strong>lat: array_like</strong></dt>
-<dd><p class="first last">latitude(s) which starting point(s) begin at</p>
-</dd>
-<dt><strong>lon: array_like</strong></dt>
-<dd><p class="first last">longitude(s) which starting point(s) begin at</p>
-</dd>
-<dt><strong>heading: array_like</strong></dt>
-<dd><p class="first last">heading(s) which determine which direction to go on the spheriod</p>
-</dd>
-<dt><strong>dist: array_like</strong></dt>
-<dd><p class="first last">distance(s) in meters of how far to go along the heading</p>
-</dd>
-</dl>
-</td>
-</tr>
-</tbody>
-</table>
-<p class="rubric">Notes</p>
-<p>This function follows NumPy’s broadcasting rules for handing arguments of different shapes.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="refraction_render.renderers.land_model.has_data">
-<code class="descname">has_data</code><a class="headerlink" href="#refraction_render.renderers.land_model.has_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>flag if True the terrain object has land else it has no land.</p>
-</dd></dl>
-
-</dd></dl>
-
-</div>
+</section>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="refraction_render.renderers.Scene.html"
+                        title="previous chapter">refraction_render.renderers.Scene</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../misc.html"
+                        title="next chapter">Misc module (<code class="xref py py-mod docutils literal notranslate"><span class="pre">refraction_render.misc</span></code>)</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -196,17 +149,15 @@ if len(args) == 2: args = (points,elevation) which contains the arguments for sc
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -220,13 +171,20 @@ if len(args) == 2: args = (points,elevation) which contains the arguments for sc
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
+        <li class="right" >
+          <a href="../misc.html" title="Misc module (refraction_render.misc)"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="refraction_render.renderers.Scene.html" title="refraction_render.renderers.Scene"
+             >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">refraction_render 1.0.0 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="../renderers.html" >Renderers module (<code class="docutils literal notranslate"><span class="pre">refraction_render.renderers</span></code>)</a> &#187;</li> 
+          <li class="nav-item nav-item-1"><a href="../renderers.html" >Renderers module (<code class="xref py py-mod docutils literal notranslate"><span class="pre">refraction_render.renderers</span></code>)</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">refraction_render.renderers.land_model</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Phillip Weinberg.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.4.3.
     </div>
   </body>
 </html>

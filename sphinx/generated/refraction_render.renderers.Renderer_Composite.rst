@@ -1,5 +1,5 @@
-refraction\_render\.renderers\.Renderer\_Composite
-==================================================
+﻿refraction\_render.renderers.Renderer\_Composite
+================================================
 
 .. currentmodule:: refraction_render.renderers
 
@@ -20,5 +20,12 @@ refraction\_render\.renderers\.Renderer\_Composite
    
 
    
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Renderer_Composite.v_angles
+      ~Renderer_Composite.vfov
    
    

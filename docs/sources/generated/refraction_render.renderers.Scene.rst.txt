@@ -1,5 +1,5 @@
-refraction\_render\.renderers\.Scene
-====================================
+﻿refraction\_render.renderers.Scene
+==================================
 
 .. currentmodule:: refraction_render.renderers
 
@@ -20,5 +20,11 @@ refraction\_render\.renderers\.Scene
    
 
    
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Scene.land_model
    
    

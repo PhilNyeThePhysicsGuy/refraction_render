@@ -1,5 +1,5 @@
-refraction\_render\.renderers\.land\_model
-==========================================
+﻿refraction\_render.renderers.land\_model
+========================================
 
 .. currentmodule:: refraction_render.renderers
 
@@ -20,5 +20,11 @@ refraction\_render\.renderers\.land\_model
    
 
    
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~land_model.has_data
    
    
