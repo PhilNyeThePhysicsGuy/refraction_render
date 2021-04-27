@@ -10,6 +10,7 @@ from six import iteritems
 import scipy.interpolate as interp
 import scipy.signal as signal
 import numpy as np
+from tqdm import tqdm
 
 __all__=["Scene","Renderer_35mm","Renderer_Composite","land_model","ray_diagram"]
 
@@ -182,10 +183,12 @@ def _render_cpu(png_data,h_min,rs,ds,h_angles,surface_color,background_color,ter
 
 
         h_angle_max = h_angles.max()
+        if disp:
+            h_iter = tqdm(h_angles)
+        else:
+            h_iter = iter(h_angles)
 
-        for i,h_angle in enumerate(h_angles):
-            if disp:
-                print("{:5.5f} {:5.5f}".format(h_angle,h_angle_max))
+        for i,h_angle in enumerate(h_iter):
 
             heights = terrain.get_terrain(lat_obs,lon_obs,h_angle,ds)
 
@@ -294,9 +297,12 @@ def _render_gpu(png_data,h_min,rs,ds,h_angles,surface_color,background_color,ter
 
         h_angle_max = h_angles.max()
 
-        for i,h_angle in enumerate(h_angles):
-            if disp:
-                print("{:5.5f} {:5.5f}".format(h_angle,h_angle_max))
+        if disp:
+            h_iter = tqdm(h_angles)
+        else:
+            h_iter = iter(h_angles)
+
+        for i,h_angle in enumerate(h_iter):
             heights = terrain.get_terrain(lat_obs,lon_obs,h_angle,ds)
 
             cuda.to_device(heights,to=heights_dev)
@@ -1119,7 +1125,10 @@ class Scene(object):
             if len(args) == 2: args = (points,elevation) which contains the arguments for scipy.interpolate.LinearNDInterpolator.
 
         """
-        self._land_model.add_elevation_data(*args)
+        if len(args)==1 and isinstance(args[0],land_model):
+            self._land_model = args[0]
+        else:
+            self._land_model.add_elevation_data(*args)
 
     def add_image(self,image,image_pos,dimensions,direction=None):
         """Add image to scene. 
