@@ -10,4 +10,5 @@ The following Python scripts demonstrate basic and advanced functionality of the
    * :ref:`isle_of_man-label`, :download:`download files <../examples/zips/isle_of_man.zip>`
    * :ref:`lake_test-label`, :download:`download files <../examples/zips/lake_test.zip>`
    * :ref:`blackpool_ferriswheel-label`, :download:`download files <../examples/zips/blackpool_ferriswheel.zip>`
+   * :ref:`blackpool_tower-label`, :download:`download files <../examples/zips/blackpool_tower.zip>`
 

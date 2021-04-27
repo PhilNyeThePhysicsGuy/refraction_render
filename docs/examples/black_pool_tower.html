@@ -1,0 +1,250 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+    <title>Black Pool Tower In Front of Moutains &#8212; refraction_render 1.0.0 documentation</title>
+    <link rel="stylesheet" href="../static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../static/classic.css" type="text/css" />
+    
+    <script id="documentation_options" data-url_root="../" src="../static/documentation_options.js"></script>
+    <script src="../static/jquery.js"></script>
+    <script src="../static/underscore.js"></script>
+    <script src="../static/doctools.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">refraction_render 1.0.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Black Pool Tower In Front of Moutains</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="black-pool-tower-in-front-of-moutains">
+<span id="blackpool-tower-label"></span><h1>Black Pool Tower In Front of Moutains<a class="headerlink" href="#black-pool-tower-in-front-of-moutains" title="Permalink to this headline">¶</a></h1>
+<p>back to <a class="reference internal" href="../Examples.html#examples"><span class="std std-ref">Examples</span></a></p>
+<p>In this example we try to model an image of Blackpool tower are a remarkably clear day. The day is so clear that you can easily see the moutains in the background which are significantly farther away.</p>
+<p><a class="reference download internal" download="" href="../downloads/65c472ab4df73d2e538ba6fd3bccd2d5/blackpool_ferriswheel.zip"><code class="xref download docutils literal notranslate"><span class="pre">download</span> <span class="pre">files</span></code></a></p>
+<div class="highlight-python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">refraction_render.renderers</span> <span class="kn">import</span> <span class="n">Scene</span><span class="p">,</span><span class="n">Renderer_35mm</span><span class="p">,</span><span class="n">Renderer_Composite</span><span class="p">,</span><span class="n">ray_diagram</span><span class="p">,</span><span class="n">land_model</span>
+<span class="kn">from</span> <span class="nn">refraction_render.calcs</span> <span class="kn">import</span> <span class="n">CurveCalc</span><span class="p">,</span><span class="n">FlatCalc</span>
+<span class="kn">from</span> <span class="nn">refraction_render.misc</span> <span class="kn">import</span> <span class="n">mi_to_m</span><span class="p">,</span><span class="n">ft_to_m</span>
+<span class="kn">from</span> <span class="nn">pyproj</span> <span class="kn">import</span> <span class="n">Geod</span>
+<span class="kn">from</span> <span class="nn">PIL</span> <span class="kn">import</span> <span class="n">Image</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">cProfile</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+
+<span class="k">def</span> <span class="nf">cfunc</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="n">h</span><span class="p">,</span><span class="n">n_ref</span><span class="p">,</span><span class="n">h_max</span><span class="p">,</span><span class="n">d_min</span><span class="p">):</span>
+    <span class="c1"># this is a function which should give the color of the pixels on the</span>
+    <span class="c1"># rendered topographical data. h_max is the maximum value of the elevation</span>
+    <span class="c1"># which for the isle of man is 621 meters, d_min is roughly the minimum distance</span>
+    <span class="c1"># of land away from the observer, which is roughly 50 km. </span>
+    
+    <span class="n">ng</span> <span class="o">=</span> <span class="mi">100</span><span class="o">+</span><span class="p">(</span><span class="mi">255</span><span class="o">-</span><span class="mi">100</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">logaddexp</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,(</span><span class="n">d</span><span class="o">-</span><span class="n">d_min</span><span class="p">)</span><span class="o">/</span><span class="mi">40000</span><span class="p">))</span>
+    <span class="n">nr</span> <span class="o">=</span> <span class="n">ng</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">h</span><span class="o">/</span><span class="n">h_max</span><span class="p">)</span>
+    <span class="n">dimming</span> <span class="o">=</span> <span class="mi">1</span><span class="o">-</span><span class="mf">0.7</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">n_ref</span><span class="p">[</span><span class="mi">1</span><span class="p">,:])</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">broadcast_arrays</span><span class="p">(</span><span class="n">dimming</span><span class="o">*</span><span class="n">nr</span><span class="p">,</span><span class="n">dimming</span><span class="o">*</span><span class="n">ng</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span><span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># create calculators</span>
+<span class="n">calc_args</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+<span class="n">calc_globe</span> <span class="o">=</span> <span class="n">CurveCalc</span><span class="p">(</span><span class="o">**</span><span class="n">calc_args</span><span class="p">)</span>
+<span class="n">calc_flat</span> <span class="o">=</span> <span class="n">FlatCalc</span><span class="p">(</span><span class="o">**</span><span class="n">calc_args</span><span class="p">)</span>
+
+<span class="c1"># load topographical data</span>
+<span class="n">data1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;elevation/n53_w004_1arc_v3.tif&quot;</span><span class="p">))</span>
+<span class="n">data2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;elevation/n54_w004_1arc_v3.tif&quot;</span><span class="p">))</span>
+<span class="n">data3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;elevation/n53_w003_1arc_v3.tif&quot;</span><span class="p">))</span>
+<span class="n">data4</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;elevation/n54_w003_1arc_v3.tif&quot;</span><span class="p">))</span>
+
+
+<span class="c1"># data must be flipped row whys so that latitude grid is strictly increasing</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">bmat</span><span class="p">([[</span><span class="n">data1</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">,:],</span><span class="n">data3</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">,:]],[</span><span class="n">data2</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">,:],</span><span class="n">data4</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">,:]]]))</span>
+<span class="n">n_lat</span><span class="p">,</span><span class="n">n_lon</span> <span class="o">=</span>  <span class="n">data</span><span class="o">.</span><span class="n">shape</span>
+
+<span class="n">lats</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">53</span><span class="p">,</span><span class="mi">55</span><span class="p">,</span><span class="n">n_lat</span><span class="p">)</span> <span class="c1"># get latitudes of raster</span>
+<span class="n">lons</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span><span class="n">n_lon</span><span class="p">)</span> <span class="c1"># get longitudes of raster</span>
+
+<span class="c1"># generate topographical map</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">matshow</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">&quot;topo.png&quot;</span><span class="p">)</span>
+
+<span class="n">d_max</span> <span class="o">=</span> <span class="n">mi_to_m</span><span class="p">(</span><span class="mi">60</span><span class="p">)</span>
+<span class="n">h_obs</span><span class="p">,</span><span class="n">lat_obs</span><span class="p">,</span> <span class="n">lon_obs</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span> <span class="mf">53.640153</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.029342</span>
+<span class="n">lat_tower</span><span class="p">,</span> <span class="n">lon_tower</span> <span class="o">=</span> <span class="mf">53.815901</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.055212</span>
+<span class="n">lat_base</span><span class="p">,</span> <span class="n">lon_base</span> <span class="o">=</span>   <span class="mf">53.815206</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.055205</span>
+
+<span class="n">s</span> <span class="o">=</span> <span class="n">Scene</span><span class="p">()</span>
+<span class="n">lm</span> <span class="o">=</span> <span class="n">land_model</span><span class="p">()</span>
+<span class="n">lm</span><span class="o">.</span><span class="n">add_elevation_data</span><span class="p">(</span><span class="n">lats</span><span class="p">,</span><span class="n">lons</span><span class="p">,</span><span class="n">data</span><span class="p">)</span>
+<span class="n">s</span><span class="o">.</span><span class="n">add_elevation_model</span><span class="p">(</span><span class="n">lm</span><span class="p">)</span>
+
+
+<span class="n">s</span><span class="o">.</span><span class="n">add_image</span><span class="p">(</span><span class="s2">&quot;blackpool_tower.png&quot;</span><span class="p">,(</span><span class="n">lat_tower</span><span class="p">,</span><span class="n">lon_tower</span><span class="p">),</span><span class="n">dimensions</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">160</span><span class="p">))</span>
+
+<span class="n">args</span> <span class="o">=</span> <span class="p">(</span><span class="n">h_obs</span><span class="p">,</span><span class="n">lat_obs</span><span class="p">,</span><span class="n">lon_obs</span><span class="p">,(</span><span class="n">lat_tower</span><span class="p">,</span><span class="n">lon_tower</span><span class="p">),</span><span class="n">d_max</span><span class="p">)</span>
+
+<span class="n">kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">vert_res</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span><span class="n">focal_length</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+
+<span class="n">r_globe</span> <span class="o">=</span> <span class="n">Renderer_35mm</span><span class="p">(</span><span class="n">calc_globe</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+<span class="n">r_flat</span> <span class="o">=</span> <span class="n">Renderer_35mm</span><span class="p">(</span><span class="n">calc_flat</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">vert_obs_angle</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+<span class="n">render_list</span> <span class="o">=</span> <span class="p">[</span>
+				<span class="p">(</span><span class="n">r_globe</span><span class="p">,</span><span class="s2">&quot;blackpool_tower_globe.png&quot;</span><span class="p">),</span>
+				<span class="p">(</span><span class="n">r_flat</span><span class="p">,</span><span class="s2">&quot;blackpool_tower_flat.png&quot;</span><span class="p">),</span>
+			<span class="p">]</span>
+
+<span class="k">for</span> <span class="n">r</span><span class="p">,</span><span class="n">img</span> <span class="ow">in</span> <span class="n">render_list</span><span class="p">:</span>
+	<span class="n">r</span><span class="o">.</span><span class="n">render_scene</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="n">img</span><span class="p">,</span><span class="n">cfunc</span><span class="o">=</span><span class="n">cfunc</span><span class="p">,</span><span class="n">cfunc_args</span><span class="o">=</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span><span class="mi">20000</span><span class="p">),</span><span class="n">disp</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</td></tr></table></div>
+<p>This image is nice because it shows the large moutains so clearly. It is clear that at those distances the curvature of the earth should provide a significant amount of drop. Here we will use topography data to generate a model with standard atmosphere on a spherical and flat earth.</p>
+<a class="reference internal image-reference" href="../images/Blackpool_image.jpg"><img alt="../images/Blackpool_image.jpg" class="align-center" src="../images/Blackpool_image.jpg" style="width: 940.0px; height: 558.8000000000001px;" /></a>
+<p>The Image in question is presented above and the models are presented below:</p>
+<p>Spherical Earth:</p>
+<a class="reference internal image-reference" href="../images/blackpool_tower_globe.png"><img alt="../images/blackpool_tower_globe.png" class="align-center" src="../images/blackpool_tower_globe.png" style="width: 750.0px; height: 500.0px;" /></a>
+<p>Flat Earth:</p>
+<a class="reference internal image-reference" href="../images/blackpool_tower_flat.png"><img alt="../images/blackpool_tower_flat.png" class="align-center" src="../images/blackpool_tower_flat.png" style="width: 750.0px; height: 500.0px;" /></a>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../sources/examples/black_pool_tower.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">refraction_render 1.0.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Black Pool Tower In Front of Moutains</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Phillip Weinberg.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.4.3.
+    </div>
+  </body>
+</html>
