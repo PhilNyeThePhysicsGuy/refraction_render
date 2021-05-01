@@ -8,14 +8,24 @@ import os
 import cProfile
 
 
-def cfunc(d,h,h_max,d_min):
+def cfunc(d,h,n_ref,h_max,d_min):
     # this is a function which should give the color of the pixels on the
     # rendered topographical data. h_max is the maximum value of the elevation
     # which for the isle of man is 621 meters, d_min is roughly the minimum distance
     # of land away from the observer, which is roughly 50 km. 
     ng = 100+(255-100)*(d/d_min)**(-4)
     nr = ng*(1-h/h_max)
-    return np.stack(np.broadcast_arrays(nr,ng,0),axis=-1)
+
+    # this line of code is used to generate the shading of the elevation.
+    # n_ref are a set of unit vector pointing in the direction of the reflected 
+    # ray bounding off of the surface if the lighting is above the object the closer 
+    # the reflected ray is to pointing completly vertical the more illuminated it 
+    # should appear. In this way we can scale the whole rgb color by a dimming factor
+    # that takes into account this angle. Note we do not take the dimming to 0, 
+    # otherwise the shading would be black.
+    dimming = 1-0.5*np.abs(n_ref[1,:])
+
+    return np.stack(np.broadcast_arrays(dimming*nr,dimming*ng,0),axis=-1)
 
 def T_prof(h):
     e1 = np.exp(h/1.5)

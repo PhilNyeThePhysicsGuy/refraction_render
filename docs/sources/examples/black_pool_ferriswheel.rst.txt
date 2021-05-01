@@ -1,3 +1,5 @@
+:orphan:
+
 .. _blackpool_ferriswheel-label:
 
 Black Pool Ferris wheel from Barrow in Furness
@@ -9,7 +11,7 @@ In this example we try to model an observation done by Ranty Flat Earth
 
 :download:`download files <../../examples/zips/blackpool_ferriswheel.zip>`
 
-.. literalinclude:: ../../examples/zips/blackpool_ferriswheel/blackpool_ferriswheel.py
+.. literalinclude:: ../../examples/zips/blackpool_ferriswheel/blackpool_Ferriswheel.py
 	:linenos:
 	:language: python
 	:lines: 1-

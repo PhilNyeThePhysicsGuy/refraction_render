@@ -1,3 +1,5 @@
+:orphan:
+
 .. _inferior_mirage-label:
 
 Simulation of an Inferior Mirage

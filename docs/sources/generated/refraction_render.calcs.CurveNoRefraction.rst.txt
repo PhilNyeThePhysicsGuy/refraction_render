@@ -1,5 +1,5 @@
-refraction\_render\.calcs\.CurveNoRefraction
-============================================
+﻿refraction\_render.calcs.CurveNoRefraction
+==========================================
 
 .. currentmodule:: refraction_render.calcs
 
@@ -19,5 +19,11 @@ refraction\_render\.calcs\.CurveNoRefraction
    
 
    
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~CurveNoRefraction.R0
    
    

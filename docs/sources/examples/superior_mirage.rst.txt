@@ -1,3 +1,5 @@
+:orphan:
+
 .. _superior_mirage-label:
 
 Simulation of an Superior Mirage

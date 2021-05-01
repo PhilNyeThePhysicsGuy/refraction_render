@@ -10,6 +10,7 @@ from six import iteritems
 import scipy.interpolate as interp
 import scipy.signal as signal
 import numpy as np
+from tqdm import tqdm
 
 __all__=["Scene","Renderer_35mm","Renderer_Composite","land_model","ray_diagram"]
 
@@ -182,10 +183,12 @@ def _render_cpu(png_data,h_min,rs,ds,h_angles,surface_color,background_color,ter
 
 
         h_angle_max = h_angles.max()
+        if disp:
+            h_iter = tqdm(h_angles)
+        else:
+            h_iter = iter(h_angles)
 
-        for i,h_angle in enumerate(h_angles):
-            if disp:
-                print("{:5.5f} {:5.5f}".format(h_angle,h_angle_max))
+        for i,h_angle in enumerate(h_iter):
 
             heights = terrain.get_terrain(lat_obs,lon_obs,h_angle,ds)
 
@@ -195,8 +198,26 @@ def _render_cpu(png_data,h_min,rs,ds,h_angles,surface_color,background_color,ter
             png_data[i,sky,:] = background_color
 
             if np.any(land):
+                iland, = np.where(land)
                 land_inds = inds[land]
-                png_data[i,land,:] = cfunc(ds[land_inds],heights[land_inds],*cfunc_args)
+                land_inds_m = land_inds-1
+                land_inds_m[land_inds_m<0] = 0
+
+                _heights = heights[land_inds]
+                dx = ds[land_inds] - ds[land_inds_m]
+                dy = (rs[iland,land_inds] - rs[iland,land_inds_m])
+                dh = (_heights - heights[land_inds_m])
+
+                t_ray = np.stack((dx,dy),axis=-1)
+                t_land = np.stack((dx,dh),axis=-1)
+                t_ray = (t_ray.T/np.linalg.norm(t_ray,axis=1))
+                t_land = (t_land.T/np.linalg.norm(t_land,axis=1))
+                n_ray = t_ray - 2*np.sum(t_ray*t_land,axis=0)*t_land
+
+                try:
+                    png_data[i,land,:] = cfunc(ds[land_inds],_heights,n_ray,*cfunc_args)
+                except TypeError:
+                    png_data[i,land,:] = cfunc(ds[land_inds],_heights,*cfunc_args)
 
             _get_bounds(h_angle,h_mins,h_maxs,out=img_mask)
             if np.any(img_mask):
@@ -276,9 +297,12 @@ def _render_gpu(png_data,h_min,rs,ds,h_angles,surface_color,background_color,ter
 
         h_angle_max = h_angles.max()
 
-        for i,h_angle in enumerate(h_angles):
-            if disp:
-                print("{:5.5f} {:5.5f}".format(h_angle,h_angle_max))
+        if disp:
+            h_iter = tqdm(h_angles)
+        else:
+            h_iter = iter(h_angles)
+
+        for i,h_angle in enumerate(h_iter):
             heights = terrain.get_terrain(lat_obs,lon_obs,h_angle,ds)
 
             cuda.to_device(heights,to=heights_dev)
@@ -294,8 +318,26 @@ def _render_gpu(png_data,h_min,rs,ds,h_angles,surface_color,background_color,ter
             png_data[i,sky,:] = background_color
 
             if np.any(land):
+                iland, = np.where(land)
                 land_inds = inds[land]
-                png_data[i,land,:] = cfunc(ds[land_inds],heights[land_inds],*cfunc_args)
+                land_inds_m = land_inds-1
+                land_inds_m[land_inds_m<0] = 0
+
+                _heights = heights[land_inds]
+                dx = ds[land_inds] - ds[land_inds_m]
+                dy = (rs[iland,land_inds] - rs[iland,land_inds_m])
+                dh = (_heights - heights[land_inds_m])
+
+                t_ray = np.stack((dx,dy),axis=-1)
+                t_land = np.stack((dx,dh),axis=-1)
+                t_ray = (t_ray.T/np.linalg.norm(t_ray,axis=1))
+                t_land = (t_land.T/np.linalg.norm(t_land,axis=1))
+                n_ray = t_ray - 2*np.sum(t_ray*t_land,axis=0)*t_land
+
+                try:
+                    png_data[i,land,:] = cfunc(ds[land_inds],_heights,n_ray,*cfunc_args)
+                except TypeError:
+                    png_data[i,land,:] = cfunc(ds[land_inds],_heights,*cfunc_args)
 
             _get_bounds(h_angle,h_mins,h_maxs,out=img_mask)
             if np.any(img_mask):
@@ -694,25 +736,26 @@ class Renderer_35mm(object):
 
     @property
     def vfov(self):
-        """vertial field of view for this particular renderer"""
+        """Vertial field of view for this particular renderer"""
         return self._vfov
 
     @property
     def v_angles(self):
-        """vertical angular scale of the image frame"""
+        """Vertical angular scale of the image frame."""
         v_angles = self._v_angles[...]
         v_angles.setflags(write=False)
         return v_angles
 
     @property
     def h_angles(self):
-        """horizontal angular scale of the image frame"""
+        """Horizontal angular scale of the image frame."""
         h_angles = self._h_angles[...]
         h_angles.setflags(write=False)
         return h_angles
 
     @property
     def calc(self):
+        """Calc object used to calculate verticle rays."""
         return self._calc
 
     def set_location(self,lat_obs,lon_obs,direction):
@@ -1070,6 +1113,7 @@ class Scene(object):
 
     @property
     def land_model(self):
+        """Object used to generate elevation along great circle."""
         return self._land_model
 
     def add_elevation_model(self,*args):
@@ -1081,9 +1125,13 @@ class Scene(object):
             tuple which contains elevation data:
             if len(args) == 3: args = (lats,lons,elevation) which contains the arguments for scipy.interpolate.RegularGridInterpolator.
             if len(args) == 2: args = (points,elevation) which contains the arguments for scipy.interpolate.LinearNDInterpolator.
+            if len(args) == 1: args = object that is instance of `land_model`.
 
         """
-        self._land_model.add_elevation_data(*args)
+        if len(args)==1 and isinstance(args[0],land_model):
+            self._land_model += args[0]
+        else:
+            self._land_model.add_elevation_data(*args)
 
     def add_image(self,image,image_pos,dimensions,direction=None):
         """Add image to scene. 
@@ -1205,6 +1253,7 @@ class land_model(object):
         heights = np.zeros_like(lon)
 
         coors = np.stack((lat,lon),axis=-1)
+
         for terrain in self._terrain_list:
             heights += terrain(coors)
 
@@ -1228,7 +1277,7 @@ class land_model(object):
         """
         if len(args) == 3:
             lats,lons,elevation = args
-            self._terrain_list.append(interp.RegularGridInterpolator((lats,lons),elevation,bounds_error=False,fill_value=0.0))
+            self._terrain_list.append(interp.RegularGridInterpolator((lats,lons),elevation,bounds_error=False,fill_value=0.0,method="linear"))
         elif len(args) == 2:
             points,elevation = args
             self._terrain_list.append(interp.LinearNDInterpolator(points,elevation,fill_value=0.0))
@@ -1236,5 +1285,19 @@ class land_model(object):
             raise ValueError("can't interpret arguments.")
 
 
+    def __iadd__(self,other):
+        if isinstance(other,land_model):
+            self._terrain_list += other._terrain_list
+            return self
+        else:
+            return NotImplemented
 
+
+    def __add__(self,other):
+        if isinstance(other,land_model):
+            new = land_model()
+            new += other
+            return new
+        else:
+            return NotImplemented
 
