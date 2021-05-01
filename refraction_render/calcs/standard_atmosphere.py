@@ -153,8 +153,8 @@ class vert_atmosphere(object):
     """Object which calculates the standard atmospheric model. 
 
     """
-    def __init__(self,T_prof,dist_vals,h0=0.0,P0=101325.0,g=9.81,wavelength=0.545,moist_lapse_rate=False,
-                 dT_prof=None,T_prof_args=()):
+    def __init__(self,T_prof,dist_vals,h0=0.0,P0=101325.0,g=9.81,
+        wavelength=0.545,h_grid=None,dT_prof=None,T_prof_args=()):
         """Intializes the `std_atmosphere` object.
 
         Parameters
@@ -207,12 +207,14 @@ class vert_atmosphere(object):
         self._deltan = (0.05792105/(238.0185-wavelength**(-2)) + 0.00167917/(57.362-wavelength**(-2)))
         self._g = g
 
+        if h_grid is None:
+            h_grid = np.hstack([np.linspace(-10000,0,10),
+                                np.linspace(0,300,301),
+                                np.linspace(400,900,5),
+                                np.linspace(1000,10000,9)
+                                ])
 
-        self._dist_vals = dist_vals
-        self._sol = sol
-        self._T = T
-        self._dTdh = dTdr
-        self._dPdh = 
+        Ps = sol.sol(h_grid)
 
     @property
     def R(self):
