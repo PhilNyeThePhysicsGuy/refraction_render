@@ -93,7 +93,7 @@ def _ray_crossing_gpu(h_min,rs,heights,inds,water,land,sky):
         sky[i] = not hit
 
 
-@njit(["void(f8,f8[:,::1],f8[:],i4[:],b1[:],b1[:],b1[:])"])
+@njit(["void(f8,f8[:,::1],f8[:],i4[:],b1[:],b1[:],b1[:])"],parallel=True)
 def _ray_crossing_cpu(h_min,rs,heights,inds,water,land,sky):
     n_v = rs.shape[0]
     n_d = rs.shape[1]
@@ -103,7 +103,7 @@ def _ray_crossing_cpu(h_min,rs,heights,inds,water,land,sky):
     sky[:] = False
     inds[:] = -1
     
-    for i in range(n_v):
+    for i in prange(n_v):
         hit = False
 
         for j in range(n_d):

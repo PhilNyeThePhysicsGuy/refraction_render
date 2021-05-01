@@ -77,24 +77,18 @@ class FermatEquationsEuclid(FermatEquations):
 
 
     """
-    def __init__(self,n,dndx,dndy,args=()):
+    def __init__(self,f,args=()):
         """Intializes the `FermatEquationsEuclid` object.
 
         Parameters
         ----------
-        n : callable
-            function which returns the index of refraction :math:`n(x,y)`.
-        dndx : callable
-            function which returns :math:`\\frac{\\partial n(x,y)}{\\partial x}`.
-        dndy : callable
-            function which returns :math:`\\frac{\\partial n(x,y)}{\\partial y}`.
+        f : callable
+            function which returns the index of refraction and its gradient as a tuple: :math:`n(x,y),\\frac{\\partial n(x,y)}{\\partial y},\\frac{\\partial n(x,y)}{\\partial x}`.
         args : array_like, optional
             optional arguments which go into the functions. 
 
         """
-        self._n = n
-        self._dndx = dndx
-        self._dndy = dndy
+        self._f = f
         self._args = args
 
     def __call__(self,x,yin): # object(args,...)
@@ -107,9 +101,7 @@ class FermatEquationsEuclid(FermatEquations):
 
         y,dydx = yin[0],yin[1]
 
-        n_val = self._n(x,y,*self._args)
-        dndx_val = self._dndx(x,y,*self._args)
-        dndy_val = self._dndy(x,y,*self._args)
+        n_val,dndy_val,dndx_val = self._f(x,y,*self._args)
 
         self._yout[0] = dydx
         self._yout[1] = (1+dydx**2)*(dndy_val-dydx*dndx_val)/n_val
@@ -126,24 +118,18 @@ class FermatEquationsCurve(FermatEquations):
 
 
     """
-    def __init__(self,R0,n,dnds,dndy,args=()):
-        """Intializes the `FermatEquationsCurve` object.
+    def __init__(self,R0,f,args=()):
+        """Intializes the `FermatEquationsEuclid` object.
 
         Parameters
         ----------
-        n : callable
-            function which returns the index of refraction :math:`n(s,y)`.
-        dnds : callable
-            function which returns :math:`\\frac{\\partial n(s,y)}{\\partial s}`.
-        dndy : callable
-            function which returns :math:`\\frac{\\partial n(s,y)}{\\partial y}`.
+        f : callable
+            function which returns the index of refraction and its gradient as a tuple: :math:`n(s,y),\\frac{\\partial n(x,y)}{\\partial y},\\frac{\\partial n(s,y)}{\\partial s}`.
         args : array_like, optional
             optional arguments which go into the functions. 
 
         """
-        self._n = n
-        self._dnds = dnds
-        self._dndy = dndy
+        self._f = f
         self._args = args  
         self._R0 = R0 
 
@@ -158,9 +144,7 @@ class FermatEquationsCurve(FermatEquations):
 
         y,dyds = yin[0],yin[1]
 
-        n_val = self._n(s,y,*self._args)
-        dnds_val = self._dndx(s,y,*self._args)
-        dndy_val = self._dndy(s,y,*self._args)
+        n_val,dndy_val,dnds_val = self._f(s,y,*self._args)
         R02 = self._R0**2
         R0 = self._R0
 
@@ -177,21 +161,18 @@ class UniformFermatEquationsEuclid(FermatEquations):
     and uses these functions to solve Fermat's equations for the path of a light ray. 
 
     """
-    def __init__(self,n,dndy,args=()):
+    def __init__(self,f,args=()):
         """Intializes the `FermatEquationsEuclid` object.
 
         Parameters
         ----------
-        n : callable
-            function which returns the index of refraction :math:`n(y)`.
-        dndy : callable
-            function which returns :math:`\\frac{\\partial n(y)}{\\partial y}`.
+        f : callable
+            function which returns the index of refraction and its gradient as a tuple: :math:`n(x,y),\\frac{\\partial n(x,y)}{\\partial y}`.
         args : array_like, optional
             optional arguments which go into the functions. 
 
         """
-        self._n = n
-        self._dndy = dndy
+        self._f = f
         self._args = args
 
     def __call__(self,s,yin): # object(args,...)
@@ -204,8 +185,7 @@ class UniformFermatEquationsEuclid(FermatEquations):
 
         y,dyds = yin[0],yin[1]
 
-        n_val = self._n(s,y,*self._args)
-        dndy_val = self._dndy(s,y,*self._args)
+        n_val,dndy_val = self._f(s,y,*self._args)
 
         self._yout[0] = dyds
         self._yout[1] = (1+dyds**2)*dndy_val/n_val
@@ -221,21 +201,18 @@ class UniformFermatEquationsCurve(FermatEquations):
 
 
     """
-    def __init__(self,R0,n,dndy,args=()):
-        """Intializes the `FermatEquationsCurve` object.
+    def __init__(self,R0,f,args=()):
+        """Intializes the `FermatEquationsEuclid` object.
 
         Parameters
         ----------
-        n : callable
-            function which returns the index of refraction :math:`n(y)`.
-        dndy : callable
-            function which returns :math:`\\frac{\\partial n(x,y)}{\\partial y}`.
+        f : callable
+            function which returns the index of refraction and its gradient as a tuple: :math:`n(s,y),\\frac{\\partial n(x,y)}{\\partial y},\\frac{\\partial n(s,y)}{\\partial s}`.
         args : array_like, optional
             optional arguments which go into the functions. 
 
         """
-        self._n = n
-        self._dndy = dndy
+        self._f = f
         self._args = args 
         self._R0 = R0   
 
@@ -250,8 +227,7 @@ class UniformFermatEquationsCurve(FermatEquations):
 
         y,dyds = yin[0],yin[1]
 
-        n_val = self._n(s,y,*self._args)
-        dndy_val = self._dndy(s,y,*self._args)
+        n_val,dndy_val = self._f(s,y,*self._args)
         R02 = self._R0**2
         R0 = self._R0
 

@@ -52,7 +52,7 @@ class CurveCalc(Calc):
         """
         self._R0 = R0
         self._atm = std_atmosphere(**std_atmosphere_args)
-        Calc.__init__(self,UniformFermatEquationsCurve(R0,self._atm._n,self._atm._dndy))
+        Calc.__init__(self,UniformFermatEquationsCurve(R0,self._atm.f))
 
     @property
     def atm_model(self):
@@ -74,7 +74,7 @@ class FlatCalc(Calc):
             arguments to `std_atmosphere` object. 
         """
         self._atm = std_atmosphere(**std_atmosphere_args)
-        Calc.__init__(self,UniformFermatEquationsEuclid(self._atm._n,self._atm._dndy))
+        Calc.__init__(self,UniformFermatEquationsEuclid(self._atm.f))
 
     @property
     def atm_model(self):
@@ -91,7 +91,7 @@ class CurveNoRefraction(Calc):
             Radius of the sphere for this calculation.
         """
         self._R0 = R0
-        Calc.__init__(self,UniformFermatEquationsCurve(R0,lambda s,y:1.0,lambda s,y:0.0))
+        Calc.__init__(self,UniformFermatEquationsCurve(R0,lambda s,y:(1.0,0.0)))
 
     @property
     def R0(self):
@@ -103,7 +103,7 @@ class FlatNoRefraction(Calc):
     """Calculator used for calculating rays on a flat earth in no atmosphere."""
     def __init__(self):
         """Initialize `FlatNoRefraction` object."""
-        Calc.__init__(self,UniformFermatEquationsEuclid(lambda s,y:1.0,lambda s,y:0.0))
+        Calc.__init__(self,UniformFermatEquationsEuclid(lambda s,y:(1.0,0.0)))
 
 
 

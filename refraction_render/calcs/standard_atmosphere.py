@@ -82,30 +82,20 @@ class std_atmosphere(object):
         P = sol.y[0,-1]
         sol = solve_ivp(dPdh,(-10000,10000),np.array([P]),dense_output=True)
 
-        def drhody(h):
-            t = T(h)
-            p = sol.sol(h)[0]
-            dpdr = -g*p/(R*t)
-            return (dpdr*t-dTdr(h)*p)/(R*t**2)
-
-        rho = lambda h:sol.sol(h)[0]/(R*T(h))
-
         if wavelength < 0.23  or wavelength > 1.69:
               warnings.warm("Cauchy Equation used to calculate despersion does not work well beyond the visible spetrum. ")
           
         deltan = (0.05792105/(238.0185-wavelength**(-2)) + 0.00167917/(57.362-wavelength**(-2)))
-
-
-        self._n = lambda s,h:(1+rho(h)*deltan)
-        self._dndy = lambda s,h:drhody(h)*deltan
-        self._dndx = lambda s,h:0.0
+        self._n = lambda s,h:1+deltan*np.squeeze(sol.sol(h))/(R*T(h))
         
-        self._rho = rho
+        self._rho = lambda h:np.squeeze(sol.sol(h))/(R*T(h))
         self._dT = dT
-        self._P = lambda h:sol.sol(h)[0]
+        self._P = lambda h:np.squeeze(sol.sol(h))
         self._T = T
         self._dTdh = dTdr
-            
+
+        self._g = 9.81
+        self._deltan = deltan
 
     @property
     def dT(self):
@@ -136,7 +126,27 @@ class std_atmosphere(object):
         """ Curvature of light rays at given height."""
         return 5.03*self._P(h)*(0.0343+self._dTdh(h))/self._T(h)**2
 
+    @property
+    def R(self):
+        return 287.058
+    
+    @property
+    def g(self):
+        return self._g
+    
+    @property
+    def deltan(self):
+        return self._deltan
 
+    def f(self,s,h):
+        t = self._T(h)
+        p = np.squeeze(self._P(h))
+        dpdr = -self.g*p/(self.R*t)
+
+        rho = p/(self.R*t)
+        drhody = (dpdr*t-self._dTdh(h)*p)/(self.R*t**2)
+
+        return (1+self.deltan*rho),self.deltan*drhody
 
 
 class vert_atmosphere(object):
@@ -164,9 +174,6 @@ class vert_atmosphere(object):
 
         wavelength: float, optional
             wavelength of light (in :math:`\\mu m`) used calculate the index of refraction 
-
-        moist_lapse_rate: bool, optional
-            Uses the temperature and pressure to calculate the moist lapse rate, use when the humidity is at 100%
 
         dT_prof: callable, optional
             derivative of `T_prof`, see description.
@@ -198,28 +205,18 @@ class vert_atmosphere(object):
               warnings.warm("Cauchy Equation used to calculate despersion does not work well beyond the visible spetrum. ")
           
         self._deltan = (0.05792105/(238.0185-wavelength**(-2)) + 0.00167917/(57.362-wavelength**(-2)))
+        self._g = g
+
 
         self._dist_vals = dist_vals
         self._sol = sol
         self._T = T
         self._dTdh = dTdr
+        self._dPdh = 
 
     @property
     def R(self):
         return 287.058
     
-    def __call__(self,s,h):
-        p = self._sol.sol(h)
-        t = self._T(h)
-        dtdh = self._dTdh(h)
-        dpdh = -g * p / (self.R * t)
-
-        rho = p / (self.R * t)
-
-        drhodh = (dpdh*t + dtdh*p)/(self.R * t**2)
-
-        n = (1 + np.interp(s,self._dist_vals,rho) * deltan)
-        dndh = np.interp(s,self._dist_vals,drhodh) * deltan
-        i = np.searchsorted(self._dist_vals,s)
 
 
