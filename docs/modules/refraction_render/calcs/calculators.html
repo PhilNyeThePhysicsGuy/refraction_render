@@ -13,7 +13,6 @@
     <script src="../../../static/jquery.js"></script>
     <script src="../../../static/underscore.js"></script>
     <script src="../../../static/doctools.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -93,7 +92,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_R0</span> <span class="o">=</span> <span class="n">R0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_atm</span> <span class="o">=</span> <span class="n">std_atmosphere</span><span class="p">(</span><span class="o">**</span><span class="n">std_atmosphere_args</span><span class="p">)</span>
-        <span class="n">Calc</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">UniformFermatEquationsCurve</span><span class="p">(</span><span class="n">R0</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_atm</span><span class="o">.</span><span class="n">_n</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_atm</span><span class="o">.</span><span class="n">_dndy</span><span class="p">))</span></div>
+        <span class="n">Calc</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">UniformFermatEquationsCurve</span><span class="p">(</span><span class="n">R0</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_atm</span><span class="o">.</span><span class="n">_f</span><span class="p">))</span></div>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">atm_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -115,7 +114,7 @@
 <span class="sd">            arguments to `std_atmosphere` object. </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_atm</span> <span class="o">=</span> <span class="n">std_atmosphere</span><span class="p">(</span><span class="o">**</span><span class="n">std_atmosphere_args</span><span class="p">)</span>
-        <span class="n">Calc</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">UniformFermatEquationsEuclid</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_atm</span><span class="o">.</span><span class="n">_n</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_atm</span><span class="o">.</span><span class="n">_dndy</span><span class="p">))</span></div>
+        <span class="n">Calc</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">UniformFermatEquationsEuclid</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_atm</span><span class="o">.</span><span class="n">_f</span><span class="p">))</span></div>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">atm_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -132,7 +131,7 @@
 <span class="sd">            Radius of the sphere for this calculation.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_R0</span> <span class="o">=</span> <span class="n">R0</span>
-        <span class="n">Calc</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">UniformFermatEquationsCurve</span><span class="p">(</span><span class="n">R0</span><span class="p">,</span><span class="k">lambda</span> <span class="n">s</span><span class="p">,</span><span class="n">y</span><span class="p">:</span><span class="mf">1.0</span><span class="p">,</span><span class="k">lambda</span> <span class="n">s</span><span class="p">,</span><span class="n">y</span><span class="p">:</span><span class="mf">0.0</span><span class="p">))</span></div>
+        <span class="n">Calc</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">UniformFermatEquationsCurve</span><span class="p">(</span><span class="n">R0</span><span class="p">,</span><span class="k">lambda</span> <span class="n">s</span><span class="p">,</span><span class="n">y</span><span class="p">:(</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">)))</span></div>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">R0</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -144,7 +143,7 @@
     <span class="sd">&quot;&quot;&quot;Calculator used for calculating rays on a flat earth in no atmosphere.&quot;&quot;&quot;</span>
 <div class="viewcode-block" id="FlatNoRefraction.__init__"><a class="viewcode-back" href="../../../generated/refraction_render.calcs.FlatNoRefraction.html#refraction_render.calcs.FlatNoRefraction.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Initialize `FlatNoRefraction` object.&quot;&quot;&quot;</span>
-        <span class="n">Calc</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">UniformFermatEquationsEuclid</span><span class="p">(</span><span class="k">lambda</span> <span class="n">s</span><span class="p">,</span><span class="n">y</span><span class="p">:</span><span class="mf">1.0</span><span class="p">,</span><span class="k">lambda</span> <span class="n">s</span><span class="p">,</span><span class="n">y</span><span class="p">:</span><span class="mf">0.0</span><span class="p">))</span></div></div>
+        <span class="n">Calc</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">UniformFermatEquationsEuclid</span><span class="p">(</span><span class="k">lambda</span> <span class="n">s</span><span class="p">,</span><span class="n">y</span><span class="p">:(</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">)))</span></div></div>
 
 
 
@@ -201,7 +200,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Phillip Weinberg.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.4.3.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.4.
     </div>
   </body>
 </html>

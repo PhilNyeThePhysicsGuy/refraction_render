@@ -128,17 +128,21 @@ class std_atmosphere(object):
 
     @property
     def R(self):
+        """Ideal gas constant for the atmosphere"""
         return 287.058
     
     @property
     def g(self):
+        """gravitational acceleration."""
         return self._g
     
     @property
     def deltan(self):
+        """scale factor used to calculate the index of refraction of air. """
         return self._deltan
 
-    def f(self,s,h):
+    def _f(self,s,h):
+
         t = self._T(h)
         p = np.squeeze(self._P(h))
         dpdr = -self.g*p/(self.R*t)
@@ -232,7 +236,7 @@ class atmospheric_corridor(object):
     def rho(self,s,h):
         return self._rho_interp(s,h,grid=False)
 
-    def f(self,s,h):
+    def _f(self,s,h):
         s,h = np.broadcast_arrays(s,h)
 
         s = np.atleast_1d(s)

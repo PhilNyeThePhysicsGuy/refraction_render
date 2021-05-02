@@ -763,6 +763,7 @@ class Renderer_35mm(object):
 
     @property
     def geod(self):
+        """geod object used to distances between latitude and longitude coordinates."""
         return self._geod
     
 

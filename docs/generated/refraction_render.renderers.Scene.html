@@ -4,8 +4,7 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>refraction_render.renderers.Scene &#8212; refraction_render 1.0.0 documentation</title>
     <link rel="stylesheet" href="../static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../static/classic.css" type="text/css" />
@@ -14,7 +13,6 @@
     <script src="../static/jquery.js"></script>
     <script src="../static/underscore.js"></script>
     <script src="../static/doctools.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -47,16 +45,16 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <section id="refraction-render-renderers-scene">
+  <div class="section" id="refraction-render-renderers-scene">
 <h1>refraction_render.renderers.Scene<a class="headerlink" href="#refraction-render-renderers-scene" title="Permalink to this headline">¶</a></h1>
 <dl class="py class">
 <dt id="refraction_render.renderers.Scene">
-<em class="property">class </em><code class="sig-prename descclassname">refraction_render.renderers.</code><code class="sig-name descname">Scene</code><a class="reference internal" href="../modules/refraction_render/renderers/render.html#Scene"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.renderers.Scene" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">refraction_render.renderers.</span></code><code class="sig-name descname"><span class="pre">Scene</span></code><a class="reference internal" href="../modules/refraction_render/renderers/render.html#Scene"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#refraction_render.renderers.Scene" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Simple wrapper which keeps track of data used to render an image.</p>
 <dl class="py method">
 <dt id="refraction_render.renderers.Scene.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/renderers/render.html#Scene.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.renderers.Scene.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">__init__</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/renderers/render.html#Scene.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#refraction_render.renderers.Scene.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function initialized <cite>Scene</cite> object.</p>
 </dd></dl>
 
@@ -92,7 +90,7 @@
 </table>
 <dl class="py method">
 <dt id="refraction_render.renderers.Scene.add_elevation_model">
-<code class="sig-name descname">add_elevation_model</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/renderers/render.html#Scene.add_elevation_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.renderers.Scene.add_elevation_model" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">add_elevation_model</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/renderers/render.html#Scene.add_elevation_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#refraction_render.renderers.Scene.add_elevation_model" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add terrain data to the interpolated model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -109,7 +107,7 @@ if len(args) == 1: args = object that is instance of <cite>land_model</cite>.</p
 
 <dl class="py method">
 <dt id="refraction_render.renderers.Scene.add_image">
-<code class="sig-name descname">add_image</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">image</span></em>, <em class="sig-param"><span class="n">image_pos</span></em>, <em class="sig-param"><span class="n">dimensions</span></em>, <em class="sig-param"><span class="n">direction</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/renderers/render.html#Scene.add_image"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.renderers.Scene.add_image" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">add_image</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dimensions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/renderers/render.html#Scene.add_image"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#refraction_render.renderers.Scene.add_image" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add image to scene.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -128,13 +126,13 @@ then that dimension is determined by the resolution of the picture.</p>
 
 <dl class="py method">
 <dt id="refraction_render.renderers.Scene.land_model">
-<em class="property">property </em><code class="sig-name descname">land_model</code><a class="headerlink" href="#refraction_render.renderers.Scene.land_model" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">land_model</span></code><a class="headerlink" href="#refraction_render.renderers.Scene.land_model" title="Permalink to this definition">¶</a></dt>
 <dd><p>Object used to generate elevation along great circle.</p>
 </dd></dl>
 
 </dd></dl>
 
-</section>
+</div>
 
 
             <div class="clearer"></div>
@@ -192,7 +190,7 @@ then that dimension is determined by the resolution of the picture.</p>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Phillip Weinberg.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.4.3.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.4.
     </div>
   </body>
 </html>

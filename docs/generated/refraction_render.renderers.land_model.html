@@ -4,8 +4,7 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>refraction_render.renderers.land_model &#8212; refraction_render 1.0.0 documentation</title>
     <link rel="stylesheet" href="../static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../static/classic.css" type="text/css" />
@@ -14,7 +13,6 @@
     <script src="../static/jquery.js"></script>
     <script src="../static/underscore.js"></script>
     <script src="../static/doctools.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -47,17 +45,17 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <section id="refraction-render-renderers-land-model">
+  <div class="section" id="refraction-render-renderers-land-model">
 <h1>refraction_render.renderers.land_model<a class="headerlink" href="#refraction-render-renderers-land-model" title="Permalink to this headline">¶</a></h1>
 <dl class="py class">
 <dt id="refraction_render.renderers.land_model">
-<em class="property">class </em><code class="sig-prename descclassname">refraction_render.renderers.</code><code class="sig-name descname">land_model</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ellps</span><span class="o">=</span><span class="default_value">'sphere'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/renderers/render.html#land_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.renderers.land_model" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">refraction_render.renderers.</span></code><code class="sig-name descname"><span class="pre">land_model</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ellps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sphere'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/renderers/render.html#land_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#refraction_render.renderers.land_model" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>This class is used to grab slices of the tarrain alon great circle
 slices of the earth.</p>
 <dl class="py method">
 <dt id="refraction_render.renderers.land_model.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ellps</span><span class="o">=</span><span class="default_value">'sphere'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/renderers/render.html#land_model.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.renderers.land_model.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">__init__</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ellps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sphere'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/renderers/render.html#land_model.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#refraction_render.renderers.land_model.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simple wrapper which does the bilinear interpolation of terrain data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -101,7 +99,7 @@ slices of the earth.</p>
 </table>
 <dl class="py method">
 <dt id="refraction_render.renderers.land_model.add_elevation_data">
-<code class="sig-name descname">add_elevation_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/renderers/render.html#land_model.add_elevation_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.renderers.land_model.add_elevation_data" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">add_elevation_data</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/renderers/render.html#land_model.add_elevation_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#refraction_render.renderers.land_model.add_elevation_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add terrain data to the interpolated model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -117,7 +115,7 @@ if len(args) == 2: args = (points,elevation) which contains the arguments for sc
 
 <dl class="py method">
 <dt id="refraction_render.renderers.land_model.get_terrain">
-<code class="sig-name descname">get_terrain</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">lat</span></em>, <em class="sig-param"><span class="n">lon</span></em>, <em class="sig-param"><span class="n">heading</span></em>, <em class="sig-param"><span class="n">dist</span></em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/renderers/render.html#land_model.get_terrain"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.renderers.land_model.get_terrain" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">get_terrain</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">heading</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dist</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/renderers/render.html#land_model.get_terrain"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#refraction_render.renderers.land_model.get_terrain" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sample terrain along geodesic defined by an intial latitude and longitude point along a heading at different distances.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -139,13 +137,13 @@ if len(args) == 2: args = (points,elevation) which contains the arguments for sc
 
 <dl class="py method">
 <dt id="refraction_render.renderers.land_model.has_data">
-<em class="property">property </em><code class="sig-name descname">has_data</code><a class="headerlink" href="#refraction_render.renderers.land_model.has_data" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">has_data</span></code><a class="headerlink" href="#refraction_render.renderers.land_model.has_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>flag if True the terrain object has land else it has no land.</p>
 </dd></dl>
 
 </dd></dl>
 
-</section>
+</div>
 
 
             <div class="clearer"></div>
@@ -203,7 +201,7 @@ if len(args) == 2: args = (points,elevation) which contains the arguments for sc
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Phillip Weinberg.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.4.3.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.4.
     </div>
   </body>
 </html>

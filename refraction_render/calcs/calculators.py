@@ -52,7 +52,7 @@ class CurveCalc(Calc):
         """
         self._R0 = R0
         self._atm = std_atmosphere(**std_atmosphere_args)
-        Calc.__init__(self,UniformFermatEquationsCurve(R0,self._atm.f))
+        Calc.__init__(self,UniformFermatEquationsCurve(R0,self._atm._f))
 
     @property
     def atm_model(self):
@@ -74,7 +74,7 @@ class FlatCalc(Calc):
             arguments to `std_atmosphere` object. 
         """
         self._atm = std_atmosphere(**std_atmosphere_args)
-        Calc.__init__(self,UniformFermatEquationsEuclid(self._atm.f))
+        Calc.__init__(self,UniformFermatEquationsEuclid(self._atm._f))
 
     @property
     def atm_model(self):

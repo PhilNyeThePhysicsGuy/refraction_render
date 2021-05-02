@@ -4,8 +4,7 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>refraction_render.calcs.FermatEquationsEuclid &#8212; refraction_render 1.0.0 documentation</title>
     <link rel="stylesheet" href="../static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../static/classic.css" type="text/css" />
@@ -47,27 +46,23 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <section id="refraction-render-calcs-fermatequationseuclid">
+  <div class="section" id="refraction-render-calcs-fermatequationseuclid">
 <h1>refraction_render.calcs.FermatEquationsEuclid<a class="headerlink" href="#refraction-render-calcs-fermatequationseuclid" title="Permalink to this headline">¶</a></h1>
 <dl class="py class">
 <dt id="refraction_render.calcs.FermatEquationsEuclid">
-<em class="property">class </em><code class="sig-prename descclassname">refraction_render.calcs.</code><code class="sig-name descname">FermatEquationsEuclid</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n</span></em>, <em class="sig-param"><span class="n">dndx</span></em>, <em class="sig-param"><span class="n">dndy</span></em>, <em class="sig-param"><span class="n">args</span><span class="o">=</span><span class="default_value">()</span></em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/calcs/euler_equations.html#FermatEquationsEuclid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.calcs.FermatEquationsEuclid" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">refraction_render.calcs.</span></code><code class="sig-name descname"><span class="pre">FermatEquationsEuclid</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/calcs/euler_equations.html#FermatEquationsEuclid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#refraction_render.calcs.FermatEquationsEuclid" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">refraction_render.calcs.euler_equations.FermatEquations</span></code></p>
 <p>Solver for light ray in a 2D Euclidian geometry for <span class="math notranslate nohighlight">\(n=n(x,y)\)</span>.</p>
 <p>This object takes in three user defined functions:  <span class="math notranslate nohighlight">\(n(x,y), \frac{\partial n(x,y)}{\partial x}, \frac{\partial n(x,y)}{\partial y}\)</span>
 and uses these functions to solve Fermat’s equations for the path of a light ray. This is only really useful</p>
 <dl class="py method">
 <dt id="refraction_render.calcs.FermatEquationsEuclid.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n</span></em>, <em class="sig-param"><span class="n">dndx</span></em>, <em class="sig-param"><span class="n">dndy</span></em>, <em class="sig-param"><span class="n">args</span><span class="o">=</span><span class="default_value">()</span></em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/calcs/euler_equations.html#FermatEquationsEuclid.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.calcs.FermatEquationsEuclid.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">__init__</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/calcs/euler_equations.html#FermatEquationsEuclid.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#refraction_render.calcs.FermatEquationsEuclid.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Intializes the <cite>FermatEquationsEuclid</cite> object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
-<dt><strong>n</strong><span class="classifier">callable</span></dt><dd><p>function which returns the index of refraction <span class="math notranslate nohighlight">\(n(x,y)\)</span>.</p>
-</dd>
-<dt><strong>dndx</strong><span class="classifier">callable</span></dt><dd><p>function which returns <span class="math notranslate nohighlight">\(\frac{\partial n(x,y)}{\partial x}\)</span>.</p>
-</dd>
-<dt><strong>dndy</strong><span class="classifier">callable</span></dt><dd><p>function which returns <span class="math notranslate nohighlight">\(\frac{\partial n(x,y)}{\partial y}\)</span>.</p>
+<dt><strong>f</strong><span class="classifier">callable</span></dt><dd><p>function which returns the index of refraction and its gradient as a tuple: <span class="math notranslate nohighlight">\(n(x,y),\frac{\partial n(x,y)}{\partial y},\frac{\partial n(x,y)}{\partial x}\)</span>.</p>
 </dd>
 <dt><strong>args</strong><span class="classifier">array_like, optional</span></dt><dd><p>optional arguments which go into the functions.</p>
 </dd>
@@ -83,7 +78,7 @@ and uses these functions to solve Fermat’s equations for the path of a light r
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#refraction_render.calcs.FermatEquationsEuclid.__init__" title="refraction_render.calcs.FermatEquationsEuclid.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(n, dndx, dndy[, args])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#refraction_render.calcs.FermatEquationsEuclid.__init__" title="refraction_render.calcs.FermatEquationsEuclid.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(f[, args])</p></td>
 <td><p>Intializes the <cite>FermatEquationsEuclid</cite> object.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#refraction_render.calcs.FermatEquationsEuclid.solve_ivp" title="refraction_render.calcs.FermatEquationsEuclid.solve_ivp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">solve_ivp</span></code></a>(a, b, y0, dy0, **kwargs)</p></td>
@@ -93,7 +88,7 @@ and uses these functions to solve Fermat’s equations for the path of a light r
 </table>
 <dl class="py method">
 <dt id="refraction_render.calcs.FermatEquationsEuclid.solve_ivp">
-<code class="sig-name descname">solve_ivp</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">b</span></em>, <em class="sig-param"><span class="n">y0</span></em>, <em class="sig-param"><span class="n">dy0</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#refraction_render.calcs.FermatEquationsEuclid.solve_ivp" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">solve_ivp</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dy0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#refraction_render.calcs.FermatEquationsEuclid.solve_ivp" title="Permalink to this definition">¶</a></dt>
 <dd><p>Solve initial value problem for light rays.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -154,7 +149,7 @@ however the format of the solutions has the y(x) positions stacked on top of the
 
 </dd></dl>
 
-</section>
+</div>
 
 
             <div class="clearer"></div>
@@ -212,7 +207,7 @@ however the format of the solutions has the y(x) positions stacked on top of the
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Phillip Weinberg.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.4.3.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.4.
     </div>
   </body>
 </html>

@@ -4,8 +4,7 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Welcome to refraction_render’s documentation! &#8212; refraction_render 1.0.0 documentation</title>
     <link rel="stylesheet" href="static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="static/classic.css" type="text/css" />
@@ -14,7 +13,6 @@
     <script src="static/jquery.js"></script>
     <script src="static/underscore.js"></script>
     <script src="static/doctools.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -42,7 +40,7 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <section id="welcome-to-refraction-render-s-documentation">
+  <div class="section" id="welcome-to-refraction-render-s-documentation">
 <h1>Welcome to refraction_render’s documentation!<a class="headerlink" href="#welcome-to-refraction-render-s-documentation" title="Permalink to this headline">¶</a></h1>
 <table class="docutils align-default">
 <colgroup>
@@ -60,8 +58,8 @@
 <p>This is a python package which is a very simple ray tracer which allows the user to ray trace simple topographical data as well as images in the presence of atmospheric refraction. The package includes tools to calculate the <a class="reference external" href="https://en.wikipedia.org/wiki/International_Standard_Atmosphere">standard atmospheric model</a> for an arbitrary temperature profile. From this profile it can generate an index of refraction profile. The Rays trajectories are solved for using <a class="reference external" href="https://en.wikipedia.org/wiki/Fermat%27s_principle">Fermat’s principle</a>.</p>
 <p>This is a python package which uses SciPy, NumPy, Numba, pyproj, six, and tqdm so make sure these packages are installed before installing this code. Another useful package is gdal, this is not a requirement to run this code however it is sueful for loading topographical data into python.</p>
 <p>To install simply download the code and from the top directory run <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">setup.py</span> <span class="pre">install</span></code>. To record the installation directory add the option <code class="docutils literal notranslate"><span class="pre">--record</span> <span class="pre">&lt;file_name&gt;</span></code> to record the installation path to a file. On unix systems one can easily uninstall the package by running <cite>cat &lt;file_name&gt; | xargs rm -rf</cite>.</p>
-</section>
-<section id="refraction-render-api-reference">
+</div>
+<div class="section" id="refraction-render-api-reference">
 <h1>refraction_render API reference<a class="headerlink" href="#refraction-render-api-reference" title="Permalink to this headline">¶</a></h1>
 <div class="toctree-wrapper compound">
 <ul>
@@ -70,15 +68,15 @@
 <li class="toctree-l1"><a class="reference internal" href="misc.html">Misc module (<code class="xref py py-mod docutils literal notranslate"><span class="pre">refraction_render.misc</span></code>)</a></li>
 </ul>
 </div>
-</section>
-<section id="example-scripts">
+</div>
+<div class="section" id="example-scripts">
 <h1>Example Scripts<a class="headerlink" href="#example-scripts" title="Permalink to this headline">¶</a></h1>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Examples.html">Examples</a></li>
 </ul>
 </div>
-</section>
+</div>
 
 
             <div class="clearer"></div>
@@ -136,7 +134,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Phillip Weinberg.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.4.3.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.4.
     </div>
   </body>
 </html>

@@ -29,6 +29,9 @@
 
    .. autosummary::
    
+      ~std_atmosphere.R
       ~std_atmosphere.dT
+      ~std_atmosphere.deltan
+      ~std_atmosphere.g
    
    

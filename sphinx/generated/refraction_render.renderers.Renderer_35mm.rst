@@ -26,6 +26,7 @@
    .. autosummary::
    
       ~Renderer_35mm.calc
+      ~Renderer_35mm.geod
       ~Renderer_35mm.h_angles
       ~Renderer_35mm.v_angles
       ~Renderer_35mm.vfov

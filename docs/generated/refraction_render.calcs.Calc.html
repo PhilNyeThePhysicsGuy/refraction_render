@@ -4,8 +4,7 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>refraction_render.calcs.Calc &#8212; refraction_render 1.0.0 documentation</title>
     <link rel="stylesheet" href="../static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../static/classic.css" type="text/css" />
@@ -14,7 +13,6 @@
     <script src="../static/jquery.js"></script>
     <script src="../static/underscore.js"></script>
     <script src="../static/doctools.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -47,16 +45,16 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <section id="refraction-render-calcs-calc">
+  <div class="section" id="refraction-render-calcs-calc">
 <h1>refraction_render.calcs.Calc<a class="headerlink" href="#refraction-render-calcs-calc" title="Permalink to this headline">¶</a></h1>
 <dl class="py class">
 <dt id="refraction_render.calcs.Calc">
-<em class="property">class </em><code class="sig-prename descclassname">refraction_render.calcs.</code><code class="sig-name descname">Calc</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">FermatEquations_obj</span></em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/calcs/calculators.html#Calc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.calcs.Calc" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">refraction_render.calcs.</span></code><code class="sig-name descname"><span class="pre">Calc</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">FermatEquations_obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/calcs/calculators.html#Calc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#refraction_render.calcs.Calc" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Base class for Calculators.</p>
 <dl class="py method">
 <dt id="refraction_render.calcs.Calc.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">FermatEquations_obj</span></em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/calcs/calculators.html#Calc.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.calcs.Calc.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">__init__</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">FermatEquations_obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/calcs/calculators.html#Calc.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#refraction_render.calcs.Calc.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
 </dd></dl>
 
@@ -77,7 +75,7 @@
 </table>
 <dl class="py method">
 <dt id="refraction_render.calcs.Calc.solve_ivp">
-<code class="sig-name descname">solve_ivp</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">d</span></em>, <em class="sig-param"><span class="n">h</span></em>, <em class="sig-param"><span class="n">dh</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">alpha</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/calcs/calculators.html#Calc.solve_ivp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#refraction_render.calcs.Calc.solve_ivp" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">solve_ivp</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/calcs/calculators.html#Calc.solve_ivp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#refraction_render.calcs.Calc.solve_ivp" title="Permalink to this definition">¶</a></dt>
 <dd><p>Solve initial value problem for light rays.</p>
 <dl class="simple">
 <dt>d: float</dt><dd><p>maximum distance to solve the light rays.</p>
@@ -95,7 +93,7 @@
 
 </dd></dl>
 
-</section>
+</div>
 
 
             <div class="clearer"></div>
@@ -153,7 +151,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Phillip Weinberg.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.4.3.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.4.
     </div>
   </body>
 </html>

@@ -13,7 +13,6 @@
     <script src="../../../static/jquery.js"></script>
     <script src="../../../static/underscore.js"></script>
     <script src="../../../static/doctools.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -134,7 +133,7 @@
         <span class="n">sky</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">hit</span>
 
 
-<span class="nd">@njit</span><span class="p">([</span><span class="s2">&quot;void(f8,f8[:,::1],f8[:],i4[:],b1[:],b1[:],b1[:])&quot;</span><span class="p">])</span>
+<span class="nd">@njit</span><span class="p">(</span><span class="n">parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">_ray_crossing_cpu</span><span class="p">(</span><span class="n">h_min</span><span class="p">,</span><span class="n">rs</span><span class="p">,</span><span class="n">heights</span><span class="p">,</span><span class="n">inds</span><span class="p">,</span><span class="n">water</span><span class="p">,</span><span class="n">land</span><span class="p">,</span><span class="n">sky</span><span class="p">):</span>
     <span class="n">n_v</span> <span class="o">=</span> <span class="n">rs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">n_d</span> <span class="o">=</span> <span class="n">rs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
@@ -144,7 +143,7 @@
     <span class="n">sky</span><span class="p">[:]</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">inds</span><span class="p">[:]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
     
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_v</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">prange</span><span class="p">(</span><span class="n">n_v</span><span class="p">):</span>
         <span class="n">hit</span> <span class="o">=</span> <span class="kc">False</span>
 
         <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_d</span><span class="p">):</span>
@@ -665,7 +664,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 <div class="viewcode-block" id="Renderer_35mm.__init__"><a class="viewcode-back" href="../../../generated/refraction_render.renderers.Renderer_35mm.html#refraction_render.renderers.Renderer_35mm.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">calc</span><span class="p">,</span><span class="n">h_obs</span><span class="p">,</span><span class="n">lat_obs</span><span class="p">,</span><span class="n">lon_obs</span><span class="p">,</span><span class="n">direction</span><span class="p">,</span><span class="n">max_distance</span><span class="p">,</span>
                  <span class="n">distance_res</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span><span class="n">vert_obs_angle</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span><span class="n">vert_res</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
-                 <span class="n">focal_length</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span><span class="n">atol</span><span class="o">=</span><span class="mf">1.1e-7</span><span class="p">,</span><span class="n">rtol</span><span class="o">=</span><span class="mf">1.1e-7</span><span class="p">,</span><span class="n">aspect_ratio</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+                 <span class="n">focal_length</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span><span class="n">atol</span><span class="o">=</span><span class="mf">1.1e-7</span><span class="p">,</span><span class="n">rtol</span><span class="o">=</span><span class="mf">1.1e-7</span><span class="p">,</span><span class="n">aspect_ratio</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">ellps</span><span class="o">=</span><span class="s2">&quot;sphere&quot;</span><span class="p">):</span>
 
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Parameters</span>
@@ -711,6 +710,9 @@
 <span class="sd">        aspect_ratio: tuple</span>
 <span class="sd">            aspect ratio for image</span>
 
+<span class="sd">        ellps: str,</span>
+<span class="sd">            type of geoid to use for calculating gps, default is &quot;sphere&quot;</span>
+
 <span class="sd">        Note</span>
 <span class="sd">        ----</span>
 <span class="sd">        The focal length sets the verticle field of view of the frame using the standard 24 mm for 35 mm film. </span>
@@ -721,7 +723,7 @@
 
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_calc</span> <span class="o">=</span> <span class="n">calc</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_geod</span> <span class="o">=</span> <span class="n">Geod</span><span class="p">(</span><span class="n">ellps</span><span class="o">=</span><span class="s2">&quot;sphere&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_geod</span> <span class="o">=</span> <span class="n">Geod</span><span class="p">(</span><span class="n">ellps</span><span class="o">=</span><span class="n">ellps</span><span class="p">)</span>
 
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_atol</span><span class="o">=</span><span class="n">atol</span>
@@ -798,6 +800,12 @@
     <span class="k">def</span> <span class="nf">calc</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Calc object used to calculate verticle rays.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calc</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">geod</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;geod object used to distances between latitude and longitude coordinates.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geod</span>
+    
 
 <div class="viewcode-block" id="Renderer_35mm.set_location"><a class="viewcode-back" href="../../../generated/refraction_render.renderers.Renderer_35mm.html#refraction_render.renderers.Renderer_35mm.set_location">[docs]</a>    <span class="k">def</span> <span class="nf">set_location</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">lat_obs</span><span class="p">,</span><span class="n">lon_obs</span><span class="p">,</span><span class="n">direction</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;This function can be used to change the location and heading of the renderer.</span>
@@ -1380,7 +1388,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Phillip Weinberg.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.4.3.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.4.
     </div>
   </body>
 </html>
