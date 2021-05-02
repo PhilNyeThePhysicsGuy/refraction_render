@@ -1,10 +1,10 @@
 from scipy.integrate import solve_bvp,solve_ivp
 from scipy.misc import derivative
-from scipy.interpolate import interp1d
+from scipy.interpolate import interp1d,RectBivariateSpline
 import numpy as np
 
 
-__all__=["std_atmosphere"]
+__all__=["std_atmosphere","atmospheric_corridor"]
 
 class std_atmosphere(object):
     """Object which calculates the standard atmospheric model. 
@@ -149,12 +149,12 @@ class std_atmosphere(object):
         return (1+self.deltan*rho),self.deltan*drhody
 
 
-class vert_atmosphere(object):
+class atmospheric_corridor(object):
     """Object which calculates the standard atmospheric model. 
 
     """
     def __init__(self,T_prof,dist_vals,h0=0.0,P0=101325.0,g=9.81,
-        wavelength=0.545,h_grid=None,dT_prof=None,T_prof_args=()):
+        wavelength=0.545,h_vals=None,T_prof_args=()):
         """Intializes the `std_atmosphere` object.
 
         Parameters
@@ -175,50 +175,79 @@ class vert_atmosphere(object):
         wavelength: float, optional
             wavelength of light (in :math:`\\mu m`) used calculate the index of refraction 
 
-        dT_prof: callable, optional
-            derivative of `T_prof`, see description.
-
         T_prof_args: array_like, optional
             optional arguments to pass into `T_prof` and `dT_prof`.
 
         """
 
+        R =  287.058
         T = lambda h:T_prof(h,*T_prof_args)+273
 
-        if dT_prof is not None:
-            dTdr = lambda h:dT_prof(h,*T_prof_args)
+        dPdh = lambda h,P:-g*P/(R*T(h))
+        # def dPdh(h,P):
+        #     print(g,P.shape,R,h.shape)
+        #     return -g*P/(R*T(h))
 
-        if T_prof is not None:
-            dTdr = lambda h:derivative(T_prof,h,args=T_prof_args,dx=1.1e-7)
-
-        dPdh = lambda h,P:-g*P/(self.R*T(h))
         dist_vals = np.asarray(dist_vals)
         shape = dist_vals.shape
-        P0 = np.full(shape,P0)
-        sol = solve_ivp(dPdh,(h0,-10000),P0)
+        P0 = np.broadcast_to(P0,shape)
+        sol = solve_ivp(dPdh,(h0,-10001),P0)
         
-        P = sol.y[-1]
-        
-        sol = solve_ivp(dPdh,(-10000,10000),P,dense_output=True)
+        if h_vals is None:
+            h_vals = np.hstack([np.linspace(-10000,0,1000),
+                                np.linspace(0,300,3001),
+                                np.linspace(400,900,5),
+                                np.linspace(1000,10000,1000)
+                                ])
+
+        h_vals = np.unique(h_vals)
+        sol = solve_ivp(dPdh,(-10001,10001),sol.y[:,-1],t_eval = h_vals)
+
+        Ps = sol.y
+
 
         if wavelength < 0.23  or wavelength > 1.69:
               warnings.warm("Cauchy Equation used to calculate despersion does not work well beyond the visible spetrum. ")
           
         self._deltan = (0.05792105/(238.0185-wavelength**(-2)) + 0.00167917/(57.362-wavelength**(-2)))
-        self._g = g
 
-        if h_grid is None:
-            h_grid = np.hstack([np.linspace(-10000,0,10),
-                                np.linspace(0,300,301),
-                                np.linspace(400,900,5),
-                                np.linspace(1000,10000,9)
-                                ])
 
-        Ps = sol.sol(h_grid)
+        Ts = np.hstack([T(h).reshape((-1,1)) for h in h_vals])
+        rhos = Ps/(R*Ts)
 
-    @property
-    def R(self):
-        return 287.058
-    
+        self._dist_vals = dist_vals
+        self._h_vals = h_vals
+        self._rho_interp = RectBivariateSpline(dist_vals,h_vals,rhos)
+        self._T_interp = RectBivariateSpline(dist_vals,h_vals,Ts)
+        self._P_interp = RectBivariateSpline(dist_vals,h_vals,Ps)
+        self._n_interp = RectBivariateSpline(dist_vals,h_vals,1+self._deltan*rhos)
+
+
+    def T(self,s,h):
+        return self._T_interp(s,h,grid=False) - 273
+
+    def P(self,s,h):
+        return self._P_interp(s,h,grid=False)
+
+    def rho(self,s,h):
+        return self._rho_interp(s,h,grid=False)
+
+    def f(self,s,h):
+        s,h = np.broadcast_arrays(s,h)
+
+        s = np.atleast_1d(s)
+        h = np.atleast_1d(h)
+
+        s_m = np.logical_or(s < self._dist_vals[0], s > self._dist_vals[-1])
+        h_m = np.logical_or(h < self._h_vals[0], h > self._h_vals[-1])
+
+        n = self._n_interp(s,h,grid=False)
+        dndy = self._n_interp(s,h,dy=1,grid=False)
+        dnds = self._n_interp(s,h,dx=1,grid=False)
+
+        dnds[s_m] = 0
+        dndy[h_m] = 0
+
+        return n,dndy,dnds
 
 
