@@ -624,7 +624,7 @@ class Renderer_35mm(object):
     """
     def __init__(self,calc,h_obs,lat_obs,lon_obs,direction,max_distance,
                  distance_res=10,vert_obs_angle=0.0,vert_res=1000,
-                 focal_length=2000,atol=1.1e-7,rtol=1.1e-7,aspect_ratio=None):
+                 focal_length=2000,atol=1.1e-7,rtol=1.1e-7,aspect_ratio=None,ellps="sphere"):
 
         """
         Parameters
@@ -670,6 +670,9 @@ class Renderer_35mm(object):
         aspect_ratio: tuple
             aspect ratio for image
 
+        ellps: str,
+            type of geoid to use for calculating gps, default is "sphere"
+
         Note
         ----
         The focal length sets the verticle field of view of the frame using the standard 24 mm for 35 mm film. 
@@ -680,7 +683,7 @@ class Renderer_35mm(object):
 
 
         self._calc = calc
-        self._geod = Geod(ellps="sphere")
+        self._geod = Geod(ellps=ellps)
 
 
         self._atol=atol
@@ -757,6 +760,11 @@ class Renderer_35mm(object):
     def calc(self):
         """Calc object used to calculate verticle rays."""
         return self._calc
+
+    @property
+    def geod(self):
+        return self._geod
+    
 
     def set_location(self,lat_obs,lon_obs,direction):
         """This function can be used to change the location and heading of the renderer.
