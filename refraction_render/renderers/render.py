@@ -903,7 +903,7 @@ class Renderer_Composite(object):
     """
     def __init__(self,calc,h_obs,lat_obs,lon_obs,max_distance,
                  distance_res=10,vert_obs_angle=0.0,vert_res=1000,
-                 focal_length=2000,atol=1.1e-7,rtol=1.1e-7):
+                 focal_length=2000,atol=1.1e-7,rtol=1.1e-7,ellps="sphere"):
         """
         Parameters
         ----------
@@ -957,7 +957,7 @@ class Renderer_Composite(object):
         _check_gps(self._lat_obs,self._lon_obs)
 
         self._calc = calc
-        self._geod = Geod(ellps="sphere")
+        self._geod = Geod(ellps=ellps)
 
         vert_res = int(vert_res)
         vert_min = np.rad2deg(np.arctan(-12.0/focal_length))+vert_obs_angle
@@ -974,15 +974,26 @@ class Renderer_Composite(object):
 
     @property
     def vfov(self):
-        """vertial field of view for this particular renderer"""
+        """Vertial field of view for this particular renderer"""
         return self._vfov
 
     @property
     def v_angles(self):
-        """vertical angular scale of the image frame"""
+        """Vertical angular scale of the image frame."""
         v_angles = self._v_angles[...]
         v_angles.setflags(write=False)
         return v_angles
+
+    @property
+    def calc(self):
+        """Calc object used to calculate verticle rays."""
+        return self._calc
+
+    @property
+    def geod(self):
+        """geod object used to distances between latitude and longitude coordinates."""
+        return self._geod
+
 
     def set_location(self,lat_obs,lon_obs):
         """This function can be used to change the position of the renderer.
@@ -1258,13 +1269,15 @@ class land_model(object):
     def __call__(self,lat,lon):
         lat = np.atleast_1d(lat)
         lon = np.atleast_1d(lon)
-        lat,lon = np.broadcast_arrays(lat,lon)
         heights = np.zeros_like(lon)
 
-        coors = np.stack((lat,lon),axis=-1)
+        coors = np.stack(np.broadcast_arrays(lat,lon),axis=-1)
 
         for terrain in self._terrain_list:
-            heights += terrain(coors)
+            try:
+                heights += terrain(coors)
+            except TypeError:
+                heights += terrain.ev(*np.broadcast_arrays(lat,lon))
 
         return np.squeeze(heights)
 
@@ -1273,7 +1286,7 @@ class land_model(object):
         """flag if True the terrain object has land else it has no land."""
         return len(self._terrain_list) > 0
 
-    def add_elevation_data(self,*args):
+    def add_elevation_data(self,*args,smooth=False):
         """Add terrain data to the interpolated model.
 
         Parameters
@@ -1285,8 +1298,11 @@ class land_model(object):
 
         """
         if len(args) == 3:
-            lats,lons,elevation = args
-            self._terrain_list.append(interp.RegularGridInterpolator((lats,lons),elevation,bounds_error=False,fill_value=0.0,method="linear"))
+            if smooth:
+                self._terrain_list.append(interp.RectBivariateSpline(*args))
+            else:
+                lats,lons,elevation = args
+                self._terrain_list.append(interp.RegularGridInterpolator((lats,lons),elevation,bounds_error=False,fill_value=0.0,method="linear"))
         elif len(args) == 2:
             points,elevation = args
             self._terrain_list.append(interp.LinearNDInterpolator(points,elevation,fill_value=0.0))
