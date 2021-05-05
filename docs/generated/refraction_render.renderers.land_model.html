@@ -77,7 +77,7 @@ slices of the earth.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#refraction_render.renderers.land_model.__init__" title="refraction_render.renderers.land_model.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>([ellps])</p></td>
 <td><p>Simple wrapper which does the bilinear interpolation of terrain data.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#refraction_render.renderers.land_model.add_elevation_data" title="refraction_render.renderers.land_model.add_elevation_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_elevation_data</span></code></a>(*args)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#refraction_render.renderers.land_model.add_elevation_data" title="refraction_render.renderers.land_model.add_elevation_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_elevation_data</span></code></a>(*args[, smooth])</p></td>
 <td><p>Add terrain data to the interpolated model.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#refraction_render.renderers.land_model.get_terrain" title="refraction_render.renderers.land_model.get_terrain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_terrain</span></code></a>(lat, lon, heading, dist)</p></td>
@@ -99,14 +99,16 @@ slices of the earth.</p>
 </table>
 <dl class="py method">
 <dt id="refraction_render.renderers.land_model.add_elevation_data">
-<code class="sig-name descname"><span class="pre">add_elevation_data</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/renderers/render.html#land_model.add_elevation_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#refraction_render.renderers.land_model.add_elevation_data" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">add_elevation_data</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">smooth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/renderers/render.html#land_model.add_elevation_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#refraction_render.renderers.land_model.add_elevation_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add terrain data to the interpolated model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>args: tuple</strong></dt><dd><p>tuple which contains elevation data:
-if len(args) == 3: args = (lats,lons,elevation) which contains the arguments for scipy.interpolate.RegularGridInterpolator.
-if len(args) == 2: args = (points,elevation) which contains the arguments for scipy.interpolate.LinearNDInterpolator.</p>
+if len(args) == 3: args = (lats,lons,elevation) which contains the regular grid values and elevation values on that grid.
+if len(args) == 2: args = (points,elevation) which contains unstructured collection of points for the elevation data.</p>
+</dd>
+<dt><strong>smooth: bool, optional</strong></dt><dd><p>If True, then use 3rd order bivariate spline to interpolate data, otherwise use faster linear interpolation. default is False.</p>
 </dd>
 </dl>
 </dd>

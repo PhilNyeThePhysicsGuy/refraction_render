@@ -25,6 +25,8 @@
 
    .. autosummary::
    
+      ~Renderer_Composite.calc
+      ~Renderer_Composite.geod
       ~Renderer_Composite.v_angles
       ~Renderer_Composite.vfov
    

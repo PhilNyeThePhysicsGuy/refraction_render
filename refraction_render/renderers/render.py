@@ -1293,8 +1293,10 @@ class land_model(object):
         ----------
         args: tuple
             tuple which contains elevation data:
-            if len(args) == 3: args = (lats,lons,elevation) which contains the arguments for scipy.interpolate.RegularGridInterpolator.
-            if len(args) == 2: args = (points,elevation) which contains the arguments for scipy.interpolate.LinearNDInterpolator.
+            if len(args) == 3: args = (lats,lons,elevation) which contains the regular grid values and elevation values on that grid. 
+            if len(args) == 2: args = (points,elevation) which contains unstructured collection of points for the elevation data.
+        smooth: bool, optional
+            If True, then use 3rd order bivariate spline to interpolate data, otherwise use faster linear interpolation. default is False. 
 
         """
         if len(args) == 3:
@@ -1305,7 +1307,10 @@ class land_model(object):
                 self._terrain_list.append(interp.RegularGridInterpolator((lats,lons),elevation,bounds_error=False,fill_value=0.0,method="linear"))
         elif len(args) == 2:
             points,elevation = args
-            self._terrain_list.append(interp.LinearNDInterpolator(points,elevation,fill_value=0.0))
+            if smooth:
+                self._terrain_list.append(interp.SmoothBivariateSpline(points[:,0],points[:,1],elevation))
+            else:
+                self._terrain_list.append(interp.LinearNDInterpolator(points,elevation,fill_value=0.0))
         else:
             raise ValueError("can't interpret arguments.")
 
