@@ -15,9 +15,7 @@
     <script src="../static/doctools.js"></script>
     
     <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="refraction_render.renderers.Renderer_35mm" href="refraction_render.renderers.Renderer_35mm.html" />
-    <link rel="prev" title="Renderers module (refraction_render.renderers)" href="../renderers.html" /> 
+    <link rel="search" title="Search" href="../search.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
@@ -28,14 +26,7 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="right" >
-          <a href="refraction_render.renderers.Renderer_35mm.html" title="refraction_render.renderers.Renderer_35mm"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="../renderers.html" title="Renderers module (refraction_render.renderers)"
-             accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">refraction_render 1.0.0 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="../renderers.html" accesskey="U">Renderers module (<code class="xref py py-mod docutils literal notranslate"><span class="pre">refraction_render.renderers</span></code>)</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">refraction_render.renderers.ray_diagram</a></li> 
       </ul>
     </div>  
@@ -47,40 +38,6 @@
             
   <div class="section" id="refraction-render-renderers-ray-diagram">
 <h1>refraction_render.renderers.ray_diagram<a class="headerlink" href="#refraction-render-renderers-ray-diagram" title="Permalink to this headline">¶</a></h1>
-<dl class="py function">
-<dt id="refraction_render.renderers.ray_diagram">
-<code class="sig-prename descclassname"><span class="pre">refraction_render.renderers.</span></code><code class="sig-name descname"><span class="pre">ray_diagram</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h_obs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angles</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">heights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">style</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sphere_top'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eye_level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">linewidth_rays</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">linewidth_earth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6371008</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../modules/refraction_render/renderers/render.html#ray_diagram"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#refraction_render.renderers.ray_diagram" title="Permalink to this definition">¶</a></dt>
-<dd><p>Side profile view showing the rays trajectories.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl class="simple">
-<dt><strong>ax: matplotlib Axes object</strong></dt><dd><p>this function plots lines on a graph, you can specify which graph to plot to by passing in the axes object for the graph you want to plot to.</p>
-</dd>
-<dt><strong>calc: calcs object</strong></dt><dd><p>object which can be used to calculate the trajectory of light rays</p>
-</dd>
-<dt><strong>h_obs: float</strong></dt><dd><p>height of renderer in meters</p>
-</dd>
-<dt><strong>d: array_like, (N,)</strong></dt><dd><p>list of values to evaluate ray positions at for ray diagram, must be sorted in ascending order.</p>
-</dd>
-<dt><strong>angles: array_like, (M,)</strong></dt><dd><p>list of initial angles for the rays, in degrees</p>
-</dd>
-<dt><strong>heights: array_like, (N,), optional</strong></dt><dd><p>list of values which represent the elevation profile along ray trajectory</p>
-</dd>
-<dt><strong>style: str, optional</strong></dt><dd><p>style to plot the graph. “flat”: plot rays on flat plane, “sphere_top”: plot rays as if the earth is filling away from the observer, “sphere_side”: plot rays with the ‘bulge’ in the middle.</p>
-</dd>
-<dt><strong>eye_level: bool, optional</strong></dt><dd><p>color the ray which is closest to eye level (0 degrees initial angle) orange.</p>
-</dd>
-<dt><strong>linewidth_rays: float, optional</strong></dt><dd><p>linewidth used for plotting rays in diagram</p>
-</dd>
-<dt><strong>linewidth_earth: float, optional</strong></dt><dd><p>linewidth used for plotting surface of the earth, both water and land.</p>
-</dd>
-<dt><strong>h_min: float, optional</strong></dt><dd><p>minimum values which should count as water when calculating hit locations.</p>
-</dd>
-</dl>
-</dd>
-</dl>
-</dd></dl>
-
 </div>
 
 
@@ -90,12 +47,6 @@
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="../renderers.html"
-                        title="previous chapter">Renderers module (<code class="xref py py-mod docutils literal notranslate"><span class="pre">refraction_render.renderers</span></code>)</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="refraction_render.renderers.Renderer_35mm.html"
-                        title="next chapter">refraction_render.renderers.Renderer_35mm</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -126,14 +77,7 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="right" >
-          <a href="refraction_render.renderers.Renderer_35mm.html" title="refraction_render.renderers.Renderer_35mm"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="../renderers.html" title="Renderers module (refraction_render.renderers)"
-             >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">refraction_render 1.0.0 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="../renderers.html" >Renderers module (<code class="xref py py-mod docutils literal notranslate"><span class="pre">refraction_render.renderers</span></code>)</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">refraction_render.renderers.ray_diagram</a></li> 
       </ul>
     </div>
