@@ -11,7 +11,7 @@ class std_atmosphere(object):
 
     """
     def __init__(self,h0=0.0,T0=15.0,P0=101325.0,g=9.81,dT=None,wavelength=0.545,moist_lapse_rate=False,
-                 T_prof=None,dT_prof=None,T_prof_args=()):
+                 T_prof=None,dT_prof=None,T_prof_args=(),h_min=-10000,h_max=10000):
         """Intializes the `std_atmosphere` object.
 
         Parameters
@@ -46,6 +46,12 @@ class std_atmosphere(object):
         T_prof_args: array_like, optional
             optional arguments to pass into `T_prof` and `dT_prof`.
 
+        h_min: float, optional
+            minimal elevation in meters to calculate atmospheric profile, default values is -10000
+
+        h_max: float, optional
+            maximal elevation in meters to calculate atmospheric profile, default values is 10000
+
         """
 
         T0 = max(T0,0)
@@ -77,10 +83,10 @@ class std_atmosphere(object):
 
         dPdh = lambda h,P:-g*P/(R*T(h))
 
-        sol = solve_ivp(dPdh,(h0,-10000),np.array([P0]))
+        sol = solve_ivp(dPdh,(h0,h_min),np.array([P0]))
 
         P = sol.y[0,-1]
-        sol = solve_ivp(dPdh,(-10000,10000),np.array([P]),dense_output=True)
+        sol = solve_ivp(dPdh,(h_min,h_max),np.array([P]),dense_output=True)
 
         if wavelength < 0.23  or wavelength > 1.69:
               warnings.warm("Cauchy Equation used to calculate despersion does not work well beyond the visible spetrum. ")
