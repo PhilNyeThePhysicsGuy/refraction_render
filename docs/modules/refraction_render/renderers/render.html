@@ -52,7 +52,7 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
 
-<span class="n">__all__</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Scene&quot;</span><span class="p">,</span><span class="s2">&quot;Renderer_35mm&quot;</span><span class="p">,</span><span class="s2">&quot;Renderer_Composite&quot;</span><span class="p">,</span><span class="s2">&quot;land_model&quot;</span><span class="p">,</span><span class="s2">&quot;ray_diagram&quot;</span><span class="p">]</span>
+<span class="n">__all__</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Scene&quot;</span><span class="p">,</span><span class="s2">&quot;Renderer_35mm&quot;</span><span class="p">,</span><span class="s2">&quot;Renderer_Composite&quot;</span><span class="p">,</span><span class="s2">&quot;land_model&quot;</span><span class="p">]</span>
 
 
 <span class="nd">@njit</span>
@@ -494,168 +494,6 @@
                <span class="k">return</span> <span class="kc">False</span>
     <span class="k">return</span> <span class="kc">True</span>
 
-<div class="viewcode-block" id="ray_diagram"><a class="viewcode-back" href="../../../generated/refraction_render.renderers.ray_diagram.html#refraction_render.renderers.ray_diagram">[docs]</a><span class="k">def</span> <span class="nf">ray_diagram</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span><span class="n">calc</span><span class="p">,</span><span class="n">h_obs</span><span class="p">,</span><span class="n">d</span><span class="p">,</span><span class="n">angles</span><span class="p">,</span><span class="n">heights</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">style</span><span class="o">=</span><span class="s2">&quot;sphere_top&quot;</span><span class="p">,</span>
-                <span class="n">eye_level</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">linewidth_rays</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span><span class="n">linewidth_earth</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span><span class="n">R0</span><span class="o">=</span><span class="mi">6371008</span><span class="p">,</span><span class="n">h_min</span><span class="o">=</span><span class="mf">0.01</span><span class="p">):</span>
-
-    <span class="sd">&quot;&quot;&quot;Side profile view showing the rays trajectories. </span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    ax: matplotlib Axes object</span>
-<span class="sd">        this function plots lines on a graph, you can specify which graph to plot to by passing in the axes object for the graph you want to plot to.</span>
-
-
-<span class="sd">    calc: calcs object</span>
-<span class="sd">        object which can be used to calculate the trajectory of light rays</span>
-
-<span class="sd">    h_obs: float</span>
-<span class="sd">        height of renderer in meters</span>
-<span class="sd">    </span>
-<span class="sd">    d: array_like, (N,)</span>
-<span class="sd">        list of values to evaluate ray positions at for ray diagram, must be sorted in ascending order.</span>
-
-<span class="sd">    angles: array_like, (M,)</span>
-<span class="sd">        list of initial angles for the rays, in degrees</span>
-
-<span class="sd">    heights: array_like, (N,), optional</span>
-<span class="sd">        list of values which represent the elevation profile along ray trajectory</span>
-
-<span class="sd">    style: str, optional </span>
-<span class="sd">        style to plot the graph. &quot;flat&quot;: plot rays on flat plane, &quot;sphere_top&quot;: plot rays as if the earth is filling away from the observer, &quot;sphere_side&quot;: plot rays with the &#39;bulge&#39; in the middle. </span>
-
-<span class="sd">    eye_level: bool, optional</span>
-<span class="sd">        color the ray which is closest to eye level (0 degrees initial angle) orange.</span>
-
-<span class="sd">    linewidth_rays: float, optional</span>
-<span class="sd">        linewidth used for plotting rays in diagram</span>
-
-<span class="sd">    linewidth_earth: float, optional</span>
-<span class="sd">        linewidth used for plotting surface of the earth, both water and land.</span>
-
-<span class="sd">    h_min: float, optional</span>
-<span class="sd">        minimum values which should count as water when calculating hit locations.</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">is_sorted</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;array &#39;d&#39; must contain distance values in ascending order.&quot;</span><span class="p">)</span>
-
-
-    <span class="n">angles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">angles</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
-    <span class="n">d_max</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
-
-    <span class="n">sol</span> <span class="o">=</span> <span class="n">calc</span><span class="o">.</span><span class="n">solve_ivp</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span><span class="n">h_obs</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="n">angles</span><span class="p">,</span><span class="n">dense_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">atol</span><span class="o">=</span><span class="mf">1.1e-10</span><span class="p">,</span><span class="n">rtol</span><span class="o">=</span><span class="mf">1.1e-7</span><span class="p">)</span>
-    <span class="n">n_v</span> <span class="o">=</span> <span class="n">angles</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-
-    <span class="n">rs</span> <span class="o">=</span> <span class="n">sol</span><span class="o">.</span><span class="n">sol</span><span class="p">(</span><span class="n">d</span><span class="p">)[:</span><span class="n">n_v</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-
-    <span class="n">water</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_v</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>
-    <span class="n">land</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_v</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>
-    <span class="n">sky</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_v</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>
-    <span class="n">inds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_v</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">angles</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">i_horz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">angles</span><span class="p">)</span><span class="o">.</span><span class="n">argmin</span><span class="p">()</span>
-
-    <span class="k">if</span> <span class="n">heights</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">heights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">heights</span> <span class="o">=</span> <span class="n">heights</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span><span class="n">copy</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">heights</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;number of elevation points must match the number of positions.&quot;</span><span class="p">)</span>
-        
-
-    <span class="k">if</span> <span class="n">style</span> <span class="o">==</span> <span class="s2">&quot;sphere_top&quot;</span><span class="p">:</span>
-        <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="o">-</span><span class="n">d</span><span class="o">/</span><span class="n">R0</span><span class="p">)</span>
-        <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="o">-</span><span class="n">d</span><span class="o">/</span><span class="n">R0</span><span class="p">)</span>
-
-        <span class="n">_ray_crossing_cpu</span><span class="p">(</span><span class="n">h_min</span><span class="p">,</span><span class="n">rs</span><span class="p">,</span><span class="n">heights</span><span class="p">,</span><span class="n">inds</span><span class="p">,</span><span class="n">water</span><span class="p">,</span><span class="n">land</span><span class="p">,</span><span class="n">sky</span><span class="p">)</span>
-        <span class="n">rs</span> <span class="o">+=</span> <span class="n">R0</span>
-        <span class="n">heights</span> <span class="o">=</span> <span class="n">heights</span> <span class="o">+</span> <span class="n">R0</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_v</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">i_horz</span> <span class="ow">and</span> <span class="n">eye_level</span><span class="p">:</span>
-                <span class="n">i_max</span> <span class="o">=</span> <span class="n">inds</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-                <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rs</span><span class="p">[</span><span class="n">i</span><span class="p">,:</span><span class="n">i_max</span><span class="p">]</span><span class="o">*</span><span class="n">c</span><span class="p">[:</span><span class="n">i_max</span><span class="p">],</span>
-                        <span class="n">rs</span><span class="p">[</span><span class="n">i</span><span class="p">,:</span><span class="n">i_max</span><span class="p">]</span><span class="o">*</span><span class="n">s</span><span class="p">[:</span><span class="n">i_max</span><span class="p">]</span><span class="o">-</span><span class="n">R0</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;orange&quot;</span><span class="p">,</span><span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth_rays</span><span class="p">)</span>
-                <span class="k">continue</span>
-
-            <span class="k">if</span> <span class="n">water</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
-                <span class="n">i_max</span> <span class="o">=</span> <span class="n">inds</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-                <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rs</span><span class="p">[</span><span class="n">i</span><span class="p">,:</span><span class="n">i_max</span><span class="p">]</span><span class="o">*</span><span class="n">c</span><span class="p">[:</span><span class="n">i_max</span><span class="p">],</span>
-                        <span class="n">rs</span><span class="p">[</span><span class="n">i</span><span class="p">,:</span><span class="n">i_max</span><span class="p">]</span><span class="o">*</span><span class="n">s</span><span class="p">[:</span><span class="n">i_max</span><span class="p">]</span><span class="o">-</span><span class="n">R0</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span><span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth_rays</span><span class="p">)</span>
-                <span class="k">continue</span>
-
-            <span class="k">if</span> <span class="n">land</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
-                <span class="n">i_max</span> <span class="o">=</span> <span class="n">inds</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-                <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rs</span><span class="p">[</span><span class="n">i</span><span class="p">,:</span><span class="n">i_max</span><span class="p">]</span><span class="o">*</span><span class="n">c</span><span class="p">[:</span><span class="n">i_max</span><span class="p">],</span>
-                        <span class="n">rs</span><span class="p">[</span><span class="n">i</span><span class="p">,:</span><span class="n">i_max</span><span class="p">]</span><span class="o">*</span><span class="n">s</span><span class="p">[:</span><span class="n">i_max</span><span class="p">]</span><span class="o">-</span><span class="n">R0</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span><span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth_rays</span><span class="p">)</span>
-                <span class="k">continue</span>
-
-            <span class="k">if</span> <span class="n">sky</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
-                <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rs</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span><span class="o">*</span><span class="n">c</span><span class="p">,</span><span class="n">rs</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span><span class="o">*</span><span class="n">s</span><span class="o">-</span><span class="n">R0</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;cyan&quot;</span><span class="p">,</span><span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth_rays</span><span class="p">)</span>
-                <span class="k">continue</span>
-
-        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">c</span><span class="o">*</span><span class="n">heights</span><span class="p">,</span><span class="n">s</span><span class="o">*</span><span class="n">heights</span><span class="o">-</span><span class="n">R0</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span><span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth_earth</span><span class="p">)</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">c</span><span class="o">*</span><span class="n">R0</span><span class="p">,</span><span class="n">s</span><span class="o">*</span><span class="n">R0</span><span class="o">-</span><span class="n">R0</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span><span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth_earth</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">style</span> <span class="o">==</span> <span class="s2">&quot;sphere_side&quot;</span><span class="p">:</span>
-        <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="o">-</span><span class="n">d</span><span class="o">/</span><span class="n">R0</span><span class="o">+</span><span class="n">d_max</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">R0</span><span class="p">))</span>
-        <span class="n">c</span> <span class="o">-=</span> <span class="n">c</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
-        <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="o">-</span><span class="n">d</span><span class="o">/</span><span class="n">R0</span><span class="o">+</span><span class="n">d_max</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">R0</span><span class="p">))</span>
-        <span class="n">_ray_crossing_cpu</span><span class="p">(</span><span class="n">h_min</span><span class="p">,</span><span class="n">rs</span><span class="p">,</span><span class="n">heights</span><span class="p">,</span><span class="n">inds</span><span class="p">,</span><span class="n">water</span><span class="p">,</span><span class="n">land</span><span class="p">,</span><span class="n">sky</span><span class="p">)</span>
-        <span class="n">rs</span> <span class="o">+=</span> <span class="n">R0</span>
-        <span class="n">heights</span> <span class="o">=</span> <span class="n">heights</span> <span class="o">+</span> <span class="n">R0</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_v</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">i_horz</span> <span class="ow">and</span> <span class="n">eye_level</span><span class="p">:</span>
-                <span class="n">i_max</span> <span class="o">=</span> <span class="n">inds</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-                <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rs</span><span class="p">[</span><span class="n">i</span><span class="p">,:</span><span class="n">i_max</span><span class="p">]</span><span class="o">*</span><span class="n">c</span><span class="p">[:</span><span class="n">i_max</span><span class="p">],</span>
-                        <span class="n">rs</span><span class="p">[</span><span class="n">i</span><span class="p">,:</span><span class="n">i_max</span><span class="p">]</span><span class="o">*</span><span class="n">s</span><span class="p">[:</span><span class="n">i_max</span><span class="p">]</span><span class="o">-</span><span class="n">R0</span><span class="o">*</span><span class="n">s</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;orange&quot;</span><span class="p">,</span><span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth_rays</span><span class="p">)</span>
-                <span class="k">continue</span>
-
-            <span class="k">if</span> <span class="n">water</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
-                <span class="n">i_max</span> <span class="o">=</span> <span class="n">inds</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-                <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rs</span><span class="p">[</span><span class="n">i</span><span class="p">,:</span><span class="n">i_max</span><span class="p">]</span><span class="o">*</span><span class="n">c</span><span class="p">[:</span><span class="n">i_max</span><span class="p">],</span>
-                        <span class="n">rs</span><span class="p">[</span><span class="n">i</span><span class="p">,:</span><span class="n">i_max</span><span class="p">]</span><span class="o">*</span><span class="n">s</span><span class="p">[:</span><span class="n">i_max</span><span class="p">]</span><span class="o">-</span><span class="n">R0</span><span class="o">*</span><span class="n">s</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span><span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth_rays</span><span class="p">)</span>
-                <span class="k">continue</span>
-
-            <span class="k">if</span> <span class="n">land</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
-                <span class="n">i_max</span> <span class="o">=</span> <span class="n">inds</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-                <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rs</span><span class="p">[</span><span class="n">i</span><span class="p">,:</span><span class="n">i_max</span><span class="p">]</span><span class="o">*</span><span class="n">c</span><span class="p">[:</span><span class="n">i_max</span><span class="p">],</span>
-                        <span class="n">rs</span><span class="p">[</span><span class="n">i</span><span class="p">,:</span><span class="n">i_max</span><span class="p">]</span><span class="o">*</span><span class="n">s</span><span class="p">[:</span><span class="n">i_max</span><span class="p">]</span><span class="o">-</span><span class="n">R0</span><span class="o">*</span><span class="n">s</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span><span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth_rays</span><span class="p">)</span>
-                <span class="k">continue</span>
-
-            <span class="k">if</span> <span class="n">sky</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
-                <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rs</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span><span class="o">*</span><span class="n">c</span><span class="p">,</span><span class="n">rs</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span><span class="o">*</span><span class="n">s</span><span class="o">-</span><span class="n">R0</span><span class="o">*</span><span class="n">s</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;cyan&quot;</span><span class="p">,</span><span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth_rays</span><span class="p">)</span>
-                <span class="k">continue</span>
-
-        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">c</span><span class="o">*</span><span class="n">heights</span><span class="p">,</span><span class="n">s</span><span class="o">*</span><span class="n">heights</span><span class="o">-</span><span class="n">R0</span><span class="o">*</span><span class="n">s</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span><span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth_earth</span><span class="p">)</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">c</span><span class="o">*</span><span class="n">R0</span><span class="p">,</span><span class="n">s</span><span class="o">*</span><span class="n">R0</span><span class="o">-</span><span class="n">R0</span><span class="o">*</span><span class="n">s</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span><span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth_earth</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">style</span> <span class="o">==</span> <span class="s2">&quot;flat&quot;</span><span class="p">:</span>
-        <span class="n">_ray_crossing_cpu</span><span class="p">(</span><span class="n">h_min</span><span class="p">,</span><span class="n">rs</span><span class="p">,</span><span class="n">heights</span><span class="p">,</span><span class="n">inds</span><span class="p">,</span><span class="n">water</span><span class="p">,</span><span class="n">land</span><span class="p">,</span><span class="n">sky</span><span class="p">)</span>
-
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_v</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">i_horz</span> <span class="ow">and</span> <span class="n">eye_level</span><span class="p">:</span>
-                <span class="n">i_max</span> <span class="o">=</span> <span class="n">inds</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-                <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">d</span><span class="p">[:</span><span class="n">i_max</span><span class="p">],</span><span class="n">rs</span><span class="p">[</span><span class="n">i</span><span class="p">,:</span><span class="n">i_max</span><span class="p">],</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;orange&quot;</span><span class="p">,</span><span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth_rays</span><span class="p">)</span>
-                <span class="k">continue</span>
-
-            <span class="k">if</span> <span class="n">water</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
-                <span class="n">i_max</span> <span class="o">=</span> <span class="n">inds</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-                <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">d</span><span class="p">[:</span><span class="n">i_max</span><span class="p">],</span><span class="n">rs</span><span class="p">[</span><span class="n">i</span><span class="p">,:</span><span class="n">i_max</span><span class="p">],</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span><span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth_rays</span><span class="p">)</span>
-                <span class="k">continue</span>
-
-            <span class="k">if</span> <span class="n">land</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
-                <span class="n">i_max</span> <span class="o">=</span> <span class="n">inds</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-                <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">d</span><span class="p">[:</span><span class="n">i_max</span><span class="p">],</span><span class="n">rs</span><span class="p">[</span><span class="n">i</span><span class="p">,:</span><span class="n">i_max</span><span class="p">],</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span><span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth_rays</span><span class="p">)</span>
-                <span class="k">continue</span>
-
-            <span class="k">if</span> <span class="n">sky</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
-                <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="n">rs</span><span class="p">[</span><span class="n">i</span><span class="p">,:],</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;cyan&quot;</span><span class="p">,</span><span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth_rays</span><span class="p">)</span>
-                <span class="k">continue</span>
-
-        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="n">heights</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span><span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth_earth</span><span class="p">)</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">d</span><span class="p">),</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span><span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth_earth</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span></div>
 
 
 <div class="viewcode-block" id="Renderer_35mm"><a class="viewcode-back" href="../../../generated/refraction_render.renderers.Renderer_35mm.html#refraction_render.renderers.Renderer_35mm">[docs]</a><span class="k">class</span> <span class="nc">Renderer_35mm</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -805,7 +643,13 @@
     <span class="k">def</span> <span class="nf">geod</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;geod object used to distances between latitude and longitude coordinates.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geod</span>
-    
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">ds</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;distance points.&quot;&quot;&quot;</span>
+        <span class="n">ds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ds</span><span class="p">[</span><span class="o">...</span><span class="p">]</span>
+        <span class="n">ds</span><span class="o">.</span><span class="n">setflags</span><span class="p">(</span><span class="n">write</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ds</span>
 
 <div class="viewcode-block" id="Renderer_35mm.set_location"><a class="viewcode-back" href="../../../generated/refraction_render.renderers.Renderer_35mm.html#refraction_render.renderers.Renderer_35mm.set_location">[docs]</a>    <span class="k">def</span> <span class="nf">set_location</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">lat_obs</span><span class="p">,</span><span class="n">lon_obs</span><span class="p">,</span><span class="n">direction</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;This function can be used to change the location and heading of the renderer.</span>
@@ -839,6 +683,155 @@
 
         <span class="n">x_grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">18</span><span class="p">,</span><span class="mi">18</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_horz_res</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_h_angles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">rad2deg</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arctan</span><span class="p">(</span><span class="n">x_grid</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">_focal_length</span><span class="p">))</span><span class="o">+</span><span class="n">f_az</span></div>
+
+<div class="viewcode-block" id="Renderer_35mm.ray_diagram"><a class="viewcode-back" href="../../../generated/refraction_render.renderers.Renderer_35mm.html#refraction_render.renderers.Renderer_35mm.ray_diagram">[docs]</a>    <span class="k">def</span> <span class="nf">ray_diagram</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">ax</span><span class="p">,</span><span class="n">heading</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">heights</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">style</span><span class="o">=</span><span class="s2">&quot;sphere_top&quot;</span><span class="p">,</span>
+                    <span class="n">eye_level</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">linewidth_rays</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span><span class="n">linewidth_earth</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span><span class="n">R0</span><span class="o">=</span><span class="mi">6371008</span><span class="p">,</span><span class="n">h_min</span><span class="o">=</span><span class="mf">0.01</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Side profile view showing the rays trajectories. </span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        ax: matplotlib Axes object</span>
+<span class="sd">            this function plots lines on a graph, you can specify which graph to plot to by passing in the axes object for the graph you want to plot to.</span>
+
+<span class="sd">        heading: scalar, optional</span>
+<span class="sd">            the heading to take slice of tarrain for ray paths. default is the center of the frame for renderer</span>
+
+<span class="sd">        heights: array_like, (N,), optional</span>
+<span class="sd">            list of values which represent the elevation profile along ray trajectory (in addition to elevation)</span>
+
+<span class="sd">        style: str, optional </span>
+<span class="sd">            style to plot the graph. &quot;flat&quot;: plot rays on flat plane, &quot;sphere_top&quot;: plot rays as if the earth is filling away from the observer, &quot;sphere_side&quot;: plot rays with the &#39;bulge&#39; in the middle. </span>
+
+<span class="sd">        eye_level: bool, optional</span>
+<span class="sd">            color the ray which is closest to eye level (0 degrees initial angle) orange.</span>
+
+<span class="sd">        linewidth_rays: float, optional</span>
+<span class="sd">            linewidth used for plotting rays in diagram</span>
+
+<span class="sd">        linewidth_earth: float, optional</span>
+<span class="sd">            linewidth used for plotting surface of the earth, both water and land.</span>
+
+<span class="sd">        h_min: float, optional</span>
+<span class="sd">            minimum values which should count as water when calculating hit locations.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ds</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">is_sorted</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;array &#39;d&#39; must contain distance values in ascending order.&quot;</span><span class="p">)</span>
+
+        <span class="n">d_max</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ds</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+        
+        <span class="k">if</span> <span class="n">heading</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">h_angle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">h_angles</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">h_angle</span> <span class="o">=</span> <span class="n">heading</span>
+
+        <span class="n">rs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rs</span>
+        <span class="k">if</span> <span class="n">heights</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">heights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+
+        <span class="n">n_v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">v_angles</span><span class="o">.</span><span class="n">size</span>
+
+        <span class="n">water</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_v</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>
+        <span class="n">land</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_v</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>
+        <span class="n">sky</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_v</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>
+        <span class="n">inds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_v</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+
+        <span class="n">i_horz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">v_angles</span><span class="p">)</span><span class="o">.</span><span class="n">argmin</span><span class="p">()</span>
+
+
+        <span class="k">if</span> <span class="n">style</span> <span class="o">==</span> <span class="s2">&quot;sphere_top&quot;</span><span class="p">:</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="o">-</span><span class="n">d</span><span class="o">/</span><span class="n">R0</span><span class="p">)</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="o">-</span><span class="n">d</span><span class="o">/</span><span class="n">R0</span><span class="p">)</span>
+
+            <span class="n">_ray_crossing_cpu</span><span class="p">(</span><span class="n">h_min</span><span class="p">,</span><span class="n">rs</span><span class="p">,</span><span class="n">heights</span><span class="p">,</span><span class="n">inds</span><span class="p">,</span><span class="n">water</span><span class="p">,</span><span class="n">land</span><span class="p">,</span><span class="n">sky</span><span class="p">)</span>
+            <span class="n">rs</span> <span class="o">=</span> <span class="n">rs</span> <span class="o">+</span> <span class="n">R0</span>
+            <span class="n">heights</span> <span class="o">=</span> <span class="n">heights</span> <span class="o">+</span> <span class="n">R0</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_v</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">i_horz</span> <span class="ow">and</span> <span class="n">eye_level</span><span class="p">:</span>
+                    <span class="n">i_max</span> <span class="o">=</span> <span class="n">inds</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rs</span><span class="p">[</span><span class="n">i</span><span class="p">,:</span><span class="n">i_max</span><span class="p">]</span><span class="o">*</span><span class="n">c</span><span class="p">[:</span><span class="n">i_max</span><span class="p">],</span>
+                            <span class="n">rs</span><span class="p">[</span><span class="n">i</span><span class="p">,:</span><span class="n">i_max</span><span class="p">]</span><span class="o">*</span><span class="n">s</span><span class="p">[:</span><span class="n">i_max</span><span class="p">]</span><span class="o">-</span><span class="n">R0</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;orange&quot;</span><span class="p">,</span><span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth_rays</span><span class="p">)</span>
+                    <span class="k">continue</span>
+
+                <span class="k">if</span> <span class="n">water</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                    <span class="n">i_max</span> <span class="o">=</span> <span class="n">inds</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rs</span><span class="p">[</span><span class="n">i</span><span class="p">,:</span><span class="n">i_max</span><span class="p">]</span><span class="o">*</span><span class="n">c</span><span class="p">[:</span><span class="n">i_max</span><span class="p">],</span>
+                            <span class="n">rs</span><span class="p">[</span><span class="n">i</span><span class="p">,:</span><span class="n">i_max</span><span class="p">]</span><span class="o">*</span><span class="n">s</span><span class="p">[:</span><span class="n">i_max</span><span class="p">]</span><span class="o">-</span><span class="n">R0</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span><span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth_rays</span><span class="p">)</span>
+                    <span class="k">continue</span>
+
+                <span class="k">if</span> <span class="n">land</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                    <span class="n">i_max</span> <span class="o">=</span> <span class="n">inds</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rs</span><span class="p">[</span><span class="n">i</span><span class="p">,:</span><span class="n">i_max</span><span class="p">]</span><span class="o">*</span><span class="n">c</span><span class="p">[:</span><span class="n">i_max</span><span class="p">],</span>
+                            <span class="n">rs</span><span class="p">[</span><span class="n">i</span><span class="p">,:</span><span class="n">i_max</span><span class="p">]</span><span class="o">*</span><span class="n">s</span><span class="p">[:</span><span class="n">i_max</span><span class="p">]</span><span class="o">-</span><span class="n">R0</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span><span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth_rays</span><span class="p">)</span>
+                    <span class="k">continue</span>
+
+                <span class="k">if</span> <span class="n">sky</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rs</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span><span class="o">*</span><span class="n">c</span><span class="p">,</span><span class="n">rs</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span><span class="o">*</span><span class="n">s</span><span class="o">-</span><span class="n">R0</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;cyan&quot;</span><span class="p">,</span><span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth_rays</span><span class="p">)</span>
+                    <span class="k">continue</span>
+
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">c</span><span class="o">*</span><span class="n">heights</span><span class="p">,</span><span class="n">s</span><span class="o">*</span><span class="n">heights</span><span class="o">-</span><span class="n">R0</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span><span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth_earth</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">c</span><span class="o">*</span><span class="n">R0</span><span class="p">,</span><span class="n">s</span><span class="o">*</span><span class="n">R0</span><span class="o">-</span><span class="n">R0</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span><span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth_earth</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">style</span> <span class="o">==</span> <span class="s2">&quot;sphere_side&quot;</span><span class="p">:</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="o">-</span><span class="n">d</span><span class="o">/</span><span class="n">R0</span><span class="o">+</span><span class="n">d_max</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">R0</span><span class="p">))</span>
+            <span class="n">c</span> <span class="o">-=</span> <span class="n">c</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="o">-</span><span class="n">d</span><span class="o">/</span><span class="n">R0</span><span class="o">+</span><span class="n">d_max</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">R0</span><span class="p">))</span>
+            <span class="n">_ray_crossing_cpu</span><span class="p">(</span><span class="n">h_min</span><span class="p">,</span><span class="n">rs</span><span class="p">,</span><span class="n">heights</span><span class="p">,</span><span class="n">inds</span><span class="p">,</span><span class="n">water</span><span class="p">,</span><span class="n">land</span><span class="p">,</span><span class="n">sky</span><span class="p">)</span>
+            <span class="n">rs</span> <span class="o">=</span> <span class="n">rs</span> <span class="o">+</span> <span class="n">R0</span>
+            <span class="n">heights</span> <span class="o">=</span> <span class="n">heights</span> <span class="o">+</span> <span class="n">R0</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_v</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">i_horz</span> <span class="ow">and</span> <span class="n">eye_level</span><span class="p">:</span>
+                    <span class="n">i_max</span> <span class="o">=</span> <span class="n">inds</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rs</span><span class="p">[</span><span class="n">i</span><span class="p">,:</span><span class="n">i_max</span><span class="p">]</span><span class="o">*</span><span class="n">c</span><span class="p">[:</span><span class="n">i_max</span><span class="p">],</span>
+                            <span class="n">rs</span><span class="p">[</span><span class="n">i</span><span class="p">,:</span><span class="n">i_max</span><span class="p">]</span><span class="o">*</span><span class="n">s</span><span class="p">[:</span><span class="n">i_max</span><span class="p">]</span><span class="o">-</span><span class="n">R0</span><span class="o">*</span><span class="n">s</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;orange&quot;</span><span class="p">,</span><span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth_rays</span><span class="p">)</span>
+                    <span class="k">continue</span>
+
+                <span class="k">if</span> <span class="n">water</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                    <span class="n">i_max</span> <span class="o">=</span> <span class="n">inds</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rs</span><span class="p">[</span><span class="n">i</span><span class="p">,:</span><span class="n">i_max</span><span class="p">]</span><span class="o">*</span><span class="n">c</span><span class="p">[:</span><span class="n">i_max</span><span class="p">],</span>
+                            <span class="n">rs</span><span class="p">[</span><span class="n">i</span><span class="p">,:</span><span class="n">i_max</span><span class="p">]</span><span class="o">*</span><span class="n">s</span><span class="p">[:</span><span class="n">i_max</span><span class="p">]</span><span class="o">-</span><span class="n">R0</span><span class="o">*</span><span class="n">s</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span><span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth_rays</span><span class="p">)</span>
+                    <span class="k">continue</span>
+
+                <span class="k">if</span> <span class="n">land</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                    <span class="n">i_max</span> <span class="o">=</span> <span class="n">inds</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rs</span><span class="p">[</span><span class="n">i</span><span class="p">,:</span><span class="n">i_max</span><span class="p">]</span><span class="o">*</span><span class="n">c</span><span class="p">[:</span><span class="n">i_max</span><span class="p">],</span>
+                            <span class="n">rs</span><span class="p">[</span><span class="n">i</span><span class="p">,:</span><span class="n">i_max</span><span class="p">]</span><span class="o">*</span><span class="n">s</span><span class="p">[:</span><span class="n">i_max</span><span class="p">]</span><span class="o">-</span><span class="n">R0</span><span class="o">*</span><span class="n">s</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span><span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth_rays</span><span class="p">)</span>
+                    <span class="k">continue</span>
+
+                <span class="k">if</span> <span class="n">sky</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rs</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span><span class="o">*</span><span class="n">c</span><span class="p">,</span><span class="n">rs</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span><span class="o">*</span><span class="n">s</span><span class="o">-</span><span class="n">R0</span><span class="o">*</span><span class="n">s</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;cyan&quot;</span><span class="p">,</span><span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth_rays</span><span class="p">)</span>
+                    <span class="k">continue</span>
+
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">c</span><span class="o">*</span><span class="n">heights</span><span class="p">,</span><span class="n">s</span><span class="o">*</span><span class="n">heights</span><span class="o">-</span><span class="n">R0</span><span class="o">*</span><span class="n">s</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span><span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth_earth</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">c</span><span class="o">*</span><span class="n">R0</span><span class="p">,</span><span class="n">s</span><span class="o">*</span><span class="n">R0</span><span class="o">-</span><span class="n">R0</span><span class="o">*</span><span class="n">s</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span><span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth_earth</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">style</span> <span class="o">==</span> <span class="s2">&quot;flat&quot;</span><span class="p">:</span>
+            <span class="n">_ray_crossing_cpu</span><span class="p">(</span><span class="n">h_min</span><span class="p">,</span><span class="n">rs</span><span class="p">,</span><span class="n">heights</span><span class="p">,</span><span class="n">inds</span><span class="p">,</span><span class="n">water</span><span class="p">,</span><span class="n">land</span><span class="p">,</span><span class="n">sky</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_v</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">i_horz</span> <span class="ow">and</span> <span class="n">eye_level</span><span class="p">:</span>
+                    <span class="n">i_max</span> <span class="o">=</span> <span class="n">inds</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">d</span><span class="p">[:</span><span class="n">i_max</span><span class="p">],</span><span class="n">rs</span><span class="p">[</span><span class="n">i</span><span class="p">,:</span><span class="n">i_max</span><span class="p">],</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;orange&quot;</span><span class="p">,</span><span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth_rays</span><span class="p">)</span>
+                    <span class="k">continue</span>
+
+                <span class="k">if</span> <span class="n">water</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                    <span class="n">i_max</span> <span class="o">=</span> <span class="n">inds</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">d</span><span class="p">[:</span><span class="n">i_max</span><span class="p">],</span><span class="n">rs</span><span class="p">[</span><span class="n">i</span><span class="p">,:</span><span class="n">i_max</span><span class="p">],</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span><span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth_rays</span><span class="p">)</span>
+                    <span class="k">continue</span>
+
+                <span class="k">if</span> <span class="n">land</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                    <span class="n">i_max</span> <span class="o">=</span> <span class="n">inds</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">d</span><span class="p">[:</span><span class="n">i_max</span><span class="p">],</span><span class="n">rs</span><span class="p">[</span><span class="n">i</span><span class="p">,:</span><span class="n">i_max</span><span class="p">],</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span><span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth_rays</span><span class="p">)</span>
+                    <span class="k">continue</span>
+
+                <span class="k">if</span> <span class="n">sky</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="n">rs</span><span class="p">[</span><span class="n">i</span><span class="p">,:],</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;cyan&quot;</span><span class="p">,</span><span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth_rays</span><span class="p">)</span>
+                    <span class="k">continue</span>
+
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="n">heights</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span><span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth_earth</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">d</span><span class="p">),</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span><span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth_earth</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span></div>
 
 
 <div class="viewcode-block" id="Renderer_35mm.render_scene"><a class="viewcode-back" href="../../../generated/refraction_render.renderers.Renderer_35mm.html#refraction_render.renderers.Renderer_35mm.render_scene">[docs]</a>    <span class="k">def</span> <span class="nf">render_scene</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">scene</span><span class="p">,</span><span class="n">image_name</span><span class="p">,</span><span class="n">surface_color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">background_color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">cfunc</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">cfunc_args</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -1034,6 +1027,12 @@
         <span class="sd">&quot;&quot;&quot;geod object used to distances between latitude and longitude coordinates.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geod</span>
 
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">ds</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;distance points.&quot;&quot;&quot;</span>
+        <span class="n">ds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ds</span><span class="p">[</span><span class="o">...</span><span class="p">]</span>
+        <span class="n">ds</span><span class="o">.</span><span class="n">setflags</span><span class="p">(</span><span class="n">write</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ds</span>
 
 <div class="viewcode-block" id="Renderer_Composite.set_location"><a class="viewcode-back" href="../../../generated/refraction_render.renderers.Renderer_Composite.html#refraction_render.renderers.Renderer_Composite.set_location">[docs]</a>    <span class="k">def</span> <span class="nf">set_location</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">lat_obs</span><span class="p">,</span><span class="n">lon_obs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;This function can be used to change the position of the renderer.</span>
@@ -1049,6 +1048,152 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_lat_obs</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">lat_obs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_lon_obs</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">lon_obs</span><span class="p">)</span>
         <span class="n">_check_gps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_lat_obs</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_lon_obs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Renderer_Composite.ray_diagram"><a class="viewcode-back" href="../../../generated/refraction_render.renderers.Renderer_Composite.html#refraction_render.renderers.Renderer_Composite.ray_diagram">[docs]</a>    <span class="k">def</span> <span class="nf">ray_diagram</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">ax</span><span class="p">,</span><span class="n">heading</span><span class="p">,</span><span class="n">heights</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">style</span><span class="o">=</span><span class="s2">&quot;sphere_top&quot;</span><span class="p">,</span>
+                    <span class="n">eye_level</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">linewidth_rays</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span><span class="n">linewidth_earth</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span><span class="n">R0</span><span class="o">=</span><span class="mi">6371008</span><span class="p">,</span><span class="n">h_min</span><span class="o">=</span><span class="mf">0.01</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Side profile view showing the rays trajectories. </span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        ax: matplotlib Axes object</span>
+<span class="sd">            this function plots lines on a graph, you can specify which graph to plot to by passing in the axes object for the graph you want to plot to.</span>
+
+<span class="sd">        heading: scalar</span>
+<span class="sd">            the heading to take slice of tarrain for ray paths.</span>
+
+<span class="sd">        heights: array_like, (N,), optional</span>
+<span class="sd">            list of values which represent the elevation profile along ray trajectory (in addition to elevation)</span>
+
+<span class="sd">        style: str, optional </span>
+<span class="sd">            style to plot the graph. &quot;flat&quot;: plot rays on flat plane, &quot;sphere_top&quot;: plot rays as if the earth is filling away from the observer, &quot;sphere_side&quot;: plot rays with the &#39;bulge&#39; in the middle. </span>
+
+<span class="sd">        eye_level: bool, optional</span>
+<span class="sd">            color the ray which is closest to eye level (0 degrees initial angle) orange.</span>
+
+<span class="sd">        linewidth_rays: float, optional</span>
+<span class="sd">            linewidth used for plotting rays in diagram</span>
+
+<span class="sd">        linewidth_earth: float, optional</span>
+<span class="sd">            linewidth used for plotting surface of the earth, both water and land.</span>
+
+<span class="sd">        h_min: float, optional</span>
+<span class="sd">            minimum values which should count as water when calculating hit locations.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ds</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">is_sorted</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;array &#39;d&#39; must contain distance values in ascending order.&quot;</span><span class="p">)</span>
+
+        <span class="n">d_max</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ds</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+        
+        <span class="n">h_angle</span> <span class="o">=</span> <span class="n">heading</span>
+
+        <span class="n">rs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rs</span>
+        <span class="k">if</span> <span class="n">heights</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">heights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+
+        <span class="n">n_v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">v_angles</span><span class="o">.</span><span class="n">size</span>
+
+        <span class="n">water</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_v</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>
+        <span class="n">land</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_v</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>
+        <span class="n">sky</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_v</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>
+        <span class="n">inds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_v</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+
+        <span class="n">i_horz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">v_angles</span><span class="p">)</span><span class="o">.</span><span class="n">argmin</span><span class="p">()</span>
+
+
+        <span class="k">if</span> <span class="n">style</span> <span class="o">==</span> <span class="s2">&quot;sphere_top&quot;</span><span class="p">:</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="o">-</span><span class="n">d</span><span class="o">/</span><span class="n">R0</span><span class="p">)</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="o">-</span><span class="n">d</span><span class="o">/</span><span class="n">R0</span><span class="p">)</span>
+
+            <span class="n">_ray_crossing_cpu</span><span class="p">(</span><span class="n">h_min</span><span class="p">,</span><span class="n">rs</span><span class="p">,</span><span class="n">heights</span><span class="p">,</span><span class="n">inds</span><span class="p">,</span><span class="n">water</span><span class="p">,</span><span class="n">land</span><span class="p">,</span><span class="n">sky</span><span class="p">)</span>
+            <span class="n">rs</span> <span class="o">=</span> <span class="n">rs</span> <span class="o">+</span> <span class="n">R0</span>
+            <span class="n">heights</span> <span class="o">=</span> <span class="n">heights</span> <span class="o">+</span> <span class="n">R0</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_v</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">i_horz</span> <span class="ow">and</span> <span class="n">eye_level</span><span class="p">:</span>
+                    <span class="n">i_max</span> <span class="o">=</span> <span class="n">inds</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rs</span><span class="p">[</span><span class="n">i</span><span class="p">,:</span><span class="n">i_max</span><span class="p">]</span><span class="o">*</span><span class="n">c</span><span class="p">[:</span><span class="n">i_max</span><span class="p">],</span>
+                            <span class="n">rs</span><span class="p">[</span><span class="n">i</span><span class="p">,:</span><span class="n">i_max</span><span class="p">]</span><span class="o">*</span><span class="n">s</span><span class="p">[:</span><span class="n">i_max</span><span class="p">]</span><span class="o">-</span><span class="n">R0</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;orange&quot;</span><span class="p">,</span><span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth_rays</span><span class="p">)</span>
+                    <span class="k">continue</span>
+
+                <span class="k">if</span> <span class="n">water</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                    <span class="n">i_max</span> <span class="o">=</span> <span class="n">inds</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rs</span><span class="p">[</span><span class="n">i</span><span class="p">,:</span><span class="n">i_max</span><span class="p">]</span><span class="o">*</span><span class="n">c</span><span class="p">[:</span><span class="n">i_max</span><span class="p">],</span>
+                            <span class="n">rs</span><span class="p">[</span><span class="n">i</span><span class="p">,:</span><span class="n">i_max</span><span class="p">]</span><span class="o">*</span><span class="n">s</span><span class="p">[:</span><span class="n">i_max</span><span class="p">]</span><span class="o">-</span><span class="n">R0</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span><span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth_rays</span><span class="p">)</span>
+                    <span class="k">continue</span>
+
+                <span class="k">if</span> <span class="n">land</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                    <span class="n">i_max</span> <span class="o">=</span> <span class="n">inds</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rs</span><span class="p">[</span><span class="n">i</span><span class="p">,:</span><span class="n">i_max</span><span class="p">]</span><span class="o">*</span><span class="n">c</span><span class="p">[:</span><span class="n">i_max</span><span class="p">],</span>
+                            <span class="n">rs</span><span class="p">[</span><span class="n">i</span><span class="p">,:</span><span class="n">i_max</span><span class="p">]</span><span class="o">*</span><span class="n">s</span><span class="p">[:</span><span class="n">i_max</span><span class="p">]</span><span class="o">-</span><span class="n">R0</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span><span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth_rays</span><span class="p">)</span>
+                    <span class="k">continue</span>
+
+                <span class="k">if</span> <span class="n">sky</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rs</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span><span class="o">*</span><span class="n">c</span><span class="p">,</span><span class="n">rs</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span><span class="o">*</span><span class="n">s</span><span class="o">-</span><span class="n">R0</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;cyan&quot;</span><span class="p">,</span><span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth_rays</span><span class="p">)</span>
+                    <span class="k">continue</span>
+
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">c</span><span class="o">*</span><span class="n">heights</span><span class="p">,</span><span class="n">s</span><span class="o">*</span><span class="n">heights</span><span class="o">-</span><span class="n">R0</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span><span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth_earth</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">c</span><span class="o">*</span><span class="n">R0</span><span class="p">,</span><span class="n">s</span><span class="o">*</span><span class="n">R0</span><span class="o">-</span><span class="n">R0</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span><span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth_earth</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">style</span> <span class="o">==</span> <span class="s2">&quot;sphere_side&quot;</span><span class="p">:</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="o">-</span><span class="n">d</span><span class="o">/</span><span class="n">R0</span><span class="o">+</span><span class="n">d_max</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">R0</span><span class="p">))</span>
+            <span class="n">c</span> <span class="o">-=</span> <span class="n">c</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="o">-</span><span class="n">d</span><span class="o">/</span><span class="n">R0</span><span class="o">+</span><span class="n">d_max</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">R0</span><span class="p">))</span>
+            <span class="n">_ray_crossing_cpu</span><span class="p">(</span><span class="n">h_min</span><span class="p">,</span><span class="n">rs</span><span class="p">,</span><span class="n">heights</span><span class="p">,</span><span class="n">inds</span><span class="p">,</span><span class="n">water</span><span class="p">,</span><span class="n">land</span><span class="p">,</span><span class="n">sky</span><span class="p">)</span>
+            <span class="n">rs</span> <span class="o">=</span> <span class="n">rs</span> <span class="o">+</span> <span class="n">R0</span>
+            <span class="n">heights</span> <span class="o">=</span> <span class="n">heights</span> <span class="o">+</span> <span class="n">R0</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_v</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">i_horz</span> <span class="ow">and</span> <span class="n">eye_level</span><span class="p">:</span>
+                    <span class="n">i_max</span> <span class="o">=</span> <span class="n">inds</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rs</span><span class="p">[</span><span class="n">i</span><span class="p">,:</span><span class="n">i_max</span><span class="p">]</span><span class="o">*</span><span class="n">c</span><span class="p">[:</span><span class="n">i_max</span><span class="p">],</span>
+                            <span class="n">rs</span><span class="p">[</span><span class="n">i</span><span class="p">,:</span><span class="n">i_max</span><span class="p">]</span><span class="o">*</span><span class="n">s</span><span class="p">[:</span><span class="n">i_max</span><span class="p">]</span><span class="o">-</span><span class="n">R0</span><span class="o">*</span><span class="n">s</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;orange&quot;</span><span class="p">,</span><span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth_rays</span><span class="p">)</span>
+                    <span class="k">continue</span>
+
+                <span class="k">if</span> <span class="n">water</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                    <span class="n">i_max</span> <span class="o">=</span> <span class="n">inds</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rs</span><span class="p">[</span><span class="n">i</span><span class="p">,:</span><span class="n">i_max</span><span class="p">]</span><span class="o">*</span><span class="n">c</span><span class="p">[:</span><span class="n">i_max</span><span class="p">],</span>
+                            <span class="n">rs</span><span class="p">[</span><span class="n">i</span><span class="p">,:</span><span class="n">i_max</span><span class="p">]</span><span class="o">*</span><span class="n">s</span><span class="p">[:</span><span class="n">i_max</span><span class="p">]</span><span class="o">-</span><span class="n">R0</span><span class="o">*</span><span class="n">s</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span><span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth_rays</span><span class="p">)</span>
+                    <span class="k">continue</span>
+
+                <span class="k">if</span> <span class="n">land</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                    <span class="n">i_max</span> <span class="o">=</span> <span class="n">inds</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rs</span><span class="p">[</span><span class="n">i</span><span class="p">,:</span><span class="n">i_max</span><span class="p">]</span><span class="o">*</span><span class="n">c</span><span class="p">[:</span><span class="n">i_max</span><span class="p">],</span>
+                            <span class="n">rs</span><span class="p">[</span><span class="n">i</span><span class="p">,:</span><span class="n">i_max</span><span class="p">]</span><span class="o">*</span><span class="n">s</span><span class="p">[:</span><span class="n">i_max</span><span class="p">]</span><span class="o">-</span><span class="n">R0</span><span class="o">*</span><span class="n">s</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span><span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth_rays</span><span class="p">)</span>
+                    <span class="k">continue</span>
+
+                <span class="k">if</span> <span class="n">sky</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rs</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span><span class="o">*</span><span class="n">c</span><span class="p">,</span><span class="n">rs</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span><span class="o">*</span><span class="n">s</span><span class="o">-</span><span class="n">R0</span><span class="o">*</span><span class="n">s</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;cyan&quot;</span><span class="p">,</span><span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth_rays</span><span class="p">)</span>
+                    <span class="k">continue</span>
+
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">c</span><span class="o">*</span><span class="n">heights</span><span class="p">,</span><span class="n">s</span><span class="o">*</span><span class="n">heights</span><span class="o">-</span><span class="n">R0</span><span class="o">*</span><span class="n">s</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span><span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth_earth</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">c</span><span class="o">*</span><span class="n">R0</span><span class="p">,</span><span class="n">s</span><span class="o">*</span><span class="n">R0</span><span class="o">-</span><span class="n">R0</span><span class="o">*</span><span class="n">s</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span><span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth_earth</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">style</span> <span class="o">==</span> <span class="s2">&quot;flat&quot;</span><span class="p">:</span>
+            <span class="n">_ray_crossing_cpu</span><span class="p">(</span><span class="n">h_min</span><span class="p">,</span><span class="n">rs</span><span class="p">,</span><span class="n">heights</span><span class="p">,</span><span class="n">inds</span><span class="p">,</span><span class="n">water</span><span class="p">,</span><span class="n">land</span><span class="p">,</span><span class="n">sky</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_v</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">i_horz</span> <span class="ow">and</span> <span class="n">eye_level</span><span class="p">:</span>
+                    <span class="n">i_max</span> <span class="o">=</span> <span class="n">inds</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">d</span><span class="p">[:</span><span class="n">i_max</span><span class="p">],</span><span class="n">rs</span><span class="p">[</span><span class="n">i</span><span class="p">,:</span><span class="n">i_max</span><span class="p">],</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;orange&quot;</span><span class="p">,</span><span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth_rays</span><span class="p">)</span>
+                    <span class="k">continue</span>
+
+                <span class="k">if</span> <span class="n">water</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                    <span class="n">i_max</span> <span class="o">=</span> <span class="n">inds</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">d</span><span class="p">[:</span><span class="n">i_max</span><span class="p">],</span><span class="n">rs</span><span class="p">[</span><span class="n">i</span><span class="p">,:</span><span class="n">i_max</span><span class="p">],</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span><span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth_rays</span><span class="p">)</span>
+                    <span class="k">continue</span>
+
+                <span class="k">if</span> <span class="n">land</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                    <span class="n">i_max</span> <span class="o">=</span> <span class="n">inds</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">d</span><span class="p">[:</span><span class="n">i_max</span><span class="p">],</span><span class="n">rs</span><span class="p">[</span><span class="n">i</span><span class="p">,:</span><span class="n">i_max</span><span class="p">],</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span><span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth_rays</span><span class="p">)</span>
+                    <span class="k">continue</span>
+
+                <span class="k">if</span> <span class="n">sky</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="n">rs</span><span class="p">[</span><span class="n">i</span><span class="p">,:],</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;cyan&quot;</span><span class="p">,</span><span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth_rays</span><span class="p">)</span>
+                    <span class="k">continue</span>
+
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="n">heights</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span><span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth_earth</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">d</span><span class="p">),</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span><span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth_earth</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span></div>
 
 <div class="viewcode-block" id="Renderer_Composite.render_scene"><a class="viewcode-back" href="../../../generated/refraction_render.renderers.Renderer_Composite.html#refraction_render.renderers.Renderer_Composite.render_scene">[docs]</a>    <span class="k">def</span> <span class="nf">render_scene</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">scene</span><span class="p">,</span><span class="n">image_names</span><span class="p">,</span><span class="n">heading_mins</span><span class="p">,</span><span class="n">heading_maxs</span><span class="p">,</span><span class="n">surface_color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">background_color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">cfunc</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">cfunc_args</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">disp</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">eye_level</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">postprocess</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">h_min</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span><span class="n">gpu</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>

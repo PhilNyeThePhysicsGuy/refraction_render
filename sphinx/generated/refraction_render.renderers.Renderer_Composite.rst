@@ -14,6 +14,7 @@
    .. autosummary::
    
       ~Renderer_Composite.__init__
+      ~Renderer_Composite.ray_diagram
       ~Renderer_Composite.render_scene
       ~Renderer_Composite.set_location
    
@@ -26,6 +27,7 @@
    .. autosummary::
    
       ~Renderer_Composite.calc
+      ~Renderer_Composite.ds
       ~Renderer_Composite.geod
       ~Renderer_Composite.v_angles
       ~Renderer_Composite.vfov

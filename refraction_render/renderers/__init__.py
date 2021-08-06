@@ -3,16 +3,6 @@
 Renderers module (:mod:`refraction_render.renderers`)
 =====================================================
 
-function for creating nice ray diagrams:
-----------------------------------------
-
-.. currentmodule:: refraction_render.renderers
-
-.. autosummary::
-   :toctree: generated/
-
-	ray_diagram
-
 classes for rendering an image:
 -------------------------------
 
